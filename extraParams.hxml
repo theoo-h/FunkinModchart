@@ -1,0 +1,6 @@
+--macro modchart.core.macros.AdapterMacro.init()
+--macro include('modchart', false, ['modchart.standalone.adapters'])
+--macro addMetadata('@:build(modchart.core.macros.Macro.buildFlxCamera())', 'flixel.FlxCamera')
+--macro addMetadata('@:build(modchart.core.macros.Macro.buildFlxDrawTrianglesItem())', 'flixel.graphics.tile.FlxDrawTrianglesItem')
+--macro addMetadata('@:build(modchart.core.macros.Macro.addZProperty())', 'flixel.FlxObject')
+--macro addMetadata('@:build(modchart.core.macros.Macro.addZProperty())', 'flixel.FlxObject')
