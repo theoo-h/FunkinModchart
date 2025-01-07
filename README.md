@@ -7,6 +7,34 @@
 
 This framework also provides **extra features** that can help you to make even more crazy visuals, as **arrow paths, 3D view camera, AFTs**, etc. *(If you have already modeled NotITG or StepMania, you know what I am talking about)*
 
+<details>
+<summary><h2>Importing the library</h2></summary>
+
+This library currently has support for multiple engines such as [Codename Engine](https://codename-engine.com) and [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine.com), click [here](SUPPORT.md) for more information, and only takes a couple of lines of code to import it:
+
+#### Go to your project and open `Project.xml`
+At the bottom of where the haxelib section is, paste this code.
+```xml
+<haxedef name="FM_ENGINE" value="YOUR_ENGINE"/>
+<haxedef name="FM_ENGINE_VERSION" value="ENGINE_VERSION"/>
+
+<haxelib name="funkin-modchart" />
+```
+
+Fill in the definitions with your engine name and version using the [format](SUPPORT.md) mentioned.
+
+And if you did everything good, it should compile and work normal !
+
+</details>
+
+<details>
+<summary><h2>Making your own Adapter</h2></summary>
+
+to do heheheh, if u know coding just check psych and codename adapters and u'll figure out (also check Adapter.hx and AdapterMacro.hx for more information)
+also OBVIOUSLY has to be an flixel-based fnf engine
+
+</details>
+
 ## Credits
 **OpenITG:** Some math taken for modifiers.
 
