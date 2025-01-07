@@ -28,6 +28,30 @@ And if you did everything good, it should compile and work normal !
 </details>
 
 <details>
+<summary><h2>Using the library</h2></summary>
+
+This is the easiest thing, you only have to do a couple of steps for add the modchart instance to a song.
+
+#### Import `modchart.Manager`
+And then make an instance of it, and add it to the state.
+
+```haxe
+var funkin_modchart_instance:Manager = new Manager();
+// On your create function.
+add(funkin_modchart_instance);
+```
+
+This can be done via haxe scripts or source code, and will soon be possible in PsychLua for `PSYCH` as well.
+
+Make sure that at the time you create the instance, the notes and strums were already generated.
+This now all the stuff should be working, do your stuff now.
+
+### `Manager` usage
+TODO heheheh, if u know code basics, just check `Manager.hx` funcions.
+
+</details>
+
+<details>
 <summary><h2>Making your own Adapter</h2></summary>
 
 to do heheheh, if u know coding just check psych and codename adapters and u'll figure out (also check Adapter.hx and AdapterMacro.hx for more information)
