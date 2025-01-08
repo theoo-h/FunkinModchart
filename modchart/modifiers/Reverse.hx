@@ -42,7 +42,7 @@ class Reverse extends Modifier
         }
 
 		// downscroll
-		if (false == true)
+		if (Adapter.instance.getDownscroll())
 			val = 1 - val;
         return val;
     }

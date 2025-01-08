@@ -12,7 +12,6 @@ import backend.ClientPrefs;
 import objects.Note;
 import objects.StrumNote as Strum;
 import flixel.FlxG;
-
 class Psych implements IAdapter
 {
     private var __fCrochet:Float = 0;
@@ -20,7 +19,14 @@ class Psych implements IAdapter
     private var __receptorXs:Array<Array<Float>>;
     private var __receptorYs:Array<Array<Float>>;
 
-    public function new() {}
+    public function new()
+    {
+        try {
+            setupLuaFunctions();
+        } catch (e) {
+            trace('[ From FunkinModchart Adapter ] Failed while adding lua functions: $e');
+        }
+    }
 
     public function onModchartingInitialization()
     {
@@ -37,8 +43,15 @@ class Psych implements IAdapter
                 __receptorYs[strumNote.player] = [];
 
             __receptorXs[strumNote.player][strumNote.noteData] = strumNote.x;
-            __receptorYs[strumNote.player][strumNote.noteData] = strumNote.y;
+            __receptorYs[strumNote.player][strumNote.noteData] = getDownscroll() ? FlxG.height - strumNote.y - Manager.ARROW_SIZE : strumNote.y;
         });
+    }
+
+    private function setupLuaFunction():Bool
+    {
+        #if LUA_ALLOWED
+        // todo
+        #end
     }
     
     public function isTapNote(sprite:FlxSprite)
@@ -57,7 +70,7 @@ class Psych implements IAdapter
     }
     public function getStaticCrochet():Float
     {
-        return __fCrochet;
+        return __fCrochet + 8;
     }
 
     public function arrowHitted(arrow:FlxSprite)
@@ -114,7 +127,12 @@ class Psych implements IAdapter
 
 	public function getHoldSubdivitions():Int
 	{
-		return 3;
+		return 4;
+	}
+    // psych adjust the strum pos at the begin of playstate
+    public function getDownscroll():Bool
+	{
+		return ClientPrefs.data.downScroll;
 	}
 	public function getDefaultReceptorX(lane:Int, player:Int):Float
 	{

@@ -46,8 +46,9 @@ This can be done via haxe scripts or source code, and will soon be possible in P
 Make sure that at the time you create the instance, the notes and strums were already generated.
 This now all the stuff should be working, do your stuff now.
 
-### `Manager` usage
-TODO heheheh, if u know code basics, just check `Manager.hx` funcions.
+#### Making a Modchart
+First, you should know all the modcharting functions, check they [here](DOC.md).
+To make a modchart you don't necessarily have to follow instructions, it's a matter of experimenting with the modifiers and all the functions that FunkinModchart offers, although previous experience with The Mirin Template and NotITG would help you design a good modchart more easily.
 
 </details>
 

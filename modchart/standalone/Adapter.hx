@@ -1,5 +1,6 @@
 package modchart.standalone;
 
+import haxe.xml.Fast;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 
@@ -83,8 +84,9 @@ interface IAdapter
     // Get cameras to render the arrows (camHUD for almost every engine)
     public function getArrowCamera():Array<FlxCamera>;
 
-    // Hold resolution
-    public function getHoldSubdivitions():Int;
+    // Options section
+    public function getHoldSubdivitions():Int;  // Hold resolution
+    public function getDownscroll():Bool;       // Get if it is downscroll
 
     /**
      * Get the every arrow/receptor indexed by player.

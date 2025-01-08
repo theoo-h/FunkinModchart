@@ -101,6 +101,10 @@ class Codename implements IAdapter
 	{
 		return Std.int(Math.max(1, Options?.hold_subs ?? 1));
 	}
+    public function getDownscroll():Bool
+	{
+		return Options?.downscroll ?? false;
+	}
 	public function getDefaultReceptorX(lane:Int, field:Int):Float
 	{
         @:privateAccess

@@ -1,5 +1,5 @@
 {
-    "name": "FunkinModchart",
+    "name": "funkin-modchart",
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
     "version": "1.0.0",
@@ -8,5 +8,6 @@
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {
       "flixel": ""
-    }
+    },
+    "url": "https://github.com/TheoDevelops/FunkinModchart"
   }
