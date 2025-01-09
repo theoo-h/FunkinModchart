@@ -37,11 +37,11 @@ class Event
     }
 	public function create() {}
 
-    public function setModPercent(name, value, player)
+    public inline function setModPercent(name, value, player)
     {
         parent.pf.setPercent(name, value, player);
     }
-	public function getModPercent(name, player):Float
+	public inline function getModPercent(name, player):Float
 	{
 		return parent.pf.getPercent(name, player);
 	}

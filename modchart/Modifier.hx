@@ -39,20 +39,20 @@ class Modifier
         return pf.getPercent(name, player);
     }
 
-	private function getKeyCount(field:Int = 0):Int
+	private inline function getKeyCount(field:Int = 0):Int
 	{
 		return Adapter.instance.getKeyCount();
 	}
-	private function getPlayerCount():Int
+	private inline function getPlayerCount():Int
 	{
 		return Adapter.instance.getPlayerCount();
 	}
     // Helpers Functions
-    private function getScrollSpeed():Float
+    private inline function getScrollSpeed():Float
         return Adapter.instance.getCurrentScrollSpeed();
-    public function getReceptorY(lane:Int, field:Int)
+    public inline function getReceptorY(lane:Int, field:Int)
         return Adapter.instance.getDefaultReceptorY(lane, field);
-    public function getReceptorX(lane:Int, field:Int)
+    public inline function getReceptorX(lane:Int, field:Int)
         return Adapter.instance.getDefaultReceptorX(lane, field);
 
 	public function getManager():PlayField

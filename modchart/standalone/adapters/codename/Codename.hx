@@ -158,9 +158,11 @@ class Codename implements IAdapter
     {
         var pspr:Array<Array<Array<FlxSprite>>> = [];
 
-        for (i in 0...PlayState.instance.strumLines.members.length)
+        var strumLineMembers = PlayState.instance.strumLines.members;
+
+        for (i in 0...strumLineMembers.length)
         {
-            final sl = PlayState.instance.strumLines.members[i];
+            final sl = strumLineMembers[i];
 
             // this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
             pspr[i] = [];

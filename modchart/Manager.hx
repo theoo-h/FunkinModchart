@@ -49,23 +49,23 @@ class Manager extends FlxBasic
 		else
 			for (pf in playfields) func(pf);
 	}
-	public function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
+	public inline function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
 		__playfieldChoice((pf) -> pf.registerModifier(name, mod), field);
-	public function addModifier(name:String, field:Int = -1)
+	public inline function addModifier(name:String, field:Int = -1)
 		__playfieldChoice((pf) -> pf.addModifier(name), field);
-	public function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
+	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
 		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
-	public function getPercent(name:String, player:Int = -1, field:Int)
+	public inline function getPercent(name:String, player:Int = -1, field:Int)
 		__playfieldChoice((pf) -> pf.getPercent(name, player), field);
-	public function addEvent(event:Event, field:Int = -1)
+	public inline function addEvent(event:Event, field:Int = -1)
 		__playfieldChoice((pf) -> pf.addEvent(event), field);
-    public function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
+    public inline function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
 		__playfieldChoice((pf) -> pf.set(name, beat, value, player), field);
-    public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
+    public inline function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
 		__playfieldChoice((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
-	public function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
+	public inline function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
 		__playfieldChoice((pf) -> pf.repeater(beat, length, callback), field);
-	public function callback(beat:Float, callback:Event->Void, field:Int = -1)
+	public inline function callback(beat:Float, callback:Event->Void, field:Int = -1)
 		__playfieldChoice((pf) -> pf.callback(beat, callback), field);
 
 	public function addPlayfield()

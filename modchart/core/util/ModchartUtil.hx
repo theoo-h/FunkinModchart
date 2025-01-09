@@ -1,8 +1,10 @@
 package modchart.core.util;
 
+import modchart.core.util.Constants.SimplePoint;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
 import flixel.math.FlxMath;
+import flixel.math.FlxAngle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
@@ -25,30 +27,31 @@ class ModchartUtil
 		var translatedVector = __viewMatrix.transformVector(vector.subtract(new Vector3D(FlxG.width * .5, FlxG.height * .5)));
 		return translatedVector.add(new Vector3D(FlxG.width * .5, FlxG.height * .5));
 	}
-    inline public static function rotate(x:Float, y:Float, angle:Float)
+    inline public static function rotate(x:Float, y:Float, angle:Float):SimplePoint
     {
 		if ((angle % 360) == 0)
-			return [x, y];
+			return new SimplePoint(x, y);
 
         final sin = ModchartUtil.sin(angle);
         final cos = ModchartUtil.cos(angle);
 
-        return [x * cos - y * sin, x * sin + y * cos];
+		return new SimplePoint(x * cos - y * sin, x * sin + y * cos);
     };
     inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float)
 	{
-		final RAD = Math.PI / 180;
-		if ((angleX + angleY + angleZ) == 0)
+		if(angleX == 0 && angleY == 0 && angleZ == 0)
 			return vec;
 
+		final RAD = FlxAngle.TO_RAD;
+
 		final rotateZ = rotate(vec.x, vec.y, angleZ * RAD);
-		final offZ = new Vector3D(rotateZ[0], rotateZ[1], vec.z);
+		final offZ = new Vector3D(rotateZ.x, rotateZ.y, vec.z);
 
 		final rotateY = rotate(offZ.x, offZ.z, angleY * RAD);
-		final offY = new Vector3D(rotateY[0], offZ.y, rotateY[1]);
+		final offY = new Vector3D(rotateY.x, offZ.y, rotateY.y);
 
 		final rotateX = rotate(offY.z, offY.y, angleX * RAD);
-		final offX = new Vector3D(offY.x, rotateX[1], rotateX[0]);
+		final offX = new Vector3D(offY.x, rotateX.y, rotateX.x);
 
 		return offX;
 	}
@@ -120,7 +123,11 @@ class ModchartUtil
 	// dude wtf it works
 	public inline static function sign(x:Int)
 	{
+		#if cpp
 		return (x >> 31) | ((x != 0) ? 1 : 0);
+		#else
+		return x == 0 ? 0 : x > 0 ? 1 : -1;
+		#end
 	}
 	public inline static function clamp(n:Float, l:Float, h:Float)
 	{
