@@ -19,10 +19,12 @@ class Radionic extends Modifier
 		if (perc == 0)
 			return pos;
 
+		final reverse = getManager().modifiers.modifiers.get('reverse');
+
 		final angle = ((1 / Adapter.instance.getStaticCrochet()) * ((params.sPos + params.hDiff) * PI * .25) + (PI * params.field));
 		final offsetX = pos.x - getReceptorX(params.receptor, params.field);
-		final offsetY = pos.y - getManager()?.modifiers?.modifiers?.get('reverse')?.render(pos, params)?.y ?? pos.y;
-
+		final offsetY = reverse != null ? (pos.y - reverse.render(pos, params).y) : 0;
+		
 		final circf = ARROW_SIZE + params.receptor * ARROW_SIZE;
 
 		final sinAng = sin(angle);

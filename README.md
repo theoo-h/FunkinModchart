@@ -61,6 +61,10 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 </details>
 
 ## Credits
+**TheoDev**: Owner, Lead coder
+
+**Edwhak**: Manteiner
+
 **OpenITG:** Some math taken for modifiers.
 
 **4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impresive)

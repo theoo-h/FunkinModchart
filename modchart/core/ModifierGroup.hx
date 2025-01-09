@@ -174,7 +174,17 @@ class ModifierGroup
 		percents.set(name.toLowerCase(), percs);
 	}
 	public function getPercent(name:String, field:Int):Float
-		return percents.get(name.toLowerCase())?.get(field) ?? 0;
+	{
+		final percs = percents.get(name.toLowerCase());
+
+		if (percs != null)
+		{
+			// Map.get can return null
+			final possiblePerc:Null<Float> = percs.get(field);
+			return possiblePerc != null ? possiblePerc : 0;
+		}
+		return 0;
+	}
 
 	private function getDefaultPerc():IntMap<Float>
 	{

@@ -8,6 +8,11 @@ class Square extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
+		final squarep = getPercent('square', params.field);
+
+		if (squarep == 0)
+			return curPos;
+
 		final square = (angle:Float) -> {
 			var fAngle = angle % (PI * 2);
 
@@ -18,10 +23,10 @@ class Square extends Modifier
 		final period = getPercent("squarePeriod", params.field);
 		final amp = (PI * (params.hDiff + offset) / (ARROW_SIZE + (period * ARROW_SIZE)));
 
-		curPos.x += getPercent('square', params.field) * square(amp);
+		curPos.x += squarep * square(amp);
 
         return curPos;
     }
 	override public function shouldRun(params:RenderParams):Bool
-		return getPercent('square', params.field) != 0;
+		return true;
 }

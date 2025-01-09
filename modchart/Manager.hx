@@ -33,80 +33,40 @@ class Manager extends FlxBasic
     {
         super();
         
-        instance = this;
+		instance = this;
 
 		Adapter.init();
-
 		Adapter.instance.onModchartingInitialization();
 
 		addPlayfield();
     }
 
-	public function registerModifier(name:String, mod:Class<Modifier>)
-		forEachPlayfield((pf) -> pf.registerModifier(name, mod));
-
-	public function addModifier(name:String, field:Int = -1)
-	{
-		if (field != -1)
-			playfields[field]?.addModifier(name);
-		else
-			forEachPlayfield((pf) -> pf.addModifier(name));
-	}
-	public function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
-	{
-		if (field != -1)
-			playfields[field]?.setPercent(name, value, player);
-		else
-			forEachPlayfield((pf) -> pf.setPercent(name, value, player));
-	}
-	public function getPercent(name:String, player:Int = -1, field:Int = -1)
-	{
-		return playfields[field]?.getPercent(name, player);
-	}
-
 	@:noCompletion
-	private function forEachPlayfield(func:PlayField->Void)
+	private function __playfieldChoise(func:PlayField->Void, field:Int = -1)
 	{
-		for (pf in playfields)
-			func(pf);
+		if (field != -1)
+			func(playfields[field]);
+		else
+			for (pf in playfields) func(pf);
 	}
-
+	public function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
+		__playfieldChoise((pf) -> pf.registerModifier(name, mod), field);
+	public function addModifier(name:String, field:Int = -1)
+		__playfieldChoise((pf) -> pf.addModifier(name), field);
+	public function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
+		__playfieldChoise((pf) -> pf.setPercent(name, value, player), field);
+	public function getPercent(name:String, player:Int = -1, field:Int)
+		__playfieldChoise((pf) -> pf.getPercent(name, player), field);
 	public function addEvent(event:Event, field:Int = -1)
-	{
-		if (field != -1)
-			playfields[field]?.addEvent(event);
-		else
-			forEachPlayfield((pf) -> pf.addEvent(event));
-	}
-    public function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1):Void
-    {
-		if (field != -1)
-			playfields[field]?.set(name, beat, value, player);
-		else
-			forEachPlayfield((pf) -> pf.set(name, beat, value, player));
-    }
-    public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1):Void
-    {	
-		if (field != -1)
-			playfields[field]?.ease(name, beat, length, value, easeFunc, player);
-		else
-			forEachPlayfield((pf) -> pf.ease(name, beat, length, value, easeFunc, player));
-    }
-	public function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1):Void
-	{
-		if (field != -1)
-			playfields[field]?.repeater(beat, length, callback);
-		else
-			forEachPlayfield((pf) -> pf.repeater(beat, length, callback));
-	}
-
-	public function callback(beat:Float, callback:Event->Void, field:Int = -1):Void
-	{
-		if (field != -1)
-			playfields[field]?.callback(beat, callback);
-		else
-			forEachPlayfield((pf) -> pf.callback(beat, callback));
-	}
+		__playfieldChoise((pf) -> pf.addEvent(event), field);
+    public function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
+		__playfieldChoise((pf) -> pf.set(name, beat, value, player), field);
+    public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
+		__playfieldChoise((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
+	public function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
+		__playfieldChoise((pf) -> pf.repeater(beat, length, callback), field);
+	public function callback(beat:Float, callback:Event->Void, field:Int = -1)
+		__playfieldChoise((pf) -> pf.callback(beat, callback), field);
 
 	public function addPlayfield()
 	{
@@ -127,14 +87,14 @@ class Manager extends FlxBasic
     {
 		super.update(elapsed);
 
-		forEachPlayfield(pf -> pf.update(elapsed));
+		__playfieldChoise(pf -> pf.update(elapsed));
     }
 
 	override function draw():Void
     {
 		var drawQueue:Array<{callback:Void->Void, z:Float}> = [];
 
-		forEachPlayfield(pf -> {
+		__playfieldChoise(pf -> {
 			pf.draw();
 
 			@:privateAccess
@@ -152,10 +112,9 @@ class Manager extends FlxBasic
 	{
 		super.destroy();
 
-		forEachPlayfield(pf -> pf.destroy());
+		__playfieldChoise(pf -> pf.destroy());
 	}
 
-	// for some reazon is 50 instead of 44 in cne
     public static var HOLD_SIZE:Float = 50 * 0.7;
     public static var HOLD_SIZEDIV2:Float = (50 * 0.7) * 0.5;
     public static var ARROW_SIZE:Float = 160 * 0.7;

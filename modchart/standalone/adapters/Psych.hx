@@ -83,7 +83,12 @@ class Psych implements IAdapter
     public function isHoldEnd(arrow:FlxSprite)
     {
         if (arrow is Note)
-            return !(cast(arrow, Note)?.nextNote?.isSustainNote) ?? false;
+        {
+            final castedNote = cast(arrow, Note);
+
+            if (castedNote.nextNote != null)
+                return !castedNote.nextNote.isSustainNote;
+        }
         return false;
     }
     

@@ -66,7 +66,7 @@ class Codename implements IAdapter
 		if (arrow is Note)
 			return cast(arrow, Note).strumID;
 		else if (arrow is Strum)
-			return cast(arrow, Strum).extra.get('lane') ?? 0;
+			return cast(arrow, Strum).extra.get('lane');
 
 		return 0;
 	}
@@ -75,18 +75,23 @@ class Codename implements IAdapter
 		if (arrow is Note)
 			return cast(arrow, Note).strumLine.ID;
 		else if (arrow is Strum)
-			return cast(arrow, Strum).extra.get('field') ?? 0;
+			return cast(arrow, Strum).extra.get('field');
 
 		return 0;
 	}
 
+    // im so fucking sorry for those conditionals
 	public function getKeycount(?player:Int = 0):Int
 	{
-		return (PlayState?.instance?.strumLines?.members[player]?.members?.length) ?? 4;
+        return PlayState.instance != null && PlayState.instance.strumLines != null && PlayState.instance.strumLines.members != null && PlayState.instance.strumLines.members[player] != null && PlayState.instance.strumLines.members[player].members != null
+        ? PlayState.instance.strumLines.members[player].members.length
+        : 4;
 	}
 	public function getPlayercount():Int
 	{
-		return (PlayState?.instance?.strumLines?.length) ?? 2;
+        return PlayState.instance != null && PlayState.instance.strumLines != null
+            ? PlayState.instance.strumLines.length
+            : 2;
 	}
 
 	public function getTimeFromArrow(arrow:FlxSprite)
@@ -99,11 +104,11 @@ class Codename implements IAdapter
 
 	public function getHoldSubdivitions():Int
 	{
-		return Std.int(Math.max(1, Options?.hold_subs ?? 1));
+		return Std.int(Math.max(1, Options.hold_subs ?? 1));
 	}
     public function getDownscroll():Bool
 	{
-		return Options?.downscroll ?? false;
+		return Options.downscroll ?? false;
 	}
 	public function getDefaultReceptorX(lane:Int, field:Int):Float
 	{
