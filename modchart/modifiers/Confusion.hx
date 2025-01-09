@@ -10,15 +10,17 @@ class Confusion extends Modifier
 	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String)
 	{
 		// x, y, z
-		var string2 = Std.string(axis);
+
+		var receptorName = Std.string(params.receptor);
+		var field = params.field;
 
 		var angle = 0.;
 		// real confusion
-		angle -= (params.fBeat * (getPercent('confusion' + string2, params.field) + getPercent('confusion' + string2 + Std.string(params.receptor), params.field))) % 360;
+		angle -= (params.fBeat * (getPercent('confusion' + axis, field) + getPercent('confusion' + axis + receptorName, field))) % 360;
 		// offset
-		angle += getPercent('confusionOffset' + string2, params.field) + getPercent('confusionOffset' + string2 + Std.string(params.receptor), params.field);
+		angle += getPercent('confusionOffset' + axis, field) + getPercent('confusionOffset' + axis + receptorName, field);
 		// other
-		angle += getPercent('dizzy' + string2, params.field) * (params.hDiff * 0.1 * (1 + getPercent('dizzySpeed', params.field)));
+		angle += getPercent('dizzy' + axis, field) * (params.hDiff * 0.1 * (1 + getPercent('dizzySpeed', field)));
 
 		switch (realAxis.toLowerCase())
 		{

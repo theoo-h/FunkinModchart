@@ -8,15 +8,16 @@ class Tipsy extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		var speed = getPercent('tipsySpeed', params.field);
-		var offset = getPercent('tipsyOffset', params.field);
+		var field = params.field;
+		var speed = getPercent('tipsySpeed', field);
+		var offset = getPercent('tipsyOffset', field);
 
 		var tipsy = (cos((params.sPos * 0.001 * ((speed * 1.2) + 1.2) + params.receptor * ((offset * 1.8) + 1.8))) * ARROW_SIZE * .4);
 
 		var tipAddition = new Vector3D(
-			getPercent('tipsyX', params.field),
-			getPercent('tipsyY', params.field) + getPercent('tipsy', params.field),
-			getPercent('tipsyZ', params.field)
+			getPercent('tipsyX', field),
+			getPercent('tipsyY', field) + getPercent('tipsy', field),
+			getPercent('tipsyZ', field)
 		);
 		tipAddition.scaleBy(tipsy);
 

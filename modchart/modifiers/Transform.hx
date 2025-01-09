@@ -8,9 +8,11 @@ class Transform extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-        curPos.x += getPercent('x', params.field) + getPercent('xoffset', params.field) + getPercent('xoffset' + Std.string(params.receptor), params.field) + getPercent('x' + Std.string(params.receptor), params.field);
-        curPos.y += getPercent('y', params.field) + getPercent('yoffset', params.field) + getPercent('yoffset' + Std.string(params.receptor), params.field) + getPercent('y' + Std.string(params.receptor), params.field);
-        curPos.z += getPercent('z', params.field) + getPercent('zoffset', params.field) + getPercent('zoffset' + Std.string(params.receptor), params.field) + getPercent('z' + Std.string(params.receptor), params.field);
+        var receptorName = Std.string(params.receptor);
+        var field = params.field;
+        curPos.x += getPercent('x', field) + getPercent('x' + receptorName, field) + getPercent('xoffset', field) + getPercent('xoffset' + receptorName, field);
+        curPos.y += getPercent('y', field) + getPercent('y' + receptorName, field) + getPercent('yoffset', field) + getPercent('yoffset' + receptorName, field);
+        curPos.z += getPercent('z', field) + getPercent('z' + receptorName, field) + getPercent('zoffset', field) + getPercent('zoffset' + receptorName, field);
 
         return curPos;
     }

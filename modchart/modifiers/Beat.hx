@@ -23,10 +23,11 @@ class Beat extends Modifier
     {
         final amp = getBeatAmp(params.fBeat) * cos(params.hDiff / 45);
         final beat = amp * ARROW_SIZE / 2;
+        var field = params.field;
 
-        curPos.x += beat * (getPercent('beat', params.field) + getPercent('beatX', params.field));
-        curPos.y += beat * (getPercent('beatY', params.field));
-        curPos.z += beat * (getPercent('beatZ', params.field));
+        curPos.x += beat * (getPercent('beat', field) + getPercent('beatX', field));
+        curPos.y += beat * (getPercent('beatY', field));
+        curPos.z += beat * (getPercent('beatZ', field));
 
         return curPos;
     }

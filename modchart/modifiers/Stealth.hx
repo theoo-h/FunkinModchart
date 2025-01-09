@@ -8,33 +8,49 @@ import flixel.math.FlxMath;
 import flixel.FlxG;
 import modchart.core.util.ModchartUtil;
 
-class Stealth extends Modifier
-{
+class Stealth extends Modifier {
 	public static var fadeDistY = 65;
 
-	public function getSuddenEnd(params){
-		return (-120 * getPercent('suddenExtend', params.field)) + (FlxG.height* 0.5) + fadeDistY * FlxMath.remapToRange(getPercent('sudden', params.field),0,1,1,1.25) + (FlxG.height* 0.5) * getPercent("suddenOffset", params.field);
+	public function getSuddenEnd(sudden:Float, suddenExtend:Float, suddenOffset:Float) {
+		return (-120 * suddenExtend)
+			+ (FlxG.height * 0.5)
+			+ fadeDistY * FlxMath.remapToRange(sudden, 0, 1, 1, 1.25)
+			+ (FlxG.height * 0.5) * suddenOffset;
 	}
 
-	public function getSuddenStart(params){
-		return (120 * getPercent('suddenExtend', params.field)) + (FlxG.height* 0.5) + fadeDistY * FlxMath.remapToRange(getPercent('sudden', params.field),0,1,0,0.25) + (FlxG.height* 0.5) * getPercent("suddenOffset", params.field);
+	public function getSuddenStart(sudden:Float, suddenExtend:Float, suddenOffset:Float) {
+		return (120 * suddenExtend)
+			+ (FlxG.height * 0.5)
+			+ fadeDistY * FlxMath.remapToRange(sudden, 0, 1, 0, 0.25)
+			+ (FlxG.height * 0.5) * suddenOffset;
 	}
-	public function new(pf)
-	{
+
+	public function new(pf) {
 		super(pf);
 
 		setPercent('alpha', 1, -1);
 	}
-	override public function visuals(data:Visuals, params:RenderParams)
-	{
-		var suddenAlpha = ModchartUtil.clamp(FlxMath.remapToRange(params.hDiff, getSuddenStart(params), getSuddenEnd(params), 0, -1), -1, 0);
 
-		data.alpha = getPercent('alpha', params.field) + getPercent('alphaOffset', params.field);
+	override public function visuals(data:Visuals, params:RenderParams) {
+		var field = params.field;
+		var sudden = getPercent('sudden', field);
+		var suddenExtend = getPercent('suddenExtend', field);
+		var suddenOffset = getPercent('suddenOffset', field);
+		var suddenAlpha = ModchartUtil.clamp(
+			FlxMath.remapToRange(
+				params.hDiff,
+				getSuddenStart(sudden, suddenExtend, suddenOffset),
+				getSuddenEnd(sudden, suddenExtend, suddenOffset),
+				0, -1
+			),
+			-1, 0
+		);
+
+		data.alpha = getPercent('alpha', field) + getPercent('alphaOffset', field);
 
 		// sudden
-		var sudden = getPercent('sudden', params.field);
 		data.alpha += suddenAlpha * sudden;
-		data.glow -= getPercent('flash', params.field) + suddenAlpha * (sudden * 1.5);
+		data.glow -= getPercent('flash', field) + suddenAlpha * (sudden * 1.5);
 
 		return data;
 	}

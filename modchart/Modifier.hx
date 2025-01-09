@@ -30,11 +30,11 @@ class Modifier
 	public function shouldRun(params:RenderParams):Bool
 		return false;
 
-    public function setPercent(name:String, value:Float, player:Int = -1)
+    public inline function setPercent(name:String, value:Float, player:Int = -1)
     {
         pf.setPercent(name, value, player);
     }
-	public function getPercent(name:String, player:Int):Float
+	public inline function getPercent(name:String, player:Int):Float
     {
         return pf.getPercent(name, player);
     }

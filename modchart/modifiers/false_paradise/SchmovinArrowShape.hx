@@ -24,9 +24,11 @@ class SchmovinArrowShape extends Modifier
 		var last = iterator.next();
 		last.startDist = 0;
 		var dist = 0.0;
-		while (iterator.hasNext())
+		var iteratorHasNext = iterator.hasNext;
+		var iteratorNext = iterator.next;
+		while (iteratorHasNext())
 		{
-			var current = iterator.next();
+			var current = iteratorNext();
 			var differential = current.subtract(last);
 			dist += differential.length;
 			current.startDist = dist;
@@ -55,7 +57,12 @@ class SchmovinArrowShape extends Modifier
 		for (line in file)
 		{
 			var coords = line.split(';');
-			var vec = new TimeVector(Std.parseFloat(coords[0]), Std.parseFloat(coords[1]), Std.parseFloat(coords[2]), Std.parseFloat(coords[3]));
+			var vec = new TimeVector(
+				Std.parseFloat(coords[0]),
+				Std.parseFloat(coords[1]),
+				Std.parseFloat(coords[2]),
+				Std.parseFloat(coords[3])
+			);
 			vec.scaleBy(SCALE);
 			path.add(vec);
 		}

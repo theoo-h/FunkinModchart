@@ -13,9 +13,12 @@ class CounterClockWise extends Modifier
 		var centerX = WIDTH * .5;
 		var centerY = HEIGHT * .5;
 		var radiusOffset = ARROW_SIZE * (params.receptor - 1.5);
-		var radius = 200 + radiusOffset * cos(strumTime / Adapter.instance.getStaticCrochet() * .25 / 16 * Math.PI);
-		var outX = centerX + cos(strumTime / Adapter.instance.getStaticCrochet() / 4 * Math.PI) * radius;
-		var outY = centerY + sin(strumTime / Adapter.instance.getStaticCrochet() / 4 * Math.PI) * radius;
+
+		var crochet = Adapter.instance.getStaticCrochet();
+
+		var radius = 200 + radiusOffset * cos(strumTime / crochet * .25 / 16 * Math.PI);
+		var outX = centerX + cos(strumTime / crochet / 4 * Math.PI) * radius;
+		var outY = centerY + sin(strumTime / crochet / 4 * Math.PI) * radius;
 
 		return ModchartUtil.lerpVector3D(curPos, new Vector3D(outX, outY, 0, 0), getPercent('counterClockWise', params.field));
     }

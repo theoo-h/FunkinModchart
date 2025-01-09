@@ -55,9 +55,11 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
      * Based on schmovin' hold system
 	 * @param basePos The hold position per default
 	 */
-     @:noCompletion
+    @:noCompletion
 	private function getHoldQuads(basePos:Vector3D, params:ArrowData):Array<Dynamic>
 	{
+        if(instance == null)
+            return [];
 		final output1 = instance.modifiers.getPath(basePos.clone(), params);
 		final output2 = instance.modifiers.getPath(basePos.clone(), params, 1);
 
@@ -80,9 +82,18 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 		@:privateAccess
 		for (i in 0...2)
 		{
-			var visuals = [output1.visuals, output2.visuals][i];
+			var visuals = switch(i) {
+                case 0: output1.visuals;
+                case 1: output2.visuals;
+                default: null;
+            }
 
-			var translated = ModchartUtil.rotate3DVector(quads[i], visuals.angleX * instance.getPercent('rotateHoldX', params.field), visuals.angleY * instance.getPercent('rotateHoldY', params.field), visuals.angleZ * instance.getPercent('rotateHoldZ', params.field));
+			var translated = ModchartUtil.rotate3DVector(
+                quads[i],
+                visuals.angleX * instance.getPercent('rotateHoldX', params.field),
+                visuals.angleY * instance.getPercent('rotateHoldY', params.field),
+                visuals.angleZ * instance.getPercent('rotateHoldZ', params.field)
+            );
 			translated.z *= 0.001;
 			var rotOutput = ModchartUtil.perspective(translated, new Vector3D());
 
@@ -161,11 +172,12 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
         var arrowQuads:Array<Vector3D> = null;
         var arrowVisuals:Visuals = null;
 
-        var alphaTotal = 0.;
+        var alphaTotal:Single = 0.;
 
         Manager.HOLD_SIZE = arrow.width;
         Manager.HOLD_SIZEDIV2 = arrow.width * .5;
 
+        // why not get the alpha directly from the note?
         var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 : 1)) / HOLD_SUBDIVISIONS;
         for (sub in 0...HOLD_SUBDIVISIONS)
         {
@@ -248,7 +260,10 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
         final item:FlxSprite = instruction.item;
 
-        @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
+        var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
+
+        @:privateAccess
+        for (camera in cameras)
         {
             var item = camera.startTrianglesBatch(item.graphic, false, true, item.blend, true, item.shader);
             item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, instruction.colorData);
@@ -293,15 +308,16 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
 
         // setup the position
         var arrowTime = Adapter.instance.getTimeFromArrow(arrow);
-        var arrowDiff = arrowTime - Adapter.instance.getSongPosition();
+        var songPos = Adapter.instance.getSongPosition();
+        var arrowDiff = arrowTime - songPos;
 
         // apply centered 2 (aka centered path)
         if (Adapter.instance.isTapNote(arrow))
         {
             arrowDiff += FlxG.height * 0.25 * instance.getPercent('centered2', player);
         } else {
-            arrowTime = Adapter.instance.getSongPosition() + (FlxG.height * 0.25 * instance.getPercent('centered2', player));
-            arrowDiff = arrowTime - Adapter.instance.getSongPosition();
+            arrowTime = songPos + (FlxG.height * 0.25 * instance.getPercent('centered2', player));
+            arrowDiff = arrowTime - songPos;
         }
 
         var arrowData:ArrowData = {
@@ -452,7 +468,10 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
 
         final item = instruction.item;
 
-        @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
+        var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
+
+        @:privateAccess
+        for (camera in cameras)
         {
 			camera.drawTriangles(
                 item.graphic,
@@ -512,12 +531,14 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
 
         var pointData:Array<Array<Dynamic>> = [];
 
+        var songPos = Adapter.instance.getSongPosition();
+
         for (sub in 0...divisions)
         {
             var time = -500 + interval * sub;
 
             var output = instance.modifiers.getPath(pathVector.clone(), {
-                time: Adapter.instance.getSongPosition() + time,
+                time: songPos + time,
                 hDiff: time,
                 receptor: lane,
                 field: fn,
@@ -541,7 +562,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
         }
 
         var newInstruction:FMDrawInstruction = {};
-        newInstruction.mapedExtra = [
+        newInstruction.mappedExtra = [
             'style' => [thickness, 0xFFFFFFFF, alpha],
             'position' => pointData,
             'lane' => lane
@@ -560,23 +581,28 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
 		__display.cameras = Adapter.instance.getArrowCamera();
 
         final iterator = queue.iterator();
+        var iteratorHasNext = iterator.hasNext;
+        var iteratorNext = iterator.next;
         var lastLane = -1;
 
         do {
-            final instruction = iterator.next();
-            final thisLane = instruction.mapedExtra.get('lane');
+            final instruction = iteratorNext();
+            final thisLane = instruction.mappedExtra.get('lane');
 
             if (lastLane != thisLane)
             {
-                final style = instruction.mapedExtra.get('style');
+                final style = instruction.mappedExtra.get('style');
 				__shape.graphics.lineStyle(style[0], style[1], style[2], false, NORMAL, ROUND, ROUND);
             }
 
-            final steps = instruction.mapedExtra.get('position').iterator();
+            final steps = instruction.mappedExtra.get('position').iterator();
 
-            while (steps.hasNext())
+            var stepsHasNext = steps.hasNext;
+            var stepsNext = steps.next;
+
+            while (stepsHasNext())
             {
-                final thisStep = steps.next();
+                final thisStep = stepsNext();
 
                 final needsToMove:Bool = cast thisStep[0];
                 final posX:Float = cast thisStep[1];
@@ -588,7 +614,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
             }
 
             lastLane = thisLane;
-        } while (iterator.hasNext());
+        } while (iteratorHasNext());
 
 		__shape.graphics.drawPath(__pathCommands, __pathPoints);
 
@@ -635,7 +661,7 @@ class FMDrawInstruction
     var colorData:Array<ColorTransform>;
 
     var extra:Array<Dynamic>;
-    var mapedExtra:Map<String, Dynamic>;
+    var mappedExtra:Map<String, Dynamic>;
 
     public function new() {}
 }

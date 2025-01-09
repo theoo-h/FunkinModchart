@@ -38,9 +38,8 @@ class EventManager
 
 					if (ev.beat >= curBeat)
 						continue;
-					else
-						ev.active = true;
 
+					ev.active = true;
 					ev.update(curBeat);
 
 					if (ev.fired)
@@ -58,7 +57,7 @@ class EventManager
 		{
 			final ev = list[idx];
 
-			if (Std.isOfType(ev, evClass) && ev.field == field && ev.active)
+			if (ev.active && ev.field == field && Std.isOfType(ev, evClass))
 				return ev;
 
 			idx--;

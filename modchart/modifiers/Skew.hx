@@ -10,8 +10,10 @@ class Skew extends Modifier
 {
 	override public function visuals(data:Visuals, params:RenderParams):Visuals
 	{
-		final x = getPercent('skewX', params.field) + getPercent('skewX' + Std.string(params.receptor), params.field);
-		final y = getPercent('skewY', params.field) + getPercent('skewY' + Std.string(params.receptor), params.field);
+		var receptorName = Std.string(params.receptor);
+		var field = params.field;
+		final x = getPercent('skewX', field) + getPercent('skewX' + receptorName, field);
+		final y = getPercent('skewY', field) + getPercent('skewY' + receptorName, field);
 
         data.skewX += x;
         data.skewY += y;

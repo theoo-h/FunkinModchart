@@ -17,7 +17,8 @@ class Scale extends Modifier
 	}
 	override public function visuals(data:Visuals, params:RenderParams)
 	{
-		final scaleForce = getPercent('scaleForce', params.field);
+		var field = params.field;
+		final scaleForce = getPercent('scaleForce', field);
 
 		if (scaleForce != 0)
 		{
@@ -27,15 +28,18 @@ class Scale extends Modifier
 		}
 
 		// normal scale
-		data.scaleX *= getPercent('scaleX', params.field);
-		data.scaleY *= getPercent('scaleY', params.field);
+		data.scaleX *= getPercent('scaleX', field);
+		data.scaleY *= getPercent('scaleY', field);
 
 		// tiny
-		data.scaleX *= Math.pow(0.5, getPercent('tinyX', params.field)) * Math.pow(0.5, getPercent('tiny', params.field));
-		data.scaleY *= Math.pow(0.5, getPercent('tinyY', params.field)) * Math.pow(0.5, getPercent('tiny', params.field));
 
-		data.scaleX *= getPercent('scale', params.field);
-		data.scaleY *= getPercent('scale', params.field);
+		var tinyPow = Math.pow(0.5, getPercent('tinyPow', field));
+		data.scaleX *= Math.pow(0.5, getPercent('tinyX', field)) * tinyPow;
+		data.scaleY *= Math.pow(0.5, getPercent('tinyY', field)) * tinyPow;
+
+		var scale = getPercent('scale', field);
+		data.scaleX *= scale;
+		data.scaleY *= scale;
 
 		return data;
 	}

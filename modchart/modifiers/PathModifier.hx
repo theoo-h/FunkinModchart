@@ -41,20 +41,26 @@ class PathModifier extends Modifier
 
 	public function computePath(pos:Vector3D, params:RenderParams, percent:Float)
 	{
-		if (__path.length <= 0)
+		var __path_length = __path.length;
+		if (__path_length <= 0)
 			return pos;
-		if (__path.length == 1)
-			return new Vector3D(__path[0].x, __path[0].y, __path[0].z);
+		if (__path_length == 1) {
+			var pathNode = __path[0];
+			return new Vector3D(pathNode.x, pathNode.y, pathNode.z);
+		}
 
-        var nodeProgress = (__path.length - 1) * (Math.abs(Math.min(__pathBound, params.hDiff)) * (1 / __pathBound));
+        var nodeProgress = (__path_length - 1) * (Math.abs(Math.min(__pathBound, params.hDiff)) * (1 / __pathBound));
         var thisNodeIndex = Math.floor(nodeProgress);
-        var nextNodeIndex = Math.floor(Math.min(thisNodeIndex + 1, __path.length - 1));
+        var nextNodeIndex = Math.floor(Math.min(thisNodeIndex + 1, __path_length - 1));
         var nextNodeRatio = nodeProgress - thisNodeIndex;
 
+		var thisNode = __path[thisNodeIndex];
+		var nextNode = __path[nextNodeIndex];
+
 		return ModchartUtil.lerpVector3D(pos, new Vector3D(
-			FlxMath.lerp(__path[thisNodeIndex].x, __path[nextNodeIndex].x, nextNodeRatio),
-			FlxMath.lerp(__path[thisNodeIndex].y, __path[nextNodeIndex].y, nextNodeRatio),
-			FlxMath.lerp(__path[thisNodeIndex].z, __path[nextNodeIndex].z, nextNodeRatio)).add(pathOffset),
+			FlxMath.lerp(thisNode.x, nextNode.x, nextNodeRatio),
+			FlxMath.lerp(thisNode.y, nextNode.y, nextNodeRatio),
+			FlxMath.lerp(thisNode.z, nextNode.z, nextNodeRatio)).add(pathOffset),
 		percent);
 	}
 

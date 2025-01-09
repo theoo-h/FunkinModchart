@@ -8,14 +8,15 @@ class Bounce extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		var speed = getPercent('bounceSpeed', params.field);
-		var offset = getPercent('bounceOffset', params.field);
+        var field = params.field;
+		var speed = getPercent('bounceSpeed', field);
+		var offset = getPercent('bounceOffset', field);
 
 		var bounce = Math.abs(sin((params.fBeat + offset) * (1 + speed) * Math.PI)) * ARROW_SIZE;
 
-        curPos.x += bounce * getPercent('bounceX', params.field);
-        curPos.y += bounce * (getPercent('bounce', params.field) + getPercent('bounceY', params.field));
-        curPos.z += bounce * getPercent('bounceZ', params.field);
+        curPos.x += bounce * getPercent('bounceX', field);
+        curPos.y += bounce * (getPercent('bounce', field) + getPercent('bounceY', field));
+        curPos.z += bounce * getPercent('bounceZ', field);
 
         return curPos;
     }

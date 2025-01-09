@@ -8,13 +8,14 @@ class Invert extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
+		var field = params.field;
 		final invert = -(params.receptor % 2 - 0.5) / 0.5;
 		final flip = (params.receptor - 1.5) * -2;
 		final sine = sin(params.hDiff * Math.PI * (1 / 222));
 
 		curPos.x += ARROW_SIZE * (
-			invert * getPercent('invert', params.field) + invert * (getPercent('invertSine', params.field) * sine) +
-			flip * getPercent('flip', params.field) + flip * (getPercent('flipSine', params.field) * sine)
+			invert * getPercent('invert', field) + invert * (getPercent('invertSine', field) * sine) +
+			flip * getPercent('flip', field) + flip * (getPercent('flipSine', field) * sine)
 		);
 
         return curPos;

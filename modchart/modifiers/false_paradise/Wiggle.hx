@@ -9,10 +9,11 @@ class Wiggle extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		curPos.x += sin(params.fBeat) * getPercent('wiggle', params.field) * 20;
-		curPos.y += sin(params.fBeat + 1) * getPercent('wiggle', params.field) * 20;
+		var wiggle = getPercent('wiggle', params.field);
+		curPos.x += sin(params.fBeat) * wiggle * 20;
+		curPos.y += sin(params.fBeat + 1) * wiggle * 20;
 
-		setPercent('rotateZ', (sin(params.fBeat) * 0.2 * getPercent('wiggle', params.field)) * FlxAngle.TO_DEG);
+		setPercent('rotateZ', (sin(params.fBeat) * 0.2 * wiggle) * FlxAngle.TO_DEG);
 
 		return curPos;
     }

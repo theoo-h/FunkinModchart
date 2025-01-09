@@ -8,13 +8,15 @@ class Bumpy extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		var bumpyx = (40 * sin((params.hDiff + (100.0 * getPercent('bumpyXOffset', params.field))) / ((getPercent('bumpyXPeriod', params.field) * 24.0) + 24.0)));
-		var bumpyy = (40 * sin((params.hDiff + (100.0 * getPercent('bumpyYOffset', params.field))) / ((getPercent('bumpyYPeriod', params.field) * 24.0) + 24.0)));
-		var bumpyz = (40 * sin((params.hDiff + (100.0 * getPercent('bumpyZOffset', params.field))) / ((getPercent('bumpyZPeriod', params.field) * 24.0) + 24.0)));
+        var field = params.field;
+        var hDiff = params.hDiff;
+		var bumpyX = (40 * sin((hDiff + (100.0 * getPercent('bumpyXOffset', field))) / ((getPercent('bumpyXPeriod', field) * 24.0) + 24.0)));
+		var bumpyY = (40 * sin((hDiff + (100.0 * getPercent('bumpyYOffset', field))) / ((getPercent('bumpyYPeriod', field) * 24.0) + 24.0)));
+		var bumpyZ = (40 * sin((hDiff + (100.0 * getPercent('bumpyZOffset', field))) / ((getPercent('bumpyZPeriod', field) * 24.0) + 24.0)));
 
-		curPos.x += bumpyx * getPercent('bumpyX', params.field); 
-        curPos.y += bumpyy * getPercent('bumpyY', params.field);
-        curPos.z += bumpyz * (getPercent('bumpy', params.field) + getPercent('bumpyZ', params.field));
+		curPos.x += bumpyX * getPercent('bumpyX', field);
+        curPos.y += bumpyY * getPercent('bumpyY', field);
+        curPos.z += bumpyZ * (getPercent('bumpy', field) + getPercent('bumpyZ', field));
 
         return curPos;
     }

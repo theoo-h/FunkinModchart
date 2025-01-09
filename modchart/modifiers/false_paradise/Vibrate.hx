@@ -8,8 +8,9 @@ class Vibrate extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		curPos.x += (Math.random() - 0.5) * getPercent('vibrate', params.field) * 20;
-		curPos.y += (Math.random() - 0.5) * getPercent('vibrate', params.field) * 20;
+		var vib = getPercent('vibrate', params.field);
+		curPos.x += (Math.random() - 0.5) * vib * 20;
+		curPos.y += (Math.random() - 0.5) * vib * 20;
 
 		return curPos;
     }

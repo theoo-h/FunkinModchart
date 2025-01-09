@@ -54,7 +54,7 @@ class Drugged extends Modifier
         visuals.scaleY *= squishY * drug;
 
         var preproduct = Math.asin(y);
-        var cosdY = cos(Math.asin(y));
+        //var cosdY = cos(preproduct);
 
         visuals.glow = y * -.7;
         visuals.glowR -= 0.5 + sin(preproduct * 1.4) * .5;

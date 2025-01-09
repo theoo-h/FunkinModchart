@@ -10,12 +10,17 @@ class Rotate extends Modifier
 {
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		var angleX = getPercent(getRotateName() + Std.string('X'), params.field);
-		var angleY = getPercent(getRotateName() + Std.string('Y'), params.field);
-		var angleZ = getPercent(getRotateName() + Std.string('Z'), params.field);
+		var rotateName = getRotateName();
+		var field = params.field;
+		var angleX = getPercent(rotateName + 'X', field);
+		if(angleX == 0) return curPos;
+		var angleY = getPercent(rotateName + 'Y', field);
+		if(angleY == 0) return curPos;
+		var angleZ = getPercent(rotateName + 'Z', field);
+		if(angleZ == 0) return curPos;
 
-		if ((angleX + angleY + angleZ) == 0)
-			return curPos;
+		//if ((angleX + angleY + angleZ) == 0)
+		//	return curPos;
 
 		final origin:Vector3D = getOrigin(curPos, params);
 		final diff = curPos.subtract(origin);

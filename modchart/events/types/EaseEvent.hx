@@ -57,6 +57,7 @@ class EaseEvent extends Event
 		{
             // this is easier than u think
 			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
+            // maybe we should make it use bound?
             var out = FlxMath.lerp(data.startValue, data.targetValue, data.ease(progress));
 			setModPercent(mod, out, field);
 			fired = false;

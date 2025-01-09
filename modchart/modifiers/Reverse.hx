@@ -48,8 +48,9 @@ class Reverse extends Modifier
     }
     override public function render(curPos:Vector3D, params:RenderParams)
     {
-		var initialY = Adapter.instance.getDefaultReceptorY(params.receptor, params.field) + ARROW_SIZEDIV2;
-		var reversePerc = getReverseValue(params.receptor, params.field);
+		var field = params.field;
+		var initialY = Adapter.instance.getDefaultReceptorY(params.receptor, field) + ARROW_SIZEDIV2;
+		var reversePerc = getReverseValue(params.receptor, field);
 		var shift = FlxMath.lerp(initialY, HEIGHT - initialY, reversePerc);
 
 		var centerPercent = getPercent('centered', params.field);
@@ -71,24 +72,25 @@ class Reverse extends Modifier
     }
 	function applyScrollMods(scroll:Vector3D, params:RenderParams)
 	{
+		var field = params.field;
 		var angleX = 0.;
 		var angleY = 0.;
 		var angleZ = 0.;
 
 		// Speed
-		scroll.y = scroll.y * (getPercent('xmod', params.field)) + (1 + getPercent('scrollSpeed', params.field) + getPercent('scrollSpeed' + Std.string(params.receptor), params.field));
+		scroll.y = scroll.y * (getPercent('xmod', field)) + (1 + getPercent('scrollSpeed', field) + getPercent('scrollSpeed' + Std.string(params.receptor), field));
 
 		// Main
-		angleX += getPercent('scrollAngleX', params.field);
-		angleY += getPercent('scrollAngleY', params.field);
-		angleZ += getPercent('scrollAngleZ', params.field);
+		angleX += getPercent('scrollAngleX', field);
+		angleY += getPercent('scrollAngleY', field);
+		angleZ += getPercent('scrollAngleZ', field);
 
 		// Curved
-		final shift:Float = params.hDiff * 0.25 * (1 + getPercent('curvedScrollPeriod', params.field));
+		final shift:Float = params.hDiff * 0.25 * (1 + getPercent('curvedScrollPeriod', field));
 
-		angleX += shift * getPercent('curvedScrollX', params.field);
-		angleY += shift * getPercent('curvedScrollY', params.field);
-		angleZ += shift * getPercent('curvedScrollZ', params.field);
+		angleX += shift * getPercent('curvedScrollX', field);
+		angleY += shift * getPercent('curvedScrollY', field);
+		angleZ += shift * getPercent('curvedScrollZ', field);
 
 		scroll = ModchartUtil.rotate3DVector(scroll, angleX, angleY, angleZ);
 

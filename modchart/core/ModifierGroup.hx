@@ -105,13 +105,16 @@ class ModifierGroup
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
 
+		var songPos = Adapter.instance.getSongPosition();
+		var beat = Adapter.instance.getCurrentBeat();
+
 		for (i in 0...sortedMods.length)
 		{
 			final mod = modifiers.get(sortedMods[i]);
 
 			final args:RenderParams = {
-				sPos: Adapter.instance.getSongPosition(),
-				fBeat: Adapter.instance.getCurrentBeat(),
+				sPos: songPos,
+				fBeat: beat,
 				time: data.time + posDiff,
 				hDiff: data.hDiff + posDiff,
 				receptor: data.receptor,
@@ -139,32 +142,35 @@ class ModifierGroup
 	}
 	public function registerModifier(name:String, modifier:Class<Modifier>)
 	{
-		if (MODIFIER_REGISTRY.get(name.toLowerCase()) != null)
+		var lowerName = name.toLowerCase();
+		if (MODIFIER_REGISTRY.get(lowerName) != null)
 		{
 			trace('There\'s already a modifier with name "$name" registered !');
 			return;
 		}
-		MODIFIER_REGISTRY.set(name.toLowerCase(), modifier);
+		MODIFIER_REGISTRY.set(lowerName, modifier);
 	}
 	public function addModifier(name:String)
 	{
-		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(name.toLowerCase());
+		var lowerName = name.toLowerCase();
+		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
 
 			return;
 		}
 		var newModifier = Type.createInstance(modifierClass, [pf]);
-		modifiers.set(name.toLowerCase(), newModifier);
+		modifiers.set(lowerName, newModifier);
 
 		final newArr = sortedMods.toArray();
-		newArr.push(name.toLowerCase());
+		newArr.push(lowerName);
 		__allocModSorting(newArr);
 	}
 
 	public function setPercent(name:String, value:Float, field:Int = -1)
 	{
-		final possiblePercs = percents.get(name.toLowerCase());
+		var lowerName = name.toLowerCase();
+		final possiblePercs = percents.get(lowerName);
 		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
 
 		if (field == -1)
@@ -172,7 +178,7 @@ class ModifierGroup
 		else
 			percs.set(field, value);
 
-		percents.set(name.toLowerCase(), percs);
+		percents.set(lowerName, percs);
 	}
 	public function getPercent(name:String, field:Int):Float
 	{
@@ -189,10 +195,10 @@ class ModifierGroup
 
 	private function getDefaultPerc():IntMap<Float>
 	{
-		final percmap = new IntMap<Float>();
+		final percMap = new IntMap<Float>();
 
 		for (i in 0...Adapter.instance.getPlayerCount())
-			percmap.set(i, 0.);
-		return percmap;
+			percMap.set(i, 0.);
+		return percMap;
 	}
 }
