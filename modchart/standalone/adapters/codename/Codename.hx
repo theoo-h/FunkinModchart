@@ -1,4 +1,4 @@
-package modchart.standalone.adapters;
+package modchart.standalone.adapters.codename;
 
 import flixel.FlxCamera;
 import flixel.FlxSprite;
@@ -50,32 +50,50 @@ class Codename implements IAdapter
     public function arrowHitted(arrow:FlxSprite)
     {
         if (arrow is Note)
-            return cast(arrow, Note).wasGoodHit;
+        {
+            final note:Note = cast arrow;
+            return note.wasGoodHit;
+        }
         return false;
     }
 
     public function isHoldEnd(arrow:FlxSprite)
     {
         if (arrow is Note)
-            return cast(arrow, Note).nextSustain == null;
+        {
+            final note:Note = cast arrow;
+            return note.nextSustain == null;
+        }
         return false;
     }
     
     public function getLaneFromArrow(arrow:FlxSprite)
 	{
 		if (arrow is Note)
-			return cast(arrow, Note).strumID;
+        {
+            final note:Note = cast arrow;
+            return note.strumID;
+        }
 		else if (arrow is Strum)
-			return cast(arrow, Strum).extra.get('lane');
+        {
+            final strum:Strum = cast arrow;
+            return strum.extra.get('lane');
+        }
 
 		return 0;
 	}
 	public function getPlayerFromArrow(arrow:FlxSprite)
 	{
-		if (arrow is Note)
-			return cast(arrow, Note).strumLine.ID;
+        if (arrow is Note)
+        {
+            final note:Note = cast arrow;
+            return note.strumLine.ID;
+        }
 		else if (arrow is Strum)
-			return cast(arrow, Strum).extra.get('field');
+        {
+            final strum:Strum = cast arrow;
+            return strum.extra.get('field');
+        }
 
 		return 0;
 	}
@@ -96,15 +114,19 @@ class Codename implements IAdapter
 
 	public function getTimeFromArrow(arrow:FlxSprite)
 	{
-		if (arrow is Note)
-			return cast(arrow, Note).strumTime;
+        if (arrow is Note)
+        {
+            final note:Note = cast arrow;
+            return note.strumTime;
+        }
 
 		return 0;
 	}
 
 	public function getHoldSubdivitions():Int
 	{
-		return Std.int(Math.max(1, Options.hold_subs));
+        final val = Options.hold_subs;
+		return val < 1 ? 1 : Options.hold_subs;
 	}
     public function getDownscroll():Bool
 	{
@@ -140,12 +162,22 @@ class Codename implements IAdapter
         {
             final sl = PlayState.instance.strumLines.members[i];
 
+            // this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
             pspr[i] = [];
             pspr[i][0] = cast sl.members.copy();
             pspr[i][1] = [];
             pspr[i][2] = [];
 
-            sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1].push(spr));
+            var st = 0;
+            var nt = 0;
+            sl.notes.forEachAlive((spr) -> {spr.isSustainNote ? st++ : nt++;});
+
+            pspr[i][1].resize(nt);
+            pspr[i][2].resize(st);
+
+            var si = 0;
+            var ni = 0;
+            sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
         }
 
         return pspr;

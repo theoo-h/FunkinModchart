@@ -1,4 +1,4 @@
-package modchart.standalone.adapters;
+package modchart.standalone.adapters.psych;
 
 import modchart.standalone.Adapter.IAdapter;
 import states.PlayState;
@@ -12,6 +12,7 @@ import backend.ClientPrefs;
 import objects.Note;
 import objects.StrumNote as Strum;
 import flixel.FlxG;
+
 class Psych implements IAdapter
 {
     private var __fCrochet:Float = 0;

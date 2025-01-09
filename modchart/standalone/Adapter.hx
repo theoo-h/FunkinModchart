@@ -1,6 +1,5 @@
 package modchart.standalone;
 
-import haxe.xml.Fast;
 import flixel.FlxSprite;
 import flixel.FlxCamera;
 
@@ -15,9 +14,9 @@ class Adapter
             return;
         
         final possibleClientName = ENGINE_NAME.substr(0, 1).toUpperCase() + ENGINE_NAME.substr(1).toLowerCase();
-        final client = Type.createInstance(Type.resolveClass('modchart.standalone.adapters.' + possibleClientName), []);
+        final client = Type.createInstance(Type.resolveClass('modchart.standalone.adapters.${ENGINE_NAME.toLowerCase()}.' + possibleClientName), []);
 
-        trace('modchart.standalone.adapters.' + possibleClientName);
+        trace('modchart.standalone.adapters.${ENGINE_NAME.toLowerCase()}.' + possibleClientName);
 
         if (client == null)
             throw 'Client not founded for $ENGINE_NAME';
