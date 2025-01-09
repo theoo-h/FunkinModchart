@@ -115,7 +115,10 @@ class Manager extends FlxBasic {
 	override function destroy():Void {
 		super.destroy();
 
-		__playfieldChoice(pf -> pf.destroy());
+		__playfieldChoice(pf -> {
+      pf.destroy();
+      pr.dispose();
+   });
 	}
 
 	public static var HOLD_SIZE:Float = 50 * 0.7;
