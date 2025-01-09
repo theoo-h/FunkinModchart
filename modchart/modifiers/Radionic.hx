@@ -21,10 +21,10 @@ class Radionic extends Modifier
 
 		final reverse = getManager().modifiers.modifiers.get('reverse');
 
-		final angle = ((1 / Adapter.instance.getStaticCrochet()) * ((params.sPos + params.hDiff) * PI * .25) + (PI * params.field));
+		final angle = ((1 / Adapter.instance.getStaticCrochet()) * ((params.sPos + params.hDiff) * Math.PI * .25) + (Math.PI * params.field));
 		final offsetX = pos.x - getReceptorX(params.receptor, params.field);
 		final offsetY = reverse != null ? (pos.y - reverse.render(pos, params).y) : 0;
-		
+
 		final circf = ARROW_SIZE + params.receptor * ARROW_SIZE;
 
 		final sinAng = sin(angle);
@@ -48,7 +48,7 @@ class Radionic extends Modifier
 
 		vis.scaleX = perc * (vis.scaleY = 1 + amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount);
 		vis.glow = perc * (-(amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount) * 2);
-		
+
 		return vis;
 	}*/
 

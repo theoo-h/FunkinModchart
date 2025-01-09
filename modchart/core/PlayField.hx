@@ -51,7 +51,7 @@ class PlayField extends FlxBasic
     {
 		if (player == -1)
 		{
-			for (curField in 0...Adapter.instance.getPlayercount())
+			for (curField in 0...Adapter.instance.getPlayerCount())
 				set(name, beat, value, curField);
 			return;
 		}
@@ -59,10 +59,10 @@ class PlayField extends FlxBasic
         addEvent(new SetEvent(name.toLowerCase(), beat, value, player, events));
     }
     public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void
-    {	
+    {
 		if (player == -1)
 		{
-			for (curField in 0...Adapter.instance.getPlayercount())
+			for (curField in 0...Adapter.instance.getPlayerCount())
 				ease(name, beat, length, value, easeFunc, curField);
 			return;
 		}
@@ -124,20 +124,20 @@ class PlayField extends FlxBasic
 			{
 				arrow.visible = false;
 				arrowRenderer.prepare(arrow);
-				drawCB.push({						
+				drawCB.push({
 					callback: () -> {
 						arrowRenderer.shift();
 					},
 					z: arrow._z - 2
 				});
 			}
-			
+
 			// hold notes
 			for (arrow in curItems[2])
 			{
 				arrow.visible = false;
 				holdRenderer.prepare(arrow);
-				drawCB.push({						
+				drawCB.push({
 					callback: () -> {
 						holdRenderer.shift();
 					},

@@ -36,7 +36,7 @@ class Event
         }
     }
 	public function create() {}
-	
+
     public function setModPercent(name, value, player)
     {
         parent.pf.setPercent(name, value, player);

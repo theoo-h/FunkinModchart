@@ -51,7 +51,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
     /**
 	 * Returns the normal points along the hold path at specific time.
-     * 
+     *
      * Based on schmovin' hold system
 	 * @param basePos The hold position per default
 	 */
@@ -66,13 +66,13 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
 		var zScale:Float = curPoint.z != 0 ? (1 / curPoint.z) : 1;
 		curPoint.z = nextPoint.z = 0;
-		
+
 		// normalized points difference (from 0-1)
 		var unit = nextPoint.subtract(curPoint);
 		unit.normalize();
 
 		var size = Manager.HOLD_SIZEDIV2 * output1.visuals.scaleX * zScale * output1.visuals.zoom;
-    
+
 		var quads = [
 			new Vector3D(-unit.y * size, unit.x * size),
 			new Vector3D(unit.y * size, -unit.x * size)
@@ -90,12 +90,12 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
 			if (visuals.skewX != 0 || visuals.skewY != 0)
 			{
-				__matrix.b = ModchartUtil.fastTan(visuals.skewY * FlxAngle.TO_RAD);
-				__matrix.c = ModchartUtil.fastTan(visuals.skewX * FlxAngle.TO_RAD);
+				__matrix.b = ModchartUtil.tan(visuals.skewY * FlxAngle.TO_RAD);
+				__matrix.c = ModchartUtil.tan(visuals.skewX * FlxAngle.TO_RAD);
 
                 rotOutput.x = __matrix.__transformX(rotationVector.x, rotationVector.y);
                 rotOutput.y = __matrix.__transformY(rotationVector.x, rotationVector.y);
-                
+
                 __matrix.identity();
 			}
 
@@ -114,10 +114,10 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
     @:noCompletion
     private function updateIndices()
 	{
-        final HOLD_SUBDIVITIONS = Adapter.instance.getHoldSubdivitions();
+        final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions();
 
-		_indices.length = (HOLD_SUBDIVITIONS * 6);
-		for (sub in 0...HOLD_SUBDIVITIONS)
+		_indices.length = (HOLD_SUBDIVISIONS * 6);
+		for (sub in 0...HOLD_SUBDIVISIONS)
 		{
 			var vert = sub * 4;
 			var count = sub * 6;
@@ -135,13 +135,13 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
         final arrow:FlxSprite = item;
         final newInstruction:FMDrawInstruction = {};
-        final HOLD_SUBDIVITIONS = Adapter.instance.getHoldSubdivitions();
+        final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions();
 
-        if (__lastHoldSubs != HOLD_SUBDIVITIONS)
+        if (__lastHoldSubs != HOLD_SUBDIVISIONS)
             updateIndices();
 
         if (__lastHoldSubs == -1)
-            __lastHoldSubs = Adapter.instance.getHoldSubdivitions();
+            __lastHoldSubs = Adapter.instance.getHoldSubdivisions();
 
         var player = Adapter.instance.getPlayerFromArrow(item);
         var lane = Adapter.instance.getLaneFromArrow(item);
@@ -166,8 +166,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
         Manager.HOLD_SIZE = arrow.width;
         Manager.HOLD_SIZEDIV2 = arrow.width * .5;
 
-        var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 : 1)) / HOLD_SUBDIVITIONS;
-        for (sub in 0...HOLD_SUBDIVITIONS)
+        var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 : 1)) / HOLD_SUBDIVISIONS;
+        for (sub in 0...HOLD_SUBDIVISIONS)
         {
             var subOff = subCr * sub;
 
@@ -204,19 +204,19 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
                 Math.round(topVisuals.glowB * topVisuals.glow * 255)
             ));
         }
-    
+
         arrow._z = arrowQuads[2].z * 1000;
 
         newInstruction.item = item;
         newInstruction.vertices = new openfl.Vector<Float>(vertTotal.length, true, vertTotal);
         newInstruction.indices = _indices.copy();
-        newInstruction.uvt = ModchartUtil.getHoldUVT(arrow, HOLD_SUBDIVITIONS);
+        newInstruction.uvt = ModchartUtil.getHoldUVT(arrow, HOLD_SUBDIVISIONS);
         newInstruction.colorData = transfTotal;
         newInstruction.extra = [alphaTotal];
 
         queue.push(newInstruction);
 
-        __lastHoldSubs = Adapter.instance.getHoldSubdivitions();
+        __lastHoldSubs = Adapter.instance.getHoldSubdivisions();
     }
     override public function shift()
     {
@@ -245,7 +245,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
     {
         if (cast(instruction.extra[0], Float) <= 0)
             return;
-        
+
         final item:FlxSprite = instruction.item;
 
         @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
@@ -267,7 +267,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 		var pos = (time - Adapter.instance.getSongPosition()) + posOff;
 
 		// clip rect
-		if (Adapter.instance.arrowHitted(arrow) && pos < 0)
+		if (Adapter.instance.arrowHit(arrow) && pos < 0)
 			pos = 0;
 
 		pos += timeC2;
@@ -359,7 +359,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
 		var vertPos = 0;
 		@:privateAccess do {
 			rotationVector.setTo(arrowQuads[vertPos], arrowQuads[vertPos + 1], 0);
-			
+
 			var translated = ModchartUtil.rotate3DVector(rotationVector, output.visuals.angleX, output.visuals.angleY, output.visuals.angleZ);
 			translated.z *= 0.001;
 			var rotOutput = ModchartUtil.perspective(translated, new Vector3D(FlxG.width / 2, FlxG.height / 2));
@@ -371,20 +371,20 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
 
 			if (output.visuals.skewX != 0 || output.visuals.skewY != 0)
 			{
-				__matrix.b = ModchartUtil.fastTan(output.visuals.skewY * FlxAngle.TO_RAD);
-				__matrix.c = ModchartUtil.fastTan(output.visuals.skewX * FlxAngle.TO_RAD);
+				__matrix.b = ModchartUtil.tan(output.visuals.skewY * FlxAngle.TO_RAD);
+				__matrix.c = ModchartUtil.tan(output.visuals.skewX * FlxAngle.TO_RAD);
 			}
 
 			rotOutput.x = __matrix.__transformX(rotationVector.x, rotationVector.y);
 			rotOutput.y = __matrix.__transformY(rotationVector.x, rotationVector.y);
-			
+
 			__matrix.identity();
 
 			arrowQuads[vertPos] = rotOutput.x + helperVector.x;
 			arrowQuads[vertPos+1] = rotOutput.y + helperVector.y;
 
 			vertPos += 2;
-			
+
 		} while (vertPos < arrowQuads.length);
 
 		var vertices = new Vector<Float>(12, true, [
@@ -421,7 +421,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
         newInstruction.uvt = uvData;
         newInstruction.indices = new Vector<Int>(vertices.length, true, [for (i in 0...vertices.length) i]);
         newInstruction.colorData = [color];
-        
+
         queue.push(newInstruction);
     }
     override public function shift()
@@ -451,7 +451,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
             return;
 
         final item = instruction.item;
-        
+
         @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
         {
 			camera.drawTriangles(
@@ -501,9 +501,9 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
         if (alpha <= 0 || thickness <= 0)
             return;
 
-        final divitions = Math.round(80 / Math.max(1, instance.getPercent('arrowPathDivitions', fn)));
+        final divisions = Math.round(80 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
         final limit = 1500 * (1 + instance.getPercent('arrowPathLength', fn));
-        final invertal = limit / divitions;
+        final interval = limit / divisions;
 
         var moved = false;
 
@@ -512,9 +512,9 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
 
         var pointData:Array<Array<Dynamic>> = [];
 
-        for (sub in 0...divitions)
+        for (sub in 0...divisions)
         {
-            var time = -500 + invertal * sub;
+            var time = -500 + interval * sub;
 
             var output = instance.modifiers.getPath(pathVector.clone(), {
                 time: Adapter.instance.getSongPosition() + time,
@@ -553,7 +553,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
     {
         if (queue.length <= 0)
             return;
-        
+
         __pathPoints.splice(0, __pathPoints.length);
 		__pathCommands.splice(0, __pathCommands.length);
 		__shape.graphics.clear();
@@ -565,7 +565,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
         do {
             final instruction = iterator.next();
             final thisLane = instruction.mapedExtra.get('lane');
-            
+
             if (lastLane != thisLane)
             {
                 final style = instruction.mapedExtra.get('style');
@@ -581,7 +581,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite>
                 final needsToMove:Bool = cast thisStep[0];
                 final posX:Float = cast thisStep[1];
                 final posY:Float = cast thisStep[2];
-    
+
                 __pathCommands.push(needsToMove ? GraphicsPathCommand.MOVE_TO : GraphicsPathCommand.LINE_TO);
                 __pathPoints.push(posX);
                 __pathPoints.push(posY);
@@ -633,7 +633,7 @@ class FMDrawInstruction
 	var uvt:openfl.Vector<Float>;
 	var indices:openfl.Vector<Int>;
     var colorData:Array<ColorTransform>;
-    
+
     var extra:Array<Dynamic>;
     var mapedExtra:Map<String, Dynamic>;
 

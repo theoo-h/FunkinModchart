@@ -18,15 +18,15 @@ class ReceptorScroll extends Modifier
 		var sPos = Adapter.instance.getSongPosition();
 		var vDiff = -(diff - sPos) / moveSpeed;
 		var reversed = Math.floor(vDiff)%2 == 0;
-	
+
 		var startY = curPos.y;
 		var revPerc = reversed ? 1-vDiff%1 : vDiff%1;
 		// haha perc 30
 		var upscrollOffset = 50;
 		var downscrollOffset = HEIGHT - 150;
-	
+
 		var endY = upscrollOffset + ((downscrollOffset - ARROW_SIZEDIV2) * revPerc) + ARROW_SIZEDIV2;
-	
+
 		curPos.y = FlxMath.lerp(startY, endY, getPercent('receptorScroll', params.field));
 		return curPos;
     }

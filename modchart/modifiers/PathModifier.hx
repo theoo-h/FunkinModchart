@@ -10,7 +10,7 @@ import haxe.ds.Vector;
 
 /**
  * An Path Manager for FunkinModchart
- * 
+ *
  * TODO: Make the trajectory interpolation LINEAR
  * @author TheoDev
  */
@@ -26,7 +26,7 @@ class PathModifier extends Modifier
 	public var pathEase:Float->Float = (t) -> t;
 	// set this to false if wanna extra performance
 	public var pathLinear:Bool = false;
-	
+
 	public function new(pf:PlayField, path:Array<PathNode>)
 	{
 		super(pf);

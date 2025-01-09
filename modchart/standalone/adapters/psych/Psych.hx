@@ -54,7 +54,7 @@ class Psych implements IAdapter
         // todo
         #end
     }
-    
+
     public function isTapNote(sprite:FlxSprite)
     {
         return sprite is Note;
@@ -74,7 +74,7 @@ class Psych implements IAdapter
         return __fCrochet + 8;
     }
 
-    public function arrowHitted(arrow:FlxSprite)
+    public function arrowHit(arrow:FlxSprite)
     {
         if (arrow is Note)
             return cast(arrow, Note).wasGoodHit;
@@ -92,7 +92,7 @@ class Psych implements IAdapter
         }
         return false;
     }
-    
+
     public function getLaneFromArrow(arrow:FlxSprite)
 	{
 		if (arrow is Note)
@@ -114,11 +114,11 @@ class Psych implements IAdapter
 		return 0;
 	}
 
-	public function getKeycount(?player:Int = 0):Int
+	public function getKeyCount(?player:Int = 0):Int
 	{
 		return 4;
 	}
-	public function getPlayercount():Int
+	public function getPlayerCount():Int
 	{
 		return 2;
 	}
@@ -131,7 +131,7 @@ class Psych implements IAdapter
 		return 0;
 	}
 
-	public function getHoldSubdivitions():Int
+	public function getHoldSubdivisions():Int
 	{
 		return 4;
 	}

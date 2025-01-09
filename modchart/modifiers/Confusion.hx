@@ -19,7 +19,7 @@ class Confusion extends Modifier
 		angle += getPercent('confusionOffset' + string2, params.field) + getPercent('confusionOffset' + string2 + Std.string(params.receptor), params.field);
 		// other
 		angle += getPercent('dizzy' + string2, params.field) * (params.hDiff * 0.1 * (1 + getPercent('dizzySpeed', params.field)));
-		
+
 		switch (realAxis.toLowerCase())
 		{
 			case 'x':

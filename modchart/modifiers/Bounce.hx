@@ -11,7 +11,7 @@ class Bounce extends Modifier
 		var speed = getPercent('bounceSpeed', params.field);
 		var offset = getPercent('bounceOffset', params.field);
 
-		var bounce = Math.abs(sin((params.fBeat + offset) * (1 + speed) * PI)) * ARROW_SIZE;
+		var bounce = Math.abs(sin((params.fBeat + offset) * (1 + speed) * Math.PI)) * ARROW_SIZE;
 
         curPos.x += bounce * getPercent('bounceX', params.field);
         curPos.y += bounce * (getPercent('bounce', params.field) + getPercent('bounceY', params.field));

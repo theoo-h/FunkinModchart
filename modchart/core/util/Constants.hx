@@ -18,7 +18,7 @@ class RenderParams
 
 	// for hold mods
 	public var __holdParentTime:Float = 0;
-	public var __holdLength:Float = 0; 
+	public var __holdLength:Float = 0;
 	public var __holdOffset:Float = 0;
 }
 

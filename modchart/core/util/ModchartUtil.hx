@@ -29,9 +29,9 @@ class ModchartUtil
     {
 		if ((angle % 360) == 0)
 			return [x, y];
-		
-        final sin = FlxMath.fastSin(angle);
-        final cos = FlxMath.fastCos(angle);
+
+        final sin = ModchartUtil.sin(angle);
+        final cos = ModchartUtil.cos(angle);
 
         return [x * cos - y * sin, x * sin + y * cos];
     };
@@ -53,26 +53,26 @@ class ModchartUtil
 		return offX;
 	}
 
-	inline static final near = 0;
-	inline static final far = 1;
-	inline static final range = -1;
+	inline static final near:Int = 0;
+	inline static final far:Int = 1;
+	inline static final range:Int = -1;
 
 	// stolen & improved from schmovin (Camera3DTransforms)
 	inline static public function perspective(pos:Vector3D, ?origin:Vector3D)
 	{
 		final fov = Math.PI / 2;
-		
+
 		if (origin == null)
 			origin = new Vector3D(FlxG.width / 2, FlxG.height / 2);
 		pos.decrementBy(origin);
 
 		final worldZ = Math.min(pos.z - 1, 0); // bound to 1000 z
 
-		final halfFovTan = 1 / fastTan(fov / 2);
-		final rangeDivition = 1 / range;
+		final halfFovTan = 1 / ModchartUtil.tan(fov / 2);
+		final rangeDivision = 1 / range;
 
-		final projectionScale = (near + far) * rangeDivition;
-		final projectionOffset = 2 * near * (far * rangeDivition);
+		final projectionScale = (near + far) * rangeDivision;
+		final projectionOffset = 2 * near * (far * rangeDivision);
 		final projectionZ = projectionScale * worldZ + projectionOffset;
 
 		final projectedPos = new Vector3D(pos.x * halfFovTan, pos.y * halfFovTan, projectionZ * projectionZ, projectionZ);
@@ -80,8 +80,6 @@ class ModchartUtil
 		projectedPos.incrementBy(origin);
 		return projectedPos;
 	}
-	inline static public function fastTan(ang:Float)
-		return FlxMath.fastSin(ang) / FlxMath.fastCos(ang);
 
 	inline static public function getHoldVertex(upper:Array<Vector3D>, lower:Array<Vector3D>)
 	{
@@ -99,22 +97,22 @@ class ModchartUtil
 		var frameUV = arrow.frame.uv;
 		var frameHeight = frameUV.height - frameUV.y;
 
-		var subDivited = 1.0 / subs;
+		var subDivided = 1.0 / subs;
 
 		for (curSub in 0...subs)
 		{
-			var uvOffset = subDivited * curSub;
+			var uvOffset = subDivided * curSub;
 			var subIndex = curSub * 8;
 
 			uv[subIndex] = uv[subIndex + 4] = frameUV.x;
 			uv[subIndex + 2] = uv[subIndex + 6] = frameUV.width;
 			uv[subIndex + 1] = uv[subIndex + 3] = frameUV.y + uvOffset * frameHeight;
-			uv[subIndex + 5] = uv[subIndex + 7] = frameUV.y + (uvOffset + subDivited) * frameHeight;
+			uv[subIndex + 5] = uv[subIndex + 7] = frameUV.y + (uvOffset + subDivided) * frameHeight;
 		}
 
 		return uv;
 	}
-	// gonna keep this shits inline cus are basic funcions
+	// gonna keep this shits inline cus are basic functions
 	public static inline function getHalfPos():Vector3D
 	{
 		return new Vector3D(Manager.ARROW_SIZEDIV2, Manager.ARROW_SIZEDIV2, 0, 0);
@@ -128,6 +126,18 @@ class ModchartUtil
 	{
 		return Math.min(Math.max(n, l), h);
 	}
+
+	// no way guys, regular sinus is faster than fastSin :surprised:
+    // (in hl fastSin is still faster than regular sin)
+    // https://github.com/HaxeFlixel/flixel/issues/3215#issuecomment-2226858302
+    // https://try.haxe.org/#847eac2B
+    public static inline function sin(num:Float)
+        return #if !hl Math.sin(num) #else FlxMath.fastSin(num) #end;
+    public static inline function cos(num:Float)
+        return #if !hl Math.cos(num) #else FlxMath.fastCos(num) #end;
+    public static inline function tan(num:Float)
+        return #if !hl Math.tan(num) #else sin(num) / cos(num) #end;
+
     inline public static var HOLD_SIZE:Float = 44 * 0.7;
 	inline public static var ARROW_SIZE:Float = 160 * 0.7;
     inline public static var ARROW_SIZEDIV2:Float = (160 * 0.7) * 0.5;

@@ -32,7 +32,7 @@ class Manager extends FlxBasic
     public function new()
     {
         super();
-        
+
 		instance = this;
 
 		Adapter.init();
@@ -42,7 +42,7 @@ class Manager extends FlxBasic
     }
 
 	@:noCompletion
-	private function __playfieldChoise(func:PlayField->Void, field:Int = -1)
+	private function __playfieldChoice(func:PlayField->Void, field:Int = -1)
 	{
 		if (field != -1)
 			func(playfields[field]);
@@ -50,23 +50,23 @@ class Manager extends FlxBasic
 			for (pf in playfields) func(pf);
 	}
 	public function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
-		__playfieldChoise((pf) -> pf.registerModifier(name, mod), field);
+		__playfieldChoice((pf) -> pf.registerModifier(name, mod), field);
 	public function addModifier(name:String, field:Int = -1)
-		__playfieldChoise((pf) -> pf.addModifier(name), field);
+		__playfieldChoice((pf) -> pf.addModifier(name), field);
 	public function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
-		__playfieldChoise((pf) -> pf.setPercent(name, value, player), field);
+		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
 	public function getPercent(name:String, player:Int = -1, field:Int)
-		__playfieldChoise((pf) -> pf.getPercent(name, player), field);
+		__playfieldChoice((pf) -> pf.getPercent(name, player), field);
 	public function addEvent(event:Event, field:Int = -1)
-		__playfieldChoise((pf) -> pf.addEvent(event), field);
+		__playfieldChoice((pf) -> pf.addEvent(event), field);
     public function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
-		__playfieldChoise((pf) -> pf.set(name, beat, value, player), field);
+		__playfieldChoice((pf) -> pf.set(name, beat, value, player), field);
     public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
-		__playfieldChoise((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
+		__playfieldChoice((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
 	public function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
-		__playfieldChoise((pf) -> pf.repeater(beat, length, callback), field);
+		__playfieldChoice((pf) -> pf.repeater(beat, length, callback), field);
 	public function callback(beat:Float, callback:Event->Void, field:Int = -1)
-		__playfieldChoise((pf) -> pf.callback(beat, callback), field);
+		__playfieldChoice((pf) -> pf.callback(beat, callback), field);
 
 	public function addPlayfield()
 	{
@@ -80,21 +80,21 @@ class Manager extends FlxBasic
 
 		setPercent('arrowPathAlpha', 1, -1, playfields.length - 1);
 		setPercent('arrowPathThickness', 1, -1, playfields.length - 1);
-		setPercent('arrowPathDivitions', 1, -1, playfields.length - 1);
+		setPercent('arrowPathDivisions', 1, -1, playfields.length - 1);
 		setPercent('rotateHoldY', 1, -1, playfields.length - 1);
 	}
     override function update(elapsed:Float):Void
     {
 		super.update(elapsed);
 
-		__playfieldChoise(pf -> pf.update(elapsed));
+		__playfieldChoice(pf -> pf.update(elapsed));
     }
 
 	override function draw():Void
     {
 		var drawQueue:Array<{callback:Void->Void, z:Float}> = [];
 
-		__playfieldChoise(pf -> {
+		__playfieldChoice(pf -> {
 			pf.draw();
 
 			@:privateAccess
@@ -112,7 +112,7 @@ class Manager extends FlxBasic
 	{
 		super.destroy();
 
-		__playfieldChoise(pf -> pf.destroy());
+		__playfieldChoice(pf -> pf.destroy());
 	}
 
     public static var HOLD_SIZE:Float = 50 * 0.7;

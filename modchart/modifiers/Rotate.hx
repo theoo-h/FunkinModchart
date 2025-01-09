@@ -16,7 +16,7 @@ class Rotate extends Modifier
 
 		if ((angleX + angleY + angleZ) == 0)
 			return curPos;
-		
+
 		final origin:Vector3D = getOrigin(curPos, params);
 		final diff = curPos.subtract(origin);
 		final out = ModchartUtil.rotate3DVector(diff, angleX, angleY, angleZ);
@@ -32,7 +32,7 @@ class Rotate extends Modifier
 	}
 	public function getRotateName():String
 		return 'rotate';
-	
+
 	override public function shouldRun(params:RenderParams):Bool
 		return true;
 }

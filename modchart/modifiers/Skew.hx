@@ -12,7 +12,7 @@ class Skew extends Modifier
 	{
 		final x = getPercent('skewX', params.field) + getPercent('skewX' + Std.string(params.receptor), params.field);
 		final y = getPercent('skewY', params.field) + getPercent('skewY' + Std.string(params.receptor), params.field);
-		
+
         data.skewX += x;
         data.skewY += y;
 

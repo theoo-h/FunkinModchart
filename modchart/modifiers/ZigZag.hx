@@ -13,8 +13,8 @@ class ZigZag extends Modifier
         if (zigzag == 0)
             return curPos;
 
-		var theta = -params.hDiff / ARROW_SIZE * PI;
-		var outRelative = Math.acos(cos(theta + PI / 2)) / PI * 2 - 1;
+		var theta = -params.hDiff / ARROW_SIZE * Math.PI;
+		var outRelative = Math.acos(cos(theta + Math.PI / 2)) / Math.PI * 2 - 1;
 
         curPos.x += outRelative * ARROW_SIZEDIV2;
 

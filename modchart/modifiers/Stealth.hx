@@ -28,7 +28,7 @@ class Stealth extends Modifier
 	override public function visuals(data:Visuals, params:RenderParams)
 	{
 		var suddenAlpha = ModchartUtil.clamp(FlxMath.remapToRange(params.hDiff, getSuddenStart(params), getSuddenEnd(params), 0, -1), -1, 0);
-		
+
 		data.alpha = getPercent('alpha', params.field) + getPercent('alphaOffset', params.field);
 
 		// sudden

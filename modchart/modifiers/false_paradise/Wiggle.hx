@@ -3,6 +3,7 @@ package modchart.modifiers.false_paradise;
 import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
 import openfl.geom.Vector3D;
+import flixel.math.FlxAngle;
 
 class Wiggle extends Modifier
 {
@@ -11,7 +12,7 @@ class Wiggle extends Modifier
 		curPos.x += sin(params.fBeat) * getPercent('wiggle', params.field) * 20;
 		curPos.y += sin(params.fBeat + 1) * getPercent('wiggle', params.field) * 20;
 
-		setPercent('rotateZ', (sin(params.fBeat) * 0.2 * getPercent('wiggle', params.field)) * 180 / Math.PI);
+		setPercent('rotateZ', (sin(params.fBeat) * 0.2 * getPercent('wiggle', params.field)) * FlxAngle.TO_DEG);
 
 		return curPos;
     }

@@ -13,8 +13,8 @@ class Spiral extends Modifier
 		var centerY = HEIGHT * .5;
 		var radiusOffset = -params.hDiff * .25;
 		var radius = radiusOffset + getPercent('spiralDist', params.field) * params.receptor;
-		var outX = centerX + cos(-params.hDiff / Adapter.instance.getStaticCrochet() * PI + params.fBeat * (PI * .25)) * radius;
-		var outY = centerY + sin(-params.hDiff / Adapter.instance.getStaticCrochet() * PI - params.fBeat * (PI * .25)) * radius;
+		var outX = centerX + cos(-params.hDiff / Adapter.instance.getStaticCrochet() * Math.PI + params.fBeat * (Math.PI * .25)) * radius;
+		var outY = centerY + sin(-params.hDiff / Adapter.instance.getStaticCrochet() * Math.PI - params.fBeat * (Math.PI * .25)) * radius;
 
 		return ModchartUtil.lerpVector3D(curPos, new Vector3D(outX, outY, radius / (centerY * 4) - 1, 0), getPercent('spiral', params.field));
     }

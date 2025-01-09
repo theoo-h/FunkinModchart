@@ -42,11 +42,11 @@ class EventManager
 						ev.active = true;
 
 					ev.update(curBeat);
-	
+
 					if (ev.fired)
 						events.remove(ev);
 				}
-			} 
+			}
 		}
     }
 	public function getLastEvent<T>(name:String, field:Int, evClass:T)
@@ -57,7 +57,7 @@ class EventManager
 		while (idx >= 0)
 		{
 			final ev = list[idx];
-			
+
 			if (Std.isOfType(ev, evClass) && ev.field == field && ev.active)
 				return ev;
 

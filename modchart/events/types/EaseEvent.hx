@@ -11,7 +11,7 @@ typedef EaseData = {
 
     var startBeat:Float;
     var endBeat:Float;
-    
+
     var beatLength:Float;
 
     var ease:EaseFunction;
@@ -41,7 +41,7 @@ class EaseEvent extends Event
     {
 		if (fired)
 			return;
-		
+
 		if (data.startValue == null) {
 			data.startValue = getModPercent(this.mod, this.field);
 
@@ -64,7 +64,7 @@ class EaseEvent extends Event
 		else if (curBeat >= data.endBeat)
 		{
 			fired = true;
-			
+
 			setModPercent(mod, data.ease(1) * data.targetValue, field);
 		}
     }

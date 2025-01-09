@@ -10,10 +10,10 @@ class Invert extends Modifier
     {
 		final invert = -(params.receptor % 2 - 0.5) / 0.5;
 		final flip = (params.receptor - 1.5) * -2;
-		final sine = sin(params.hDiff * PI * (1 / 222));
+		final sine = sin(params.hDiff * Math.PI * (1 / 222));
 
 		curPos.x += ARROW_SIZE * (
-			invert * getPercent('invert', params.field) + invert * (getPercent('invertSine', params.field) * sine) + 
+			invert * getPercent('invert', params.field) + invert * (getPercent('invertSine', params.field) * sine) +
 			flip * getPercent('flip', params.field) + flip * (getPercent('flipSine', params.field) * sine)
 		);
 

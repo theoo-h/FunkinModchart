@@ -18,7 +18,7 @@ class Modifier
     public function new(pf:PlayField) {
         this.pf = pf;
     }
-    
+
     public function render(curPos:Vector3D, params:RenderParams)
     {
         return curPos;
@@ -38,14 +38,14 @@ class Modifier
     {
         return pf.getPercent(name, player);
     }
-    
-	private function getKeycount(field:Int = 0):Int
+
+	private function getKeyCount(field:Int = 0):Int
 	{
-		return Adapter.instance.getKeycount();
+		return Adapter.instance.getKeyCount();
 	}
-	private function getPlayercount():Int
+	private function getPlayerCount():Int
 	{
-		return Adapter.instance.getPlayercount();
+		return Adapter.instance.getPlayerCount();
 	}
     // Helpers Functions
     private function getScrollSpeed():Float
@@ -60,25 +60,19 @@ class Modifier
 
     private var WIDTH:Float = FlxG.width;
     private var HEIGHT:Float = FlxG.height;
-    private var ARROW_SIZE(get, default):Float;
-    private var ARROW_SIZEDIV2(get, default):Float;
-	private function get_ARROW_SIZE():Float
+    private var ARROW_SIZE(get, never):Float;
+    private var ARROW_SIZEDIV2(get, never):Float;
+	private inline function get_ARROW_SIZE():Float
 		return Manager.ARROW_SIZE;
-	private function get_ARROW_SIZEDIV2():Float
+	private inline function get_ARROW_SIZEDIV2():Float
 		return Manager.ARROW_SIZEDIV2;
 
-    private var PI:Float = Math.PI;
-
-    // no way guys, regular sinus is faster than fastSin :surprised:
-    // (in hl fastSin is still faster than regular sin)
-    // https://github.com/HaxeFlixel/flixel/issues/3215#issuecomment-2226858302
-    // https://try.haxe.org/#847eac2B
-    private function sin(num:Float)
-        return #if !hl Math.sin(num) #else FlxMath.fastSin(num) #end;
-    private function cos(num:Float)
-        return #if !hl Math.cos(num) #else FlxMath.fastCos(num) #end;
-    private function tan(num:Float)
-        return #if !hl Math.tan(num) #else sin(num) / cos(num) #end;
+    private inline function sin(rad:Float):Float
+        return ModchartUtil.sin(rad);
+    private inline function cos(rad:Float):Float
+        return ModchartUtil.cos(rad);
+    private inline function tan(rad:Float):Float
+        return ModchartUtil.tan(rad);
 
     public function toString():String {
         var classn:String = Type.getClassName(Type.getClass(this));

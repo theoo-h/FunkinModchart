@@ -14,14 +14,14 @@ class Square extends Modifier
 			return curPos;
 
 		final square = (angle:Float) -> {
-			var fAngle = angle % (PI * 2);
+			var fAngle = angle % (Math.PI * 2);
 
-			return fAngle >= PI ? -1.0 : 1.0;
+			return fAngle >= Math.PI ? -1.0 : 1.0;
 		};
 
 		final offset = getPercent("squareOffset", params.field);
 		final period = getPercent("squarePeriod", params.field);
-		final amp = (PI * (params.hDiff + offset) / (ARROW_SIZE + (period * ARROW_SIZE)));
+		final amp = (Math.PI * (params.hDiff + offset) / (ARROW_SIZE + (period * ARROW_SIZE)));
 
 		curPos.x += squarep * square(amp);
 

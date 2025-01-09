@@ -17,26 +17,26 @@ class Tornado extends Modifier
 		if (tornado == 0)
 			return pos;
 
-		var bWideField = getKeycount() > 4;
+		var bWideField = getKeyCount() > 4;
 		var iTornadoWidth = bWideField ? 4 : 3;
 
 		var iColNum = params.receptor;
 		var iStartCol = iColNum - iTornadoWidth;
 		var iEndCol = iColNum + iTornadoWidth;
-		iStartCol = Math.round(ModchartUtil.clamp(iStartCol, 0, getKeycount()));
-		iEndCol = Math.round(ModchartUtil.clamp(iEndCol, 0, getKeycount()));
+		iStartCol = Math.round(ModchartUtil.clamp(iStartCol, 0, getKeyCount()));
+		iEndCol = Math.round(ModchartUtil.clamp(iEndCol, 0, getKeyCount()));
 
 		var fXOffset = ((ARROW_SIZE * 1.5) - (ARROW_SIZE * params.receptor));
 
 		var fMinX = -fXOffset;
 		var fMaxX = fXOffset;
-		
+
 		final fRealPixelOffset = fXOffset;
 		var fPositionBetween = scale( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
 
 		var fRads = Math.acos( fPositionBetween );
 		fRads += (params.hDiff * 0.8) * 6 / HEIGHT;
-		
+
 		final fAdjustedPixelOffset = scale( cos(fRads), -1, 1, fMinX, fMaxX );
 
 		pos.x -= (fAdjustedPixelOffset - fRealPixelOffset) * tornado;

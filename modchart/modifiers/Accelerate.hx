@@ -12,7 +12,7 @@ class Accelerate extends Modifier
     override public function render(curPos:Vector3D, params:RenderParams)
     {
 		final scale = 720 * (1 + (getPercent('accelerateScale', params.field)));
-		
+
 		var off = params.hDiff * 1.5 / ((params.hDiff + (scale) / 1.2) / scale);
 		curPos.y += ModchartUtil.clamp(getPercent('accelerate', params.field) * (off - params.hDiff), -600, 600);
 

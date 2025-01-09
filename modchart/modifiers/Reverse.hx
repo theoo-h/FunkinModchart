@@ -20,7 +20,7 @@ class Reverse extends Modifier
 	}
 	public function getReverseValue(dir:Int, player:Int)
 	{
-        var kNum = getKeycount();
+        var kNum = getKeyCount();
         var val:Float = 0;
         if(dir>=Math.floor(kNum * 0.5))
             val += getPercent("split", player);
@@ -51,8 +51,8 @@ class Reverse extends Modifier
 		var initialY = Adapter.instance.getDefaultReceptorY(params.receptor, params.field) + ARROW_SIZEDIV2;
 		var reversePerc = getReverseValue(params.receptor, params.field);
 		var shift = FlxMath.lerp(initialY, HEIGHT - initialY, reversePerc);
-		
-		var centerPercent = getPercent('centered', params.field);		
+
+		var centerPercent = getPercent('centered', params.field);
 		shift = FlxMath.lerp(shift, (HEIGHT * 0.5) - ARROW_SIZEDIV2, centerPercent);
 
 		// TODO: long holds
@@ -89,7 +89,7 @@ class Reverse extends Modifier
 		angleX += shift * getPercent('curvedScrollX', params.field);
 		angleY += shift * getPercent('curvedScrollY', params.field);
 		angleZ += shift * getPercent('curvedScrollZ', params.field);
-		
+
 		scroll = ModchartUtil.rotate3DVector(scroll, angleX, angleY, angleZ);
 
 		return scroll;

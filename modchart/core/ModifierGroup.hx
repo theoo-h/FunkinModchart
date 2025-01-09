@@ -63,7 +63,7 @@ class ModifierGroup
         'schmovinarrowshape' => SchmovinArrowShape,
         'drugged' => Drugged
     ];
-	private var MODIFIER_REGISTRERY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
+	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
 
 	private var percents:StringMap<IntMap<Float>> = new StringMap();
     private var modifiers:StringMap<Modifier> = new StringMap();
@@ -104,7 +104,7 @@ class ModifierGroup
 
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
-		
+
 		for (i in 0...sortedMods.length)
 		{
 			final mod = modifiers.get(sortedMods[i]);
@@ -139,16 +139,16 @@ class ModifierGroup
 	}
 	public function registerModifier(name:String, modifier:Class<Modifier>)
 	{
-		if (MODIFIER_REGISTRERY.get(name.toLowerCase()) != null)
+		if (MODIFIER_REGISTRY.get(name.toLowerCase()) != null)
 		{
 			trace('There\'s already a modifier with name "$name" registered !');
 			return;
 		}
-		MODIFIER_REGISTRERY.set(name.toLowerCase(), modifier);
+		MODIFIER_REGISTRY.set(name.toLowerCase(), modifier);
 	}
 	public function addModifier(name:String)
 	{
-		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRERY.get(name.toLowerCase());
+		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(name.toLowerCase());
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
 
@@ -191,7 +191,7 @@ class ModifierGroup
 	{
 		final percmap = new IntMap<Float>();
 
-		for (i in 0...Adapter.instance.getPlayercount())
+		for (i in 0...Adapter.instance.getPlayerCount())
 			percmap.set(i, 0.);
 		return percmap;
 	}

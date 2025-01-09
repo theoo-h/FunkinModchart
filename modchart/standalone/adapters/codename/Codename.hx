@@ -7,7 +7,7 @@ import funkin.game.Note;
 import funkin.game.PlayState;
 import funkin.options.Options;
 import funkin.backend.system.Conductor;
-import modchart.standalone.Adapter.IAdapter;
+import modchart.standalone.IAdapter;
 
 class Codename implements IAdapter
 {
@@ -28,7 +28,7 @@ class Codename implements IAdapter
 			});
 		}
     }
-    
+
     public function isTapNote(sprite:FlxSprite)
     {
         return sprite is Note;
@@ -47,7 +47,7 @@ class Codename implements IAdapter
         return __fCrochet;
     }
 
-    public function arrowHitted(arrow:FlxSprite)
+    public function arrowHit(arrow:FlxSprite)
     {
         if (arrow is Note)
         {
@@ -66,7 +66,7 @@ class Codename implements IAdapter
         }
         return false;
     }
-    
+
     public function getLaneFromArrow(arrow:FlxSprite)
 	{
 		if (arrow is Note)
@@ -99,13 +99,13 @@ class Codename implements IAdapter
 	}
 
     // im so fucking sorry for those conditionals
-	public function getKeycount(?player:Int = 0):Int
+	public function getKeyCount(?player:Int = 0):Int
 	{
         return PlayState.instance != null && PlayState.instance.strumLines != null && PlayState.instance.strumLines.members != null && PlayState.instance.strumLines.members[player] != null && PlayState.instance.strumLines.members[player].members != null
         ? PlayState.instance.strumLines.members[player].members.length
         : 4;
 	}
-	public function getPlayercount():Int
+	public function getPlayerCount():Int
 	{
         return PlayState.instance != null && PlayState.instance.strumLines != null
             ? PlayState.instance.strumLines.length
@@ -123,7 +123,7 @@ class Codename implements IAdapter
 		return 0;
 	}
 
-	public function getHoldSubdivitions():Int
+	public function getHoldSubdivisions():Int
 	{
         final val = Options.hold_subs;
 		return val < 1 ? 1 : Options.hold_subs;

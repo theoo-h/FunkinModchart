@@ -5,14 +5,14 @@
 /* Modifiers Section */
 /*
  * Search a modifier by `mod` and adds it.
- * 
+ *
  * mod:String   The modifier name string
  * field:Int    The playfield number  (-1 by default)
 */
 instance.addModifier(mod, field);
 /*
  * Adds or rewrites the percent of `mod`and sets it to `value`
- * 
+ *
  * mod:String   The modifier name string
  * value:Float  The value to be assigned to the modifier.
  * field:Int    The playfield number  (-1 by default)
@@ -20,16 +20,16 @@ instance.addModifier(mod, field);
 instance.setPercent(mod, value, field);
 /*
  * Returns the percent of `mod`
- * 
+ *
  * mod:String   The modifier name string
  * field:Int    The playfield number  (-1 by default)
- * 
+ *
  * returns: Float
 */
 instance.getPercent(mod, field);
 /*
  * Registers a new modifier in the name of `modN`
- * 
+ *
  * modN:String  The modifier name string
  * mod:Modifier The custom modifier class instance.
 */
@@ -80,7 +80,7 @@ instance.callback(beat, func, field);
 instance.repeater(beat, length, func, field);
 /*
  * Adds a custom event.
- * 
+ *
  * event:Event  The custom event to be added.
  * field:Int    The playfield number  (-1 by default)
 */
@@ -89,7 +89,7 @@ instance.addEvent(event, field);
 /* Playfield Section */
 /*
  * Adds a new playfield.
- * 
+ *
  * WARNING: If you add a playfield after adding modifiers, you will have to add them again to the new playfield.
 */
 instance.addPlayfield();

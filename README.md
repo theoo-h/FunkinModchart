@@ -19,6 +19,7 @@ At the bottom of where the haxelib section is, paste this code.
 <haxedef name="FM_ENGINE_VERSION" value="ENGINE_VERSION"/>
 
 <haxelib name="funkin-modchart" />
+<haxeflag name="--macro" value="modchart.core.macros.Macro.includeFiles()"/>
 ```
 
 Fill in the definitions with your engine name and version using the [format](SUPPORT.md) mentioned.
@@ -63,16 +64,16 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 ## Credits
 **TheoDev**: Owner, Lead coder
 
-**Edwhak**: Manteiner
+**Edwhak**: Maintainer
 
 **OpenITG:** Some math taken for modifiers.
 
-**4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impresive)
+**4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impressive)
 
 ## Special Thanks
 
 **Ne_Eo (aka. Neo):** Support, help with some bugs.
 
-**lunercleint:** Support, such a nice guy!
+**lunarcleint:** Support, such a nice guy!
 
 **Tsaku:** Support, bug finder. (thanks !!!)

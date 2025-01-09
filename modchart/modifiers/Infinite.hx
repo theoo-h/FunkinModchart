@@ -14,7 +14,7 @@ class Infinite extends Modifier
 
 		if (perc == 0)
 			return pos;
-		
+
 		var infinite = new Vector3D();
 
 		// alternate the angles
