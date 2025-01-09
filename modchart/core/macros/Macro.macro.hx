@@ -1,42 +1,36 @@
 package modchart.core.macros;
 
-import haxe.macro.Context;
 import haxe.macro.Compiler;
-import haxe.macro.Expr;
+import haxe.macro.Context;
 import haxe.macro.Expr.FieldType;
+import haxe.macro.Expr;
 
-class Macro
-{
+class Macro {
 	public static function includeFiles() {
-		Compiler.include('modchart', true, ['modchart.standalone.adapters']); // , 'modchart.core.macros', 'modchart.standalone.adapters.codename', 'modchart.standalone.adapters.psych'
+		Compiler.include('modchart', true, ['modchart.standalone.adapters']);
 		Compiler.include("modchart.standalone.adapters." + haxe.macro.Context.definedValue("FM_ENGINE").toLowerCase());
 	}
 
-	public static function addProperty_z():Array<Field>
-	{
+	public static function addProperty_z():Array<Field> {
 		var fields = Context.getBuildFields();
 
 		// uses _z to prevent collisions with other classes
 		fields.push({
 			name: "_z",
 			access: [APublic],
-			kind: FieldType.FVar(macro:Float, macro $v{0}),
+			kind: FieldType.FVar(macro :Float, macro $v{0}),
 			pos: Context.currentPos()
 		});
 
 		return fields;
 	}
 
-	public static function buildFlxCamera():Array<Field>
-	{
+	public static function buildFlxCamera():Array<Field> {
 		var fields = Context.getBuildFields();
 
-		for (f in fields)
-		{
-			if (f.name == 'startTrianglesBatch')
-			{
-				switch(f.kind)
-				{
+		for (f in fields) {
+			if (f.name == 'startTrianglesBatch') {
+				switch (f.kind) {
 					case FFun(fun):
 						// we're just removing a if statement cuz causes some color issues
 						fun.expr = macro {
@@ -50,8 +44,8 @@ class Macro
 
 		return fields;
 	}
-	public static function buildFlxDrawTrianglesItem():Array<Field>
-	{
+
+	public static function buildFlxDrawTrianglesItem():Array<Field> {
 		var fields = Context.getBuildFields();
 		var newField:Field = {
 			name: 'addGradientTriangles',
@@ -61,34 +55,34 @@ class Macro
 				args: [
 					{
 						name: 'vertices',
-						type: macro:DrawData<Float>
+						type: macro :DrawData<Float>
 					},
 					{
 						name: 'indices',
-						type: macro:DrawData<Int>
+						type: macro :DrawData<Int>
 					},
 					{
 						name: 'uvtData',
-						type: macro:DrawData<Float>
+						type: macro :DrawData<Float>
 					},
 					{
 						name: 'colors',
-						type: macro:DrawData<Int>,
+						type: macro :DrawData<Int>,
 						opt: true
 					},
 					{
 						name: 'position',
-						type: macro:FlxPoint,
+						type: macro :FlxPoint,
 						opt: true
 					},
 					{
 						name: 'cameraBounds',
-						type: macro:FlxRect,
+						type: macro :FlxRect,
 						opt: true
 					},
 					{
 						name: 'transforms',
-						type: macro:Array<ColorTransform>,
+						type: macro :Array<ColorTransform>,
 						opt: true
 					}
 				],
@@ -111,20 +105,16 @@ class Macro
 					var i:Int = 0;
 					var currentVertexPosition:Int = prevVerticesLength;
 
-					while (i < verticesLength)
-					{
+					while (i < verticesLength) {
 						tempX = position.x + vertices[i];
 						tempY = position.y + vertices[i + 1];
 
 						this.vertices[currentVertexPosition++] = tempX;
 						this.vertices[currentVertexPosition++] = tempY;
 
-						if (i == 0)
-						{
+						if (i == 0) {
 							bounds.set(tempX, tempY, 0, 0);
-						}
-						else
-						{
+						} else {
 							inflateBounds(bounds, tempX, tempY);
 						}
 
@@ -132,27 +122,20 @@ class Macro
 					}
 
 					var indicesLength:Int = indices.length;
-					if (!cameraBounds.overlaps(bounds))
-					{
+					if (!cameraBounds.overlaps(bounds)) {
 						this.vertices.splice(this.vertices.length - verticesLength, verticesLength);
-					}
-					else
-					{
+					} else {
 						var uvtDataLength:Int = uvtData.length;
-						for (i in 0...uvtDataLength)
-						{
+						for (i in 0...uvtDataLength) {
 							this.uvtData[prevUVTDataLength + i] = uvtData[i];
 						}
 
-						for (i in 0...indicesLength)
-						{
+						for (i in 0...indicesLength) {
 							this.indices[prevIndicesLength + i] = indices[i] + prevNumberOfVertices;
 						}
 
-						if (colored)
-						{
-							for (i in 0...numberOfVertices)
-							{
+						if (colored) {
+							for (i in 0...numberOfVertices) {
 								this.colors[prevColorsLength + i] = colors[i];
 							}
 
@@ -168,8 +151,7 @@ class Macro
 
 					final indDiv = (1 / indicesLength);
 
-					for (_ in 0...indicesLength)
-					{
+					for (_ in 0...indicesLength) {
 						final possibleTransform = transforms[Std.int(_ * indDiv * transforms.length)];
 
 						var alphaMultiplier = 1.;
@@ -180,19 +162,16 @@ class Macro
 						alphas.push(alphaMultiplier);
 					}
 
-					if (colored || hasColorOffsets)
-					{
+					if (colored || hasColorOffsets) {
 						if (colorMultipliers == null)
 							colorMultipliers = [];
 
 						if (colorOffsets == null)
 							colorOffsets = [];
 
-						for (_ in 0...indicesLength)
-						{
+						for (_ in 0...indicesLength) {
 							final transform = transforms[Std.int(_ * indDiv * transforms.length)];
-							if (transform != null)
-							{
+							if (transform != null) {
 								colorMultipliers.push(transform.redMultiplier);
 								colorMultipliers.push(transform.greenMultiplier);
 								colorMultipliers.push(transform.blueMultiplier);
@@ -201,9 +180,7 @@ class Macro
 								colorOffsets.push(transform.greenOffset);
 								colorOffsets.push(transform.blueOffset);
 								colorOffsets.push(transform.alphaOffset);
-							}
-							else
-							{
+							} else {
 								colorMultipliers.push(1);
 								colorMultipliers.push(1);
 								colorMultipliers.push(1);
@@ -226,30 +203,30 @@ class Macro
 		return fields;
 	}
 	/*
-	public static function generateModList()
-	{
-		Context.onAfterInitMacros(() -> {
-			final modifierList:Array<Class<Modifier>> = Type.resolveClass('CompileTime').getClassList('modchart.modifiers', true, modchart.Modifier);
-			final mappedModifiers:Map<String, Class<Modifier>> = [];
+		public static function generateModList()
+		{
+			Context.onAfterInitMacros(() -> {
+				final modifierList:Array<Class<Modifier>> = Type.resolveClass('CompileTime').getClassList('modchart.modifiers', true, modchart.Modifier);
+				final mappedModifiers:Map<String, Class<Modifier>> = [];
 
-			for (i in 0...modifierList.length)
-			{
-				final modifierClass = modifierList[i];
-
-				final meta = Meta.getType(modifierClass);
-				if (meta != null)
+				for (i in 0...modifierList.length)
 				{
-					Context.info('$meta', Context.currentPos());
+					final modifierClass = modifierList[i];
+
+					final meta = Meta.getType(modifierClass);
+					if (meta != null)
+					{
+						Context.info('$meta', Context.currentPos());
+					}
+
+					var modifierName = Type.getClassName(modifierClass);
+					modifierName = modifierName.substring(modifierName.lastIndexOf('.') + 1);
+					mappedModifiers[modifierName.toLowerCase()] = modifierClass;
 				}
 
-				var modifierName = Type.getClassName(modifierClass);
-				modifierName = modifierName.substring(modifierName.lastIndexOf('.') + 1);
-				mappedModifiers[modifierName.toLowerCase()] = modifierClass;
-			}
+				Constants.MODIFIER_LIST = mappedModifiers;
 
-			Constants.MODIFIER_LIST = mappedModifiers;
-
-			Context.info('---- Modifiers Founded ----\n$mappedModifiers');
-		});
+				Context.info('---- Modifiers Founded ----\n$mappedModifiers');
+			});
 	}*/
 }

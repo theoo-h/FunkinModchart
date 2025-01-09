@@ -1,26 +1,24 @@
 package modchart.modifiers;
 
-import modchart.core.util.ModchartUtil;
-import modchart.core.util.Constants.RenderParams;
-import modchart.core.util.Constants.ArrowData;
-import openfl.geom.Vector3D;
 import flixel.FlxG;
 import flixel.math.FlxMath;
+import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.Visuals;
+import modchart.core.util.ModchartUtil;
+import openfl.geom.Vector3D;
 
-class ReceptorScroll extends Modifier
-{
-    override public function render(curPos:Vector3D, params:RenderParams)
-    {
+class ReceptorScroll extends Modifier {
+	override public function render(curPos:Vector3D, params:RenderParams) {
 		final moveSpeed = Adapter.instance.getStaticCrochet() * 4;
 
 		var diff = -params.hDiff;
 		var sPos = Adapter.instance.getSongPosition();
 		var vDiff = -(diff - sPos) / moveSpeed;
-		var reversed = Math.floor(vDiff)%2 == 0;
+		var reversed = Math.floor(vDiff) % 2 == 0;
 
 		var startY = curPos.y;
-		var revPerc = reversed ? 1-vDiff%1 : vDiff%1;
+		var revPerc = reversed ? 1 - vDiff % 1 : vDiff % 1;
 		// haha perc 30
 		var upscrollOffset = 50;
 		var downscrollOffset = HEIGHT - 150;
@@ -29,9 +27,9 @@ class ReceptorScroll extends Modifier
 
 		curPos.y = FlxMath.lerp(startY, endY, getPercent('receptorScroll', params.field));
 		return curPos;
-    }
-	override public function visuals(data:Visuals, params:RenderParams):Visuals
-	{
+	}
+
+	override public function visuals(data:Visuals, params:RenderParams):Visuals {
 		if (getPercent('receptorScroll', params.field) <= 0)
 			return data;
 		var bar = params.sPos / (Adapter.instance.getStaticCrochet() * .25);

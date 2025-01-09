@@ -1,12 +1,12 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
-import modchart.core.util.Constants.ArrowData;
-import modchart.core.util.Constants.Visuals;
-import openfl.geom.Vector3D;
-import flixel.math.FlxMath;
 import flixel.FlxG;
+import flixel.math.FlxMath;
+import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
+import modchart.core.util.Constants.Visuals;
 import modchart.core.util.ModchartUtil;
+import openfl.geom.Vector3D;
 
 class Stealth extends Modifier {
 	public static var fadeDistY = 65;
@@ -36,15 +36,9 @@ class Stealth extends Modifier {
 		var sudden = getPercent('sudden', field);
 		var suddenExtend = getPercent('suddenExtend', field);
 		var suddenOffset = getPercent('suddenOffset', field);
-		var suddenAlpha = ModchartUtil.clamp(
-			FlxMath.remapToRange(
-				params.hDiff,
-				getSuddenStart(sudden, suddenExtend, suddenOffset),
-				getSuddenEnd(sudden, suddenExtend, suddenOffset),
-				0, -1
-			),
-			-1, 0
-		);
+		var suddenAlpha = ModchartUtil.clamp(FlxMath.remapToRange(params.hDiff, getSuddenStart(sudden, suddenExtend, suddenOffset),
+			getSuddenEnd(sudden, suddenExtend, suddenOffset), 0, -1),
+			-1, 0);
 
 		data.alpha = getPercent('alpha', field) + getPercent('alphaOffset', field);
 

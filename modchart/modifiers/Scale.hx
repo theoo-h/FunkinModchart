@@ -1,27 +1,24 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.Visuals;
 import openfl.geom.Vector3D;
 
-class Scale extends Modifier
-{
-	public function new(pf)
-	{
+class Scale extends Modifier {
+	public function new(pf) {
 		super(pf);
 
 		setPercent('scale', 1, -1);
 		setPercent('scaleX', 1, -1);
 		setPercent('scaleY', 1, -1);
 	}
-	override public function visuals(data:Visuals, params:RenderParams)
-	{
+
+	override public function visuals(data:Visuals, params:RenderParams) {
 		var field = params.field;
 		final scaleForce = getPercent('scaleForce', field);
 
-		if (scaleForce != 0)
-		{
+		if (scaleForce != 0) {
 			data.scaleX = scaleForce;
 			data.scaleY = scaleForce;
 			return data;

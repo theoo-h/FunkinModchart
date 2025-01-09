@@ -1,15 +1,13 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
+import flixel.math.FlxMath;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.ModchartUtil;
 import openfl.geom.Vector3D;
-import flixel.math.FlxMath;
 
-class Infinite extends Modifier
-{
-    override function render(pos:Vector3D, params:RenderParams)
-	{
+class Infinite extends Modifier {
+	override function render(pos:Vector3D, params:RenderParams) {
 		var perc = getPercent('infinite', params.field);
 
 		if (perc == 0)
@@ -25,14 +23,11 @@ class Infinite extends Modifier
 		final invTransf = (2 / (3 - cos(fTime * 2)));
 
 		// apply the scroll
-		infinite.setTo(
-			WIDTH * .5 + invTransf * cos(fTime) * 580,
-			HEIGHT * .5 + invTransf * (sin(fTime * 2) / 2) * 750,
-			0
-		);
+		infinite.setTo(WIDTH * .5 + invTransf * cos(fTime) * 580, HEIGHT * .5 + invTransf * (sin(fTime * 2) / 2) * 750, 0);
 
 		return ModchartUtil.lerpVector3D(pos, infinite, perc);
 	}
+
 	override public function shouldRun(params:RenderParams):Bool
 		return true;
 }

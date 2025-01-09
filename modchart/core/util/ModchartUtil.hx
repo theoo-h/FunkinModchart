@@ -1,45 +1,43 @@
 package modchart.core.util;
 
-import modchart.core.util.Constants.SimplePoint;
-import openfl.geom.Matrix3D;
-import openfl.geom.Vector3D;
-import flixel.math.FlxMath;
-import flixel.math.FlxAngle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
+import flixel.math.FlxAngle;
+import flixel.math.FlxMath;
 import modchart.Manager;
+import modchart.core.util.Constants.SimplePoint;
+import openfl.geom.Matrix3D;
+import openfl.geom.Vector3D;
 
 using StringTools;
 
 @:keep
-class ModchartUtil
-{
+class ModchartUtil {
 	private static var __viewMatrix:Matrix3D = new Matrix3D();
 
-	public static function updateViewMatrix(position:Vector3D, lookAt:Vector3D, up:Vector3D)
-	{
+	public static function updateViewMatrix(position:Vector3D, lookAt:Vector3D, up:Vector3D) {
 		__viewMatrix.pointAt(position, lookAt, up);
 		return __viewMatrix;
 	}
-	public static function applyViewMatrix(vector:Vector3D)
-	{
+
+	public static function applyViewMatrix(vector:Vector3D) {
 		var translatedVector = __viewMatrix.transformVector(vector.subtract(new Vector3D(FlxG.width * .5, FlxG.height * .5)));
 		return translatedVector.add(new Vector3D(FlxG.width * .5, FlxG.height * .5));
 	}
-    inline public static function rotate(x:Float, y:Float, angle:Float):SimplePoint
-    {
+
+	inline public static function rotate(x:Float, y:Float, angle:Float):SimplePoint {
 		if ((angle % 360) == 0)
 			return new SimplePoint(x, y);
 
-        final sin = ModchartUtil.sin(angle);
-        final cos = ModchartUtil.cos(angle);
+		final sin = ModchartUtil.sin(angle);
+		final cos = ModchartUtil.cos(angle);
 
 		return new SimplePoint(x * cos - y * sin, x * sin + y * cos);
-    };
-    inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float)
-	{
-		if(angleX == 0 && angleY == 0 && angleZ == 0)
+	};
+
+	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float) {
+		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return vec;
 
 		final RAD = FlxAngle.TO_RAD;
@@ -61,8 +59,7 @@ class ModchartUtil
 	inline static final range:Int = -1;
 
 	// stolen & improved from schmovin (Camera3DTransforms)
-	inline static public function perspective(pos:Vector3D, ?origin:Vector3D)
-	{
+	inline static public function perspective(pos:Vector3D, ?origin:Vector3D) {
 		final fov = Math.PI / 2;
 
 		if (origin == null)
@@ -84,8 +81,7 @@ class ModchartUtil
 		return projectedPos;
 	}
 
-	inline static public function getHoldVertex(upper:Array<Vector3D>, lower:Array<Vector3D>)
-	{
+	inline static public function getHoldVertex(upper:Array<Vector3D>, lower:Array<Vector3D>) {
 		return [
 			upper[0].x, upper[0].y,
 			upper[1].x, upper[1].y,
@@ -93,8 +89,8 @@ class ModchartUtil
 			lower[1].x, lower[1].y
 		];
 	}
-	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int)
-	{
+
+	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int) {
 		var uv = new DrawData<Float>(8 * subs, true, []);
 
 		var frameUV = arrow.frame.uv;
@@ -102,8 +98,7 @@ class ModchartUtil
 
 		var subDivided = 1.0 / subs;
 
-		for (curSub in 0...subs)
-		{
+		for (curSub in 0...subs) {
 			var uvOffset = subDivided * curSub;
 			var subIndex = curSub * 8;
 
@@ -115,51 +110,51 @@ class ModchartUtil
 
 		return uv;
 	}
+
 	// gonna keep this shits inline cus are basic functions
-	public static inline function getHalfPos():Vector3D
-	{
+	public static inline function getHalfPos():Vector3D {
 		return new Vector3D(Manager.ARROW_SIZEDIV2, Manager.ARROW_SIZEDIV2, 0, 0);
 	}
+
 	// dude wtf it works
-	public inline static function sign(x:Int)
-	{
+	public inline static function sign(x:Int) {
 		#if cpp
 		return (x >> 31) | ((x != 0) ? 1 : 0);
 		#else
 		return x == 0 ? 0 : x > 0 ? 1 : -1;
 		#end
 	}
-	public inline static function clamp(n:Float, l:Float, h:Float)
-	{
+
+	public inline static function clamp(n:Float, l:Float, h:Float) {
 		return Math.min(Math.max(n, l), h);
 	}
 
 	// no way guys, regular sinus is faster than fastSin :surprised:
-    // (in hl fastSin is still faster than regular sin)
-    // https://github.com/HaxeFlixel/flixel/issues/3215#issuecomment-2226858302
-    // https://try.haxe.org/#847eac2B
-    public static inline function sin(num:Float)
-        return #if !hl Math.sin(num) #else FlxMath.fastSin(num) #end;
-    public static inline function cos(num:Float)
-        return #if !hl Math.cos(num) #else FlxMath.fastCos(num) #end;
-    public static inline function tan(num:Float)
-        return #if !hl Math.tan(num) #else sin(num) / cos(num) #end;
+	// (in hl fastSin is still faster than regular sin)
+	// https://github.com/HaxeFlixel/flixel/issues/3215#issuecomment-2226858302
+	// https://try.haxe.org/#847eac2B
+	public static inline function sin(num:Float)
+		return #if !hl Math.sin(num) #else FlxMath.fastSin(num) #end;
 
-    inline public static var HOLD_SIZE:Float = 44 * 0.7;
+	public static inline function cos(num:Float)
+		return #if !hl Math.cos(num) #else FlxMath.fastCos(num) #end;
+
+	public static inline function tan(num:Float)
+		return #if !hl Math.tan(num) #else sin(num) / cos(num) #end;
+
+	inline public static var HOLD_SIZE:Float = 44 * 0.7;
 	inline public static var ARROW_SIZE:Float = 160 * 0.7;
-    inline public static var ARROW_SIZEDIV2:Float = (160 * 0.7) * 0.5;
+	inline public static var ARROW_SIZEDIV2:Float = (160 * 0.7) * 0.5;
 
-	inline public static function lerpVector3D(start:Vector3D, end:Vector3D, ratio:Float)
-	{
+	inline public static function lerpVector3D(start:Vector3D, end:Vector3D, ratio:Float) {
 		final diff = end.subtract(start);
 		diff.scaleBy(ratio);
 
 		return start.add(diff);
 	}
 
-	inline public static function applyVectorZoom(vec:Vector3D, zoom:Float)
-	{
-		if(zoom != 1){
+	inline public static function applyVectorZoom(vec:Vector3D, zoom:Float) {
+		if (zoom != 1) {
 			var centerX = FlxG.width * 0.5;
 			var centerY = FlxG.height * 0.5;
 
@@ -170,9 +165,10 @@ class ModchartUtil
 		return vec;
 	}
 
-	public static function coolTextFile(path:String):Array<String>
-	{
+	public static function coolTextFile(path:String):Array<String> {
 		var trim:String;
-		return [for(line in openfl.utils.Assets.getText(path).split("\n")) if ((trim = line.trim()) != "" && !trim.startsWith("#")) trim];
+		return [
+			for (line in openfl.utils.Assets.getText(path).split("\n")) if ((trim = line.trim()) != "" && !trim.startsWith("#")) trim
+		];
 	}
 }

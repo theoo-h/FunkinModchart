@@ -1,7 +1,7 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.Visuals;
 import modchart.core.util.ModchartUtil;
 import openfl.geom.Vector3D;
@@ -10,10 +10,8 @@ import openfl.geom.Vector3D;
 // Naming this `Radionic` since it seems like a Radionic Graphic.
 // Inspired by `The Poenix NotITG Modchart` at 0:35
 // Warning!: This should be AFTER regular modifiers (drunk, beat, transform, etc) and BEFORE rotation modifiers.
-class Radionic extends Modifier
-{
-    override public function render(pos:Vector3D, params:RenderParams)
-    {
+class Radionic extends Modifier {
+	override public function render(pos:Vector3D, params:RenderParams) {
 		final perc = getPercent('radionic', params.field);
 
 		if (perc == 0)
@@ -37,21 +35,22 @@ class Radionic extends Modifier
 		radionicVec.z = pos.z;
 
 		return ModchartUtil.lerpVector3D(pos, radionicVec, perc);
-    }
+	}
+
 	// should i include this?
 	// nah i will do this manually
+
 	/*
-	override public function visuals(data:Visuals, params:RenderParams):Visuals
-	{
-		final perc = getPercent('radionic', params.field);
-		final amount = 0.6;
+		override public function visuals(data:Visuals, params:RenderParams):Visuals
+		{
+			final perc = getPercent('radionic', params.field);
+			final amount = 0.6;
 
-		vis.scaleX = perc * (vis.scaleY = 1 + amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount);
-		vis.glow = perc * (-(amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount) * 2);
+			vis.scaleX = perc * (vis.scaleY = 1 + amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount);
+			vis.glow = perc * (-(amount - FlxEase.cubeOut((params.fBeat - Math.floor(params.fBeat))) * amount) * 2);
 
-		return vis;
+			return vis;
 	}*/
-
 	override public function shouldRun(params:RenderParams):Bool
 		return true;
 }

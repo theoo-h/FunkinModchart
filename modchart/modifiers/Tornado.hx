@@ -1,17 +1,15 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
-import modchart.core.util.Constants.ArrowData;
-import openfl.geom.Vector3D;
-import modchart.core.util.ModchartUtil;
 import flixel.math.FlxMath;
+import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
+import modchart.core.util.ModchartUtil;
+import openfl.geom.Vector3D;
 
-class Tornado extends Modifier
-{
+class Tornado extends Modifier {
 	// math from open itg
 	// hmm, looks familiar.... isnt this invert sine?
-    override public function render(pos:Vector3D, params:RenderParams)
-    {
+	override public function render(pos:Vector3D, params:RenderParams) {
 		var tornado = getPercent('tornado', params.field);
 
 		if (tornado == 0)
@@ -33,21 +31,22 @@ class Tornado extends Modifier
 		var fMaxX = fXOffset;
 
 		final fRealPixelOffset = fXOffset;
-		var fPositionBetween = scale( fRealPixelOffset, fMinX, fMaxX, -1, 1 );
+		var fPositionBetween = scale(fRealPixelOffset, fMinX, fMaxX, -1, 1);
 
-		var fRads = Math.acos( fPositionBetween );
+		var fRads = Math.acos(fPositionBetween);
 		fRads += (params.hDiff * 0.8) * 6 / HEIGHT;
 
-		final fAdjustedPixelOffset = scale( cos(fRads), -1, 1, fMinX, fMaxX );
+		final fAdjustedPixelOffset = scale(cos(fRads), -1, 1, fMinX, fMaxX);
 
 		pos.x -= (fAdjustedPixelOffset - fRealPixelOffset) * tornado;
 
-        return pos;
-    }
-	inline function scale(x:Float, l1:Float, h1:Float, l2:Float, h2:Float)
-	{
+		return pos;
+	}
+
+	inline function scale(x:Float, l1:Float, h1:Float, l2:Float, h2:Float) {
 		return (x - l1) * (h2 - l2) / (h1 - l1) + l2;
 	}
+
 	override public function shouldRun(params:RenderParams):Bool
 		return true;
 }

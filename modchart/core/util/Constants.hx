@@ -1,13 +1,11 @@
 package modchart.core.util;
 
-class Constants
-{
+class Constants {
 	public static var MODIFIER_LIST:Map<String, Class<Modifier>>;
 }
 
 @:structInit
-class RenderParams
-{
+class RenderParams {
 	public var sPos:Float;
 	public var time:Float;
 	public var fBeat:Float;
@@ -23,8 +21,7 @@ class RenderParams
 }
 
 @:structInit
-class ArrowData
-{
+class ArrowData {
 	public var time:Float;
 	public var hDiff:Float;
 	public var receptor:Int;
@@ -38,8 +35,7 @@ class ArrowData
 }
 
 @:structInit
-class Visuals
-{
+class Visuals {
 	public var scaleX:Float = 1;
 	public var scaleY:Float = 1;
 	public var alpha:Float = 1;
@@ -55,13 +51,11 @@ class Visuals
 	public var skewY:Float = 0;
 }
 
-class SimplePoint
-{
+class SimplePoint {
 	public var x:Float;
 	public var y:Float;
 
-	public function new(x:Float, y:Float)
-	{
+	public function new(x:Float, y:Float) {
 		this.x = x;
 		this.y = y;
 	}

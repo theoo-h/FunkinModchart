@@ -1,14 +1,12 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.Visuals;
 import openfl.geom.Vector3D;
 
-class Confusion extends Modifier
-{
-	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String)
-	{
+class Confusion extends Modifier {
+	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
 		// x, y, z
 
 		var receptorName = Std.string(params.receptor);
@@ -22,8 +20,7 @@ class Confusion extends Modifier
 		// other
 		angle += getPercent('dizzy' + axis, field) * (params.hDiff * 0.1 * (1 + getPercent('dizzySpeed', field)));
 
-		switch (realAxis.toLowerCase())
-		{
+		switch (realAxis.toLowerCase()) {
 			case 'x':
 				vis.angleX += angle;
 			case 'y':
@@ -32,8 +29,8 @@ class Confusion extends Modifier
 				vis.angleZ += angle;
 		}
 	}
-	override public function visuals(data:Visuals, params:RenderParams)
-	{
+
+	override public function visuals(data:Visuals, params:RenderParams) {
 		applyConfusion(data, params, '', 'z');
 		applyConfusion(data, params, 'x', 'x');
 		applyConfusion(data, params, 'y', 'y');

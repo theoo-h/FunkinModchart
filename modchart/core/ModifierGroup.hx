@@ -1,93 +1,88 @@
 package modchart.core;
 
-import openfl.geom.Vector3D;
+import haxe.ds.IntMap;
+import haxe.ds.StringMap;
+import haxe.ds.Vector;
 import modchart.Modifier;
-import modchart.core.util.Constants.Visuals;
-import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
+import modchart.core.util.Constants.Visuals;
 import modchart.core.util.ModchartUtil;
-
 import modchart.modifiers.*;
 import modchart.modifiers.false_paradise.*;
-
-import haxe.ds.StringMap;
-import haxe.ds.IntMap;
-import haxe.ds.Vector;
+import openfl.geom.Vector3D;
 
 @:structInit
 @:publicFields
-class ModifierOutput
-{
+class ModifierOutput {
 	var pos:Vector3D;
 	var visuals:Visuals;
 }
+
 @:allow(modchart.Modifier)
-class ModifierGroup
-{
+class ModifierGroup {
 	public static var GLOBAL_MODIFIERS:Map<String, Class<Modifier>> = [
 		'reverse' => Reverse,
-        'transform' => Transform,
+		'transform' => Transform,
 		'opponentswap' => OpponentSwap,
-        'drunk' => Drunk,
-        'bumpy' => Bumpy,
-        'tipsy' => Tipsy,
-        'tornado' => Tornado,
-        'invert' => Invert,
-        'square' => Square,
-        'zigzag' => ZigZag,
-        'beat' => Beat,
+		'drunk' => Drunk,
+		'bumpy' => Bumpy,
+		'tipsy' => Tipsy,
+		'tornado' => Tornado,
+		'invert' => Invert,
+		'square' => Square,
+		'zigzag' => ZigZag,
+		'beat' => Beat,
 		'accelerate' => Accelerate,
-        'receptorscroll' => ReceptorScroll,
+		'receptorscroll' => ReceptorScroll,
 		'sawtooth' => SawTooth,
 		'mini' => Mini,
-        'rotate' => Rotate,
-        'fieldrotate' => FieldRotate,
-        'centerrotate' => CenterRotate,
+		'rotate' => Rotate,
+		'fieldrotate' => FieldRotate,
+		'centerrotate' => CenterRotate,
 		'confusion' => Confusion,
 		'stealth' => Stealth,
 		'scale' => Scale,
 		'skew' => Skew,
 		// YOU NEVER STOOD A CHANCE
 		'infinite' => Infinite,
-        'schmovindrunk' => SchmovinDrunk,
-        'schmovintipsy' => SchmovinTipsy,
-        'schmovintornado' => SchmovinTornado,
-        'wiggle' => Wiggle,
-        'arrowshape' => ArrowShape,
-        'eyeshape' => EyeShape,
-        'spiral' => Spiral,
-        'counterclockwise' => CounterClockWise,
-        'vibrate' => Vibrate,
-        'bounce' => Bounce,
-        'radionic' => Radionic,
-        'schmovinarrowshape' => SchmovinArrowShape,
-        'drugged' => Drugged
-    ];
+		'schmovindrunk' => SchmovinDrunk,
+		'schmovintipsy' => SchmovinTipsy,
+		'schmovintornado' => SchmovinTornado,
+		'wiggle' => Wiggle,
+		'arrowshape' => ArrowShape,
+		'eyeshape' => EyeShape,
+		'spiral' => Spiral,
+		'counterclockwise' => CounterClockWise,
+		'vibrate' => Vibrate,
+		'bounce' => Bounce,
+		'radionic' => Radionic,
+		'schmovinarrowshape' => SchmovinArrowShape,
+		'drugged' => Drugged
+	];
+
 	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
 
 	private var percents:StringMap<IntMap<Float>> = new StringMap();
-    private var modifiers:StringMap<Modifier> = new StringMap();
+	private var modifiers:StringMap<Modifier> = new StringMap();
 
 	private var sortedMods:Vector<String>;
 
 	private var pf:PlayField;
 
-	public function new(pf:PlayField)
-	{
+	public function new(pf:PlayField) {
 		this.pf = pf;
 
 		__allocModSorting([]);
 	}
 
 	@:dox(hide)
-	@:noCompletion private function __allocModSorting(newList:Array<String>)
-	{
+	@:noCompletion private function __allocModSorting(newList:Array<String>) {
 		return sortedMods = Vector.fromArrayCopy(newList);
 	}
 
 	// just render mods with the perspective stuff included
-	public function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput
-	{
+	public function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
 		var visuals:Visuals = {
 			scaleX: 1.,
 			scaleY: 1.,
@@ -108,8 +103,7 @@ class ModifierGroup
 		var songPos = Adapter.instance.getSongPosition();
 		var beat = Adapter.instance.getCurrentBeat();
 
-		for (i in 0...sortedMods.length)
-		{
+		for (i in 0...sortedMods.length) {
 			final mod = modifiers.get(sortedMods[i]);
 
 			final args:RenderParams = {
@@ -140,18 +134,17 @@ class ModifierGroup
 			visuals: visuals
 		};
 	}
-	public function registerModifier(name:String, modifier:Class<Modifier>)
-	{
+
+	public function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
-		if (MODIFIER_REGISTRY.get(lowerName) != null)
-		{
+		if (MODIFIER_REGISTRY.get(lowerName) != null) {
 			trace('There\'s already a modifier with name "$name" registered !');
 			return;
 		}
 		MODIFIER_REGISTRY.set(lowerName, modifier);
 	}
-	public function addModifier(name:String)
-	{
+
+	public function addModifier(name:String) {
 		var lowerName = name.toLowerCase();
 		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
@@ -167,25 +160,24 @@ class ModifierGroup
 		__allocModSorting(newArr);
 	}
 
-	public function setPercent(name:String, value:Float, field:Int = -1)
-	{
+	public function setPercent(name:String, value:Float, field:Int = -1) {
 		var lowerName = name.toLowerCase();
 		final possiblePercs = percents.get(lowerName);
 		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
 
 		if (field == -1)
-			for (k => _ in percs) percs.set(k, value);
+			for (k => _ in percs)
+				percs.set(k, value);
 		else
 			percs.set(field, value);
 
 		percents.set(lowerName, percs);
 	}
-	public function getPercent(name:String, field:Int):Float
-	{
+
+	public function getPercent(name:String, field:Int):Float {
 		final percs = percents.get(name.toLowerCase());
 
-		if (percs != null)
-		{
+		if (percs != null) {
 			// Map.get can return null
 			final possiblePerc:Null<Float> = percs.get(field);
 			return possiblePerc != null ? possiblePerc : 0;
@@ -193,8 +185,7 @@ class ModifierGroup
 		return 0;
 	}
 
-	private function getDefaultPerc():IntMap<Float>
-	{
+	private function getDefaultPerc():IntMap<Float> {
 		final percMap = new IntMap<Float>();
 
 		for (i in 0...Adapter.instance.getPlayerCount())

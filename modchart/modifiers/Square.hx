@@ -1,13 +1,11 @@
 package modchart.modifiers;
 
-import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.ArrowData;
+import modchart.core.util.Constants.RenderParams;
 import openfl.geom.Vector3D;
 
-class Square extends Modifier
-{
-    override public function render(curPos:Vector3D, params:RenderParams)
-    {
+class Square extends Modifier {
+	override public function render(curPos:Vector3D, params:RenderParams) {
 		var field = params.field;
 		final squarep = getPercent('square', field);
 
@@ -20,11 +18,10 @@ class Square extends Modifier
 
 		curPos.x += squarep * square(amp);
 
-        return curPos;
-    }
+		return curPos;
+	}
 
-	function square(angle:Float):Float
-	{
+	function square(angle:Float):Float {
 		var fAngle = angle % (Math.PI * 2);
 		return fAngle >= Math.PI ? -1.0 : 1.0;
 	}
