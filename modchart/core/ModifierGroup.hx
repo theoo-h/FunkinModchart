@@ -164,7 +164,8 @@ class ModifierGroup
 
 	public function setPercent(name:String, value:Float, field:Int = -1)
 	{
-		final percs = percents.get(name.toLowerCase()) ?? getDefaultPerc();
+		final possiblePercs = percents.get(name.toLowerCase());
+		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
 
 		if (field == -1)
 			for (k => _ in percs) percs.set(k, value);

@@ -173,7 +173,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
 
             var out1:Array<Dynamic> = [lastQuad, lastVis];
             if (lastQuad == null)
-                out1 = getHoldQuads(basePos, lastData ?? getArrowParams(arrow, subOff));
+                out1 = getHoldQuads(basePos, lastData != null ? lastData : getArrowParams(arrow, subOff));
             var out2 = getHoldQuads(basePos, (lastData = getArrowParams(arrow, subOff + subCr)));
 
             var topQuads:Array<Vector3D> = out1[0];
@@ -248,7 +248,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite>
         
         final item:FlxSprite = instruction.item;
 
-        @:privateAccess for (camera in (item._cameras ?? Adapter.instance.getArrowCamera()))
+        @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
         {
             var item = camera.startTrianglesBatch(item.graphic, false, true, item.blend, true, item.shader);
             item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, instruction.colorData);
@@ -452,7 +452,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite>
 
         final item = instruction.item;
         
-        @:privateAccess for (camera in (item._cameras ?? Adapter.instance.getArrowCamera()))
+        @:privateAccess for (camera in (item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera()))
         {
 			camera.drawTriangles(
                 item.graphic,

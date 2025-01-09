@@ -104,11 +104,11 @@ class Codename implements IAdapter
 
 	public function getHoldSubdivitions():Int
 	{
-		return Std.int(Math.max(1, Options.hold_subs ?? 1));
+		return Std.int(Math.max(1, Options.hold_subs));
 	}
     public function getDownscroll():Bool
 	{
-		return Options.downscroll ?? false;
+		return Options.downscroll;
 	}
 	public function getDefaultReceptorX(lane:Int, field:Int):Float
 	{

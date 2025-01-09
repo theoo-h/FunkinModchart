@@ -32,7 +32,7 @@ class EaseEvent extends Event
             startBeat: beat,
             endBeat: beat + len,
             beatLength: len,
-            ease: ease ?? FlxEase.linear
+            ease: ease != null ? ease : FlxEase.linear
         };
 
         super(beat, (_) -> {}, parent, true);
