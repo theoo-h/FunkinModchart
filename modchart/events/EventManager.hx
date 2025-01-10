@@ -49,7 +49,7 @@ class EventManager {
 		while (idx >= 0) {
 			final ev = list[idx];
 
-			if (ev.active && ev.field == field && Std.isOfType(ev, evClass))
+			if (Std.isOfType(ev, evClass) && ev.active && ev.field == field)
 				return ev;
 
 			idx--;

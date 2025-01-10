@@ -116,9 +116,8 @@ class Manager extends FlxBasic {
 		super.destroy();
 
 		__playfieldChoice(pf -> {
-      pf.destroy();
-      pr.dispose();
-   });
+			pf.destroy();
+		});
 	}
 
 	public static var HOLD_SIZE:Float = 50 * 0.7;

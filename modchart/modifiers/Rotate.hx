@@ -10,18 +10,16 @@ class Rotate extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
 		var rotateName = getRotateName();
 		var field = params.field;
-		var angleX = getPercent(rotateName + 'X', field);
-		if (angleX == 0)
-			return curPos;
-		var angleY = getPercent(rotateName + 'Y', field);
-		if (angleY == 0)
-			return curPos;
-		var angleZ = getPercent(rotateName + 'Z', field);
-		if (angleZ == 0)
-			return curPos;
 
-		// if ((angleX + angleY + angleZ) == 0)
-		//	return curPos;
+		// each axis of the rotate is independent,
+		// which means that just because rotateX is not activated
+		// does not mean that the others will not be deactivated either.
+		var angleX = getPercent(rotateName + 'X', field);
+		var angleY = getPercent(rotateName + 'Y', field);
+		var angleZ = getPercent(rotateName + 'Z', field);
+
+		if ((angleX + angleY + angleZ) == 0)
+			return curPos;
 
 		final origin:Vector3D = getOrigin(curPos, params);
 		final diff = curPos.subtract(origin);

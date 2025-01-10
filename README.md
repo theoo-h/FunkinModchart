@@ -62,9 +62,11 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 </details>
 
 ## Credits
-**TheoDev**: Owner, Lead coder
+**TheoDev**: Owner, Lead coder.
 
-**Edwhak**: Maintainer
+**Ne_eo**: Coder, bugfixed & optimizer.
+
+**Edwhak**: Maintainer.
 
 **OpenITG:** Some math taken for modifiers.
 
