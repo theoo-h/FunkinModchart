@@ -6,9 +6,6 @@ import flixel.tweens.FlxEase;
 import modchart.events.Event;
 
 typedef EaseData = {
-	var startValue:Null<Float>;
-	var targetValue:Float;
-
 	var startBeat:Float;
 	var endBeat:Float;
 
@@ -18,21 +15,20 @@ typedef EaseData = {
 }
 
 class EaseEvent extends Event {
-	public var mod:String;
 	public var data:EaseData;
 
 	public function new(mod:String, beat:Float, len:Float, target:Float, ease:EaseFunction, field:Int, parent:EventManager) {
-		this.mod = this.name = mod.toLowerCase();
+		this.name = mod;
 		this.field = field;
 
 		this.data = {
-			startValue: null,
-			targetValue: target,
 			startBeat: beat,
 			endBeat: beat + len,
 			beatLength: len,
 			ease: ease != null ? ease : FlxEase.linear
 		};
+
+		this.target = target;
 
 		super(beat, (_) -> {}, parent, true);
 	}
@@ -41,28 +37,26 @@ class EaseEvent extends Event {
 		if (fired)
 			return;
 
-		if (data.startValue == null) {
-			data.startValue = getModPercent(this.mod, this.field);
-
-			// prevent overlapping
-			final prevEvent = parent.getLastEvent(this.mod, this.field, EaseEvent);
-			if (prevEvent != null && prevEvent != this)
-				prevEvent.fired = true;
-		}
-		if (data.ease == null)
-			data.ease = FlxEase.linear;
-
 		if (curBeat < data.endBeat) {
-			// this is easier than u think
+			var lastPerc = 0.;
+
+			// this fixed A LOT of visual issues when convining eases and sets
+			// based on schmovin timeline
+			final possibleLastEvent = parent.getLastEventBefore(this);
+
+			if (possibleLastEvent != null)
+				lastPerc = possibleLastEvent.target;
+
 			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
 			// maybe we should make it use bound?
-			var out = FlxMath.lerp(data.startValue, data.targetValue, data.ease(progress));
-			setModPercent(mod, out, field);
+			var out = FlxMath.lerp(lastPerc, target, data.ease(progress));
+			setModPercent(name, out, field);
 			fired = false;
 		} else if (curBeat >= data.endBeat) {
 			fired = true;
 
-			setModPercent(mod, data.ease(1) * data.targetValue, field);
+			// we're using the ease function bc it may dont return 1
+			setModPercent(name, data.ease(1) * target, field);
 		}
 	}
 }

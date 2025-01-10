@@ -1,5 +1,5 @@
 ### Event Manager
-- Fix ease and set overlapping (the fix i did doenst fully work)
+- [X] Fix ease and set overlapping (the fix i did doenst fully work)
 
 ### ModifierGroup
 - Optimize stuff

@@ -8,6 +8,8 @@ import modchart.events.types.*;
 @:allow(modchart.events.Event)
 class EventManager {
 	private var table:StringMap<Array<Array<Event>>> = new StringMap();
+	private var eventList:Array<Event> = [];
+
 	private var pf:PlayField;
 
 	public function new(pf:PlayField) {
@@ -15,46 +17,45 @@ class EventManager {
 	}
 
 	public function add(event:Event) {
-		if (table.get(event.name) == null)
-			table.set(event.name, [[], []]);
+		if (event.name != null) {
+			final lwr = event.name.toLowerCase();
 
-		table.get(event.name)[event.field].push(event);
+			if (table.get(lwr) == null)
+				table.set(lwr, []);
+			if (table.get(lwr)[event.field] == null)
+				table.get(lwr)[event.field] = [];
+
+			table.get(lwr)[event.field].push(event);
+		}
+
+		eventList.push(event);
 
 		sortEvents();
 	}
 
 	public function update(curBeat:Float) {
-		for (fieldTable in table.iterator()) {
-			for (events in fieldTable) {
-				for (ev in events) {
-					ev.active = false;
+		for (ev in eventList) {
+			ev.active = false;
 
-					if (ev.beat >= curBeat)
-						continue;
+			if (ev.beat >= curBeat)
+				continue;
 
-					ev.active = true;
-					ev.update(curBeat);
-
-					if (ev.fired)
-						events.remove(ev);
-				}
-			}
+			ev.active = true;
+			ev.update(curBeat);
 		}
 	}
 
-	public function getLastEvent<T>(name:String, field:Int, evClass:T) {
-		var list = table.get(name)[field];
-		var idx = list.length;
-
-		while (idx >= 0) {
-			final ev = list[idx];
-
-			if (Std.isOfType(ev, evClass) && ev.active && ev.field == field)
-				return ev;
-
-			idx--;
+	public function getLastEventBefore(event:Event) {
+		final playerEvents = table.get(event.name.toLowerCase());
+		final eventList = playerEvents != null ? playerEvents[event.field] : null;
+		if (eventList != null) {
+			final lastIndex = eventList.indexOf(event);
+			if (lastIndex > 0) {
+				final possibleEvent = eventList[lastIndex - 1];
+				if (possibleEvent != null)
+					return possibleEvent;
+			}
 		}
-
 		return null;
 	}
 

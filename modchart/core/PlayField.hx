@@ -107,6 +107,7 @@ class PlayField extends FlxBasic {
 			// tap notes
 			for (arrow in curItems[1]) {
 				arrow.visible = false;
+
 				arrowRenderer.prepare(arrow);
 				drawCB.push({
 					callback: () -> {
@@ -119,6 +120,7 @@ class PlayField extends FlxBasic {
 			// hold notes
 			for (arrow in curItems[2]) {
 				arrow.visible = false;
+
 				holdRenderer.prepare(arrow);
 				drawCB.push({
 					callback: () -> {

@@ -3,10 +3,8 @@ package modchart.events;
 import modchart.Manager;
 
 class Event {
-	/**
-	 * The beat where the event will be executed
-	 */
 	public var name:String;
+	public var target:Float;
 
 	public var beat:Float;
 	public var field:Int;
@@ -29,10 +27,13 @@ class Event {
 	}
 
 	public function update(curBeat:Float) {
-		if (curBeat >= beat) {
+		if (curBeat >= beat && callback != null) {
 			callback(this);
 
 			fired = !mercy;
+
+			if (fired)
+				callback = null;
 		}
 	}
 

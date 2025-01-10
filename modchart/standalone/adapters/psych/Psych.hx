@@ -1,17 +1,23 @@
 package modchart.standalone.adapters.psych;
 
+#if (FM_ENGINE_VERSION == "1.0" || FM_ENGINE_VERSION == "0.7")
 import backend.ClientPrefs;
 import backend.Conductor;
+import objects.Note;
+import objects.StrumNote as Strum;
+import states.PlayState;
+#else
+import ClientPrefs;
+import Conductor;
+import Note;
+import PlayState;
+import StrumNote as Strum;
+#end
 import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import modchart.Manager;
-import modchart.standalone.Adapter.IAdapter;
-import objects.Note;
-import objects.StrumNote as Strum;
-import states.PlayState;
-import states.PlayState;
-import states.PlayState;
+import modchart.standalone.IAdapter;
 
 class Psych implements IAdapter {
 	private var __fCrochet:Float = 0;
@@ -45,7 +51,7 @@ class Psych implements IAdapter {
 		});
 	}
 
-	private function setupLuaFunction():Bool {
+	private function setupLuaFunctions() {
 		#if LUA_ALLOWED
 		// todo
 		#end

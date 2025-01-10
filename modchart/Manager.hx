@@ -40,7 +40,7 @@ class Manager extends FlxBasic {
 	@:noCompletion
 	private function __playfieldChoice(func:PlayField->Void, field:Int = -1) {
 		if (field != -1)
-			func(playfields[field]);
+			return func(playfields[field]);
 		else
 			for (pf in playfields)
 				func(pf);
@@ -55,8 +55,14 @@ class Manager extends FlxBasic {
 	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
 		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
 
-	public inline function getPercent(name:String, player:Int = -1, field:Int)
-		__playfieldChoice((pf) -> pf.getPercent(name, player), field);
+	public inline function getPercent(name:String, player:Int = 0, field:Int = 0):Float {
+		final possiblePlayfield = playfields[field];
+
+		if (possiblePlayfield != null)
+			return possiblePlayfield.getPercent(name, player);
+
+		return 0.;
+	}
 
 	public inline function addEvent(event:Event, field:Int = -1)
 		__playfieldChoice((pf) -> pf.addEvent(event), field);
@@ -107,6 +113,9 @@ class Manager extends FlxBasic {
 		drawQueue.sort((a, b) -> {
 			return Math.round(b.z - a.z);
 		});
+
+		var sprs = [];
+		sprs.resize(drawQueue.length);
 
 		for (item in drawQueue)
 			item.callback();

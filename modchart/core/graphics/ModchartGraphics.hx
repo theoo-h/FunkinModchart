@@ -191,7 +191,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			alphaTotal += arrowVisuals.alpha;
 
-			transfTotal.push(new ColorTransform(1 - topVisuals.glow, 1 - topVisuals.glow, 1 - topVisuals.glow, topVisuals.alpha * 0.6,
+			transfTotal.push(new ColorTransform(1 - topVisuals.glow, 1 - topVisuals.glow, 1 - topVisuals.glow, topVisuals.alpha * arrow.alpha,
 				Math.round(topVisuals.glowR * topVisuals.glow * 255), Math.round(topVisuals.glowG * topVisuals.glow * 255),
 				Math.round(topVisuals.glowB * topVisuals.glow * 255)));
 		}
@@ -320,7 +320,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			final thisPos = ModchartUtil.applyVectorZoom(output.pos, output.visuals.zoom);
 			final nextPos = ModchartUtil.applyVectorZoom(nextOutput.pos, nextOutput.visuals.zoom);
 
-			output.visuals.angleZ += (-90 + (Math.atan2(nextPos.y - thisPos.y, nextPos.x - thisPos.x) * FlxAngle.TO_DEG)) * orient;
+			output.visuals.angleZ += FlxAngle.wrapAngle((-90 + (Math.atan2(nextPos.y - thisPos.y, nextPos.x - thisPos.x) * FlxAngle.TO_DEG)) * orient);
 		}
 
 		// prepare the instruction for drawing
@@ -388,7 +388,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		    arrow.frame.uv.width, arrow.frame.uv.height
 	   ]);
         // @formatter:on
-		var color = new ColorTransform(1 - output.visuals.glow, 1 - output.visuals.glow, 1 - output.visuals.glow, output.visuals.alpha,
+		var color = new ColorTransform(1 - output.visuals.glow, 1 - output.visuals.glow, 1 - output.visuals.glow, arrow.alpha * output.visuals.alpha,
 			Math.round(output.visuals.glowR * output.visuals.glow * 255), Math.round(output.visuals.glowG * output.visuals.glow * 255),
 			Math.round(output.visuals.glowB * output.visuals.glow * 255));
 

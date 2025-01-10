@@ -2,8 +2,8 @@
     "name": "funkin-modchart",
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
-    "version": "1.0.2",
-    "releasenote": "Removed Haxe 4.3 operators",
+    "version": "1.1.0",
+    "releasenote": "Haxe 4.2 support, Psych 0.6 support, fixed bugs and optimized stuff.",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {
