@@ -64,7 +64,7 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 ## Credits
 **TheoDev**: Owner, Lead coder.
 
-**Ne_eo**: Coder, bugfixed & optimizer.
+**Ne_Eo (aka. Neo)**: Coder, bugfixes & Optimizer.
 
 **Edwhak**: Maintainer.
 
@@ -73,8 +73,6 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 **4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impressive)
 
 ## Special Thanks
-
-**Ne_Eo (aka. Neo):** Support, help with some bugs.
 
 **lunarcleint:** Support, such a nice guy!
 

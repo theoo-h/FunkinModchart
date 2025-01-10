@@ -19,13 +19,15 @@ class EventManager {
 	public function add(event:Event) {
 		if (event.name != null) {
 			final lwr = event.name.toLowerCase();
+			var field = event.field;
 
-			if (table.get(lwr) == null)
-				table.set(lwr, []);
-			if (table.get(lwr)[event.field] == null)
-				table.get(lwr)[event.field] = [];
+			var entry = table.get(lwr);
+			if (entry == null)
+				table.set(lwr, entry = []);
+			if (entry[field] == null)
+				entry[field] = [];
 
-			table.get(lwr)[event.field].push(event);
+			entry[field].push(event);
 		}
 
 		eventList.push(event);
