@@ -11,14 +11,12 @@ class Rotate extends Modifier {
 		var rotateName = getRotateName();
 		var field = params.field;
 
-		// each axis of the rotate is independent,
-		// which means that just because rotateX is not activated
-		// does not mean that the others will not be deactivated either.
 		var angleX = getPercent(rotateName + 'X', field);
 		var angleY = getPercent(rotateName + 'Y', field);
 		var angleZ = getPercent(rotateName + 'Z', field);
 
-		if ((angleX + angleY + angleZ) == 0)
+		// does angleY work here if angleX and angleZ are disabled?
+		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return curPos;
 
 		final origin:Vector3D = getOrigin(curPos, params);
