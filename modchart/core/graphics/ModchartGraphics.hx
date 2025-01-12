@@ -298,7 +298,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			hDiff: arrowDiff,
 			receptor: Adapter.instance.getLaneFromArrow(arrow),
 			field: player,
-			arrow: true
+			arrow: Adapter.instance.isTapNote(arrow)
 		};
 
 		helperVector.setTo(Adapter.instance.getDefaultReceptorX(arrowData.receptor, arrowData.field) + Manager.ARROW_SIZEDIV2,
