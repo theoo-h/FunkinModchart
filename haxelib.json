@@ -3,7 +3,7 @@
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
     "version": "1.1.0",
-    "releasenote": "Haxe 4.2 support, Psych 0.6 support, fixed bugs and optimized stuff.",
+    "releasenote": "Haxe 4.2 support, Psych 0.6 support, mod additions, fixed bugs and optimized stuff.",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {
