@@ -15,7 +15,7 @@ class Rotate extends Modifier {
 		var angleY = getPercent(rotateName + 'Y', field);
 		var angleZ = getPercent(rotateName + 'Z', field);
 
-		// does angleY work here if angleX and angleZ are disabled?
+		// does angleY work here if angleX and angleZ are disabled? - ye
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return curPos;
 

@@ -3,37 +3,6 @@ package modchart.standalone;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 
-/*
-	class EAdapter implements IAdapter
-	{
-	public function onModchartingInitialization():Void {}
-
-	// Song-related stuff
-	public function getSongPosition():Float        {return 0;}
-	public function getStaticCrochet():Float       {return 0;}
-	public function getCurrentBeat():Float         {return 0;}
-	public function getCurrentScrollSpeed():Float  {return 0;}
-
-	// Arrow-related stuff
-	public function getDefaultReceptorX(lane:Int, player:Int):Float {return 0;}
-	public function getDefaultReceptorY(lane:Int, player:Int):Float {return 0;}
-	public function getTimeFromArrow(arrow:FlxSprite):Float         {return 0;}
-	public function isTapNote(sprite:FlxSprite):Bool                {return false;}
-	public function isHoldEnd(sprite:FlxSprite):Bool                {return false;}
-	public function arrowHit(sprite:FlxSprite):Bool              {return false;}
-
-	public function getLaneFromArrow(sprite:FlxSprite):Int          {return 0;}
-	public function getPlayerFromArrow(sprite:FlxSprite):Int        {return 0;}
-
-	public function getKeyCount():Int       {return 0;};
-	public function getPlayerCount():Int    {return 0;};
-
-	public function getArrowCamera():Array<FlxCamera> {return [];};
-
-	public function getHoldSubdivisions():Int  {return 0;};
-
-	public function getArrowItems():Array<Array<Array<FlxSprite>>> {return [];};
-}*/
 interface IAdapter {
 	public function onModchartingInitialization():Void;
 

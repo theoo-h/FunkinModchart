@@ -6,21 +6,22 @@ import modchart.core.util.Constants.Visuals;
 import openfl.geom.Vector3D;
 
 class Confusion extends Modifier {
-	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
-		// x, y, z
+	static final dNames = ['x' => 'roll', 'y' => 'twirl', 'z' => 'dizzy'];
 
-		var receptorName = Std.string(params.receptor);
-		var field = params.field;
+	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
+		final receptorName = Std.string(params.receptor);
+		final field = params.field;
 
 		var angle = 0.;
 		// real confusion
 		angle -= (params.fBeat * (getPercent('confusion' + axis, field) + getPercent('confusion' + axis + receptorName, field))) % 360;
 		// offset
 		angle += getPercent('confusionOffset' + axis, field) + getPercent('confusionOffset' + axis + receptorName, field);
-		// other
-		angle += getPercent('dizzy' + axis, field) * (params.hDiff * 0.1 * (1 + getPercent('dizzySpeed', field)));
+		// dizzy mods
+		final cName = dNames.get(realAxis);
+		angle += getPercent(cName, field) * (params.hDiff * 0.1 * (1 + getPercent('${cName}Speed', field)));
 
-		switch (realAxis.toLowerCase()) {
+		switch (realAxis) {
 			case 'x':
 				vis.angleX += angle;
 			case 'y':

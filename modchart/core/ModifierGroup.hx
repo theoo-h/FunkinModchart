@@ -185,7 +185,7 @@ class ModifierGroup {
 		return 0;
 	}
 
-	private function getDefaultPerc():IntMap<Float> {
+	private inline function getDefaultPerc():IntMap<Float> {
 		final percMap = new IntMap<Float>();
 
 		for (i in 0...Adapter.instance.getPlayerCount())

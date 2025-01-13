@@ -15,5 +15,5 @@ class SawTooth extends Modifier {
 	}
 
 	override public function shouldRun(params:RenderParams):Bool
-		return getPercent('sawtooth', params.field) != 0;
+		return true;
 }

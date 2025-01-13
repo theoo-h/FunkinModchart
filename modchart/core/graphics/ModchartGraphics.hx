@@ -71,10 +71,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		var size = Manager.HOLD_SIZEDIV2 * output1.visuals.scaleX * zScale * output1.visuals.zoom;
 
-		var quads = [
-			new Vector3D(-unit.y * size, unit.x * size),
-			new Vector3D(unit.y * size, -unit.x * size)
-		];
+		var quad0 = new Vector3D(-unit.y * size, unit.x * size);
+		var quad1 = new Vector3D(unit.y * size, -unit.x * size);
 		@:privateAccess
 		for (i in 0...2) {
 			var visuals = switch (i) {
@@ -82,8 +80,13 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				case 1: output2.visuals;
 				default: null;
 			}
+			var quad = switch (i) {
+				case 0: quad0;
+				case 1: quad1;
+				default: null;
+			}
 
-			var translated = ModchartUtil.rotate3DVector(quads[i], visuals.angleX * instance.getPercent('rotateHoldX', params.field),
+			var translated = ModchartUtil.rotate3DVector(quad, visuals.angleX * instance.getPercent('rotateHoldX', params.field),
 				visuals.angleY * instance.getPercent('rotateHoldY', params.field), visuals.angleZ * instance.getPercent('rotateHoldZ', params.field));
 			translated.z *= 0.001;
 			var rotOutput = ModchartUtil.perspective(translated, new Vector3D());
@@ -100,12 +103,12 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				__matrix.identity();
 			}
 
-			quads[i] = rotOutput;
+			quad = rotOutput;
 		}
 		return [
 			[
-				curPoint.add(quads[0]),
-				curPoint.add(quads[1]),
+				curPoint.add(quad0),
+				curPoint.add(quad1),
 				curPoint.add(new Vector3D(0, 0, 1 + (1 - zScale) * 0.001))
 			],
 			output1.visuals
@@ -163,7 +166,6 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		Manager.HOLD_SIZE = arrow.width;
 		Manager.HOLD_SIZEDIV2 = arrow.width * .5;
 
-		// why not get the alpha directly from the note?
 		var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 : 1)) / HOLD_SUBDIVISIONS;
 		for (sub in 0...HOLD_SUBDIVISIONS) {
 			var subOff = subCr * sub;
@@ -214,23 +216,6 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		__drawInstruction(queue.shift());
 	}
 
-	/*
-		override public function render(times:Null<Int>):Void
-		{
-			if (times == null)
-				times = queue.length;
-
-			var iterator = queue.iterator();
-			var count = 0;
-
-			@:privateAccess do {
-				__drawInstruction(iterator.next());
-
-				count++;
-			} while (count < times && iterator.hasNext());
-
-			queue = queue.splice(count, queue.length);
-	}*/
 	private function __drawInstruction(instruction:FMDrawInstruction) {
 		if (cast(instruction.extra[0], Float) <= 0)
 			return;
@@ -588,9 +573,6 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 class ModchartProxyRenderer extends ModchartRenderer<FlxCamera> {
 	override public function prepare(cam:FlxCamera):Void {}
 }
-
-// we better not use this, it could cause problems in the future (when we make the standalone system)
-// abstract StandartArrow(Dynamic) from Note from Strum to Note to Strum {}
 
 @:publicFields
 @:structInit
