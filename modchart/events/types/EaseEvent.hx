@@ -46,6 +46,8 @@ class EaseEvent extends Event {
 
 			if (possibleLastEvent != null)
 				lastPerc = possibleLastEvent.target;
+			else
+				lastPerc = parent.pf.getPercent(name, field);
 
 			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
 			// maybe we should make it use bound?
