@@ -223,9 +223,13 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		@:privateAccess
 		for (camera in cameras) {
-			var item = camera.startTrianglesBatch(item.graphic, false, true, item.blend, true, item.shader);
-			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds,
-				instruction.colorData);
+			var cTransforms = instruction.colorData.copy();
+
+			for (t in cTransforms)
+				t.alphaMultiplier *= camera.alpha;
+
+			var item = camera.startTrianglesBatch(item.graphic, camera.antialiasing, true, item.blend, true, item.shader);
+			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, cTransforms);
 		}
 	}
 
@@ -411,13 +415,15 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			return;
 
 		final item = instruction.item;
-
-		var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
+		final cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
 
 		@:privateAccess
 		for (camera in cameras) {
-			camera.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false, false,
-				instruction.colorData[0], item.shader);
+			final cTransform = instruction.colorData[0];
+			cTransform.alphaMultiplier *= camera.alpha;
+
+			camera.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
+				camera.antialiasing, cTransform, item.shader);
 		}
 	}
 }
