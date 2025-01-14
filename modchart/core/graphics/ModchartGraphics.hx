@@ -103,7 +103,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				__matrix.identity();
 			}
 
-			quad = rotOutput;
+			quad.copyFrom(rotOutput);
 		}
 		return [
 			[
@@ -158,8 +158,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		var lastQuad:Array<Vector3D> = null;
 		var lastData:ArrowData = null;
 
-		var arrowQuads:Array<Vector3D> = null;
-		var arrowVisuals:Visuals = null;
+		var depth:Null<Float> = null;
 
 		var alphaTotal:Single = 0.;
 
@@ -186,19 +185,17 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			lastVis = bottomVisuals;
 			lastQuad = bottomQuads;
 
-			if (arrowQuads == null) {
-				arrowQuads = topQuads;
-				arrowVisuals = topVisuals;
-			}
+			if (depth == null)
+				depth = topQuads[2].z * 1000;
 
-			alphaTotal += arrowVisuals.alpha;
+			alphaTotal += topVisuals.alpha;
 
 			transfTotal.push(new ColorTransform(1 - topVisuals.glow, 1 - topVisuals.glow, 1 - topVisuals.glow, topVisuals.alpha * arrow.alpha,
 				Math.round(topVisuals.glowR * topVisuals.glow * 255), Math.round(topVisuals.glowG * topVisuals.glow * 255),
 				Math.round(topVisuals.glowB * topVisuals.glow * 255)));
 		}
 
-		arrow._z = arrowQuads[2].z * 1000;
+		arrow._z = depth;
 
 		newInstruction.item = item;
 		newInstruction.vertices = new openfl.Vector<Float>(vertTotal.length, true, vertTotal);
