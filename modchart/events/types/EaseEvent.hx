@@ -33,25 +33,27 @@ class EaseEvent extends Event {
 		super(beat, (_) -> {}, parent, true);
 	}
 
+	var entryPerc:Null<Float> = null;
+
 	override function update(curBeat:Float) {
 		if (fired)
 			return;
 
 		if (curBeat < data.endBeat) {
-			var lastPerc = 0.;
+			if (entryPerc == null) {
+				// this fixed A LOT of visual issues when convining eases and sets
+				// based on schmovin timeline
+				final possibleLastEvent = parent.getLastEventBefore(this);
 
-			// this fixed A LOT of visual issues when convining eases and sets
-			// based on schmovin timeline
-			final possibleLastEvent = parent.getLastEventBefore(this);
-
-			if (possibleLastEvent != null)
-				lastPerc = possibleLastEvent.target;
-			else
-				lastPerc = parent.pf.getPercent(name, field);
+				if (possibleLastEvent != null)
+					entryPerc = possibleLastEvent.target;
+				else
+					entryPerc = getModPercent(name, field);
+			}
 
 			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
 			// maybe we should make it use bound?
-			var out = FlxMath.lerp(lastPerc, target, data.ease(progress));
+			var out = FlxMath.lerp(entryPerc, target, data.ease(progress));
 			setModPercent(name, out, field);
 			fired = false;
 		} else if (curBeat >= data.endBeat) {
