@@ -228,7 +228,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			for (t in cTransforms)
 				t.alphaMultiplier *= camera.alpha;
 
-			var item = camera.startTrianglesBatch(item.graphic, camera.antialiasing, true, item.blend, true, item.shader);
+			var item = camera.startTrianglesBatch(item.graphic, item.antialiasing, true, item.blend, true, item.shader);
 			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, cTransforms);
 		}
 	}
@@ -423,7 +423,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			cTransform.alphaMultiplier *= camera.alpha;
 
 			camera.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
-				camera.antialiasing, cTransform, item.shader);
+				item.antialiasing, cTransform, item.shader);
 		}
 	}
 }

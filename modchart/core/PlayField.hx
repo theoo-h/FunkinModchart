@@ -75,6 +75,28 @@ class PlayField extends FlxBasic {
 		addEvent(new EaseEvent(name, beat, length, value, easeFunc, player, events));
 	}
 
+	public function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
+		if (player == -1) {
+			for (curField in 0...Adapter.instance.getPlayerCount())
+				add(name, beat, length, value, easeFunc, curField);
+			return;
+		}
+
+		addEvent(new AddEvent(name, beat, length, value, easeFunc, player, events));
+	}
+
+	public function setAdd(name:String, beat:Float, valueToAdd:Float, player:Int = -1):Void {
+		var addition = getPercent(name, player == -1 ? 0 : player);
+		var value = addition + valueToAdd;
+		if (player == -1) {
+			for (curField in 0...Adapter.instance.getPlayerCount())
+				set(name, beat, value, curField);
+			return;
+		}
+
+		addEvent(new SetEvent(name.toLowerCase(), beat, value, player, events));
+	}
+
 	public function repeater(beat:Float, length:Float, callback:Event->Void):Void
 		addEvent(new RepeaterEvent(beat, length, callback, events));
 

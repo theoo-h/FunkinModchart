@@ -73,6 +73,12 @@ class Manager extends FlxBasic {
 	public inline function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
 		__playfieldChoice((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
 
+	public inline function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
+		__playfieldChoice((pf) -> pf.add(name, beat, length, value, easeFunc, player), field);
+
+	public inline function setAdd(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
+		__playfieldChoice((pf) -> pf.setAdd(name, beat, value, player), field);
+
 	public inline function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
 		__playfieldChoice((pf) -> pf.repeater(beat, length, callback), field);
 
