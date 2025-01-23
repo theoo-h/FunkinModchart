@@ -43,6 +43,10 @@ class Codename implements IAdapter {
 		return __fCrochet;
 	}
 
+	public function getBeatFromStep(step:Float):Float {
+		return step * Conductor.stepsPerBeat;
+	}
+
 	public function arrowHit(arrow:FlxSprite) {
 		if (arrow is Note) {
 			final note:Note = cast arrow;
@@ -134,6 +138,7 @@ class Codename implements IAdapter {
 	// 0 receptors
 	// 1 tap arrows
 	// 2 hold arrows
+	// 3 receptor attachments
 	public function getArrowItems() {
 		var pspr:Array<Array<Array<FlxSprite>>> = [];
 
@@ -141,6 +146,11 @@ class Codename implements IAdapter {
 
 		for (i in 0...strumLineMembers.length) {
 			final sl = strumLineMembers[i];
+
+			if (!sl.visible)
+				continue;
+
+			final splashHandler = PlayState.instance.splashHandler;
 
 			// this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
 			pspr[i] = [];

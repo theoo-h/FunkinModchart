@@ -51,6 +51,17 @@ class Visuals {
 	public var skewY:Float = 0;
 }
 
+@:publicFields
+@:structInit
+class Node {
+	public var input:Array<String> = [];
+	public var output:Array<String> = [];
+	public var func:NodeFunction = (_, o) -> _;
+}
+
+// (InputModPercents, PlayerNumber) -> OutputModPercents
+typedef NodeFunction = (Array<Float>, Int) -> Array<Float>;
+
 class SimplePoint {
 	public var x:Float;
 	public var y:Float;

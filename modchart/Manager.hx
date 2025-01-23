@@ -79,6 +79,9 @@ class Manager extends FlxBasic {
 	public inline function callback(beat:Float, callback:Event->Void, field:Int = -1)
 		__playfieldChoice((pf) -> pf.callback(beat, callback), field);
 
+	public inline function node(input:Array<String>, output:Array<String>, func:NodeFunction, field:Int = -1)
+		__playfieldChoice((pf) -> pf.node(input, output, func), field);
+
 	public function addPlayfield() {
 		playfields.push(new PlayField());
 

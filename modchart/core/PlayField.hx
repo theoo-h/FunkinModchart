@@ -1,6 +1,7 @@
 package modchart.core;
 
 import flixel.FlxBasic;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxEase.EaseFunction;
 import modchart.core.graphics.ModchartGraphics.ModchartArrowPath;
@@ -21,6 +22,7 @@ class PlayField extends FlxBasic {
 
 	private var arrowRenderer:ModchartArrowRenderer;
 	private var receptorRenderer:ModchartArrowRenderer;
+	private var attachmentRenderer:ModchartArrowRenderer;
 	private var holdRenderer:ModchartHoldRenderer;
 	private var pathRenderer:ModchartArrowPath;
 
@@ -32,6 +34,7 @@ class PlayField extends FlxBasic {
 
 		arrowRenderer = new ModchartArrowRenderer(this);
 		receptorRenderer = new ModchartArrowRenderer(this);
+		attachmentRenderer = new ModchartArrowRenderer(this);
 		holdRenderer = new ModchartHoldRenderer(this);
 		pathRenderer = new ModchartArrowPath(this);
 	}
@@ -78,16 +81,85 @@ class PlayField extends FlxBasic {
 	public function callback(beat:Float, callback:Event->Void):Void
 		addEvent(new Event(beat, callback, events));
 
+	private var nodes:Array<Node> = [];
+
+	/**
+	 * Register a node.
+	 * @param input Input Aux Mods
+	 * @param output Output Mods
+	 * @param func Processor function, Array<InputModPercs> -> Array<OutputModPercs>
+	 */
+	public function node(input:Array<String>, output:Array<String>, func:NodeFunction) {
+		nodes.push({
+			input: input,
+			output: output,
+			func: func
+		});
+	}
+
+	// EXPERIMENTAL
+	// FIXME
+	// Warning: If a node has 'drunk' by example in his output
+	// and u made a ease on drunk and u made a ease on the node
+	// input, the eases may overlap, causing visuals issues.
+	public function updateNodes() {
+		for (player in 0...Adapter.instance.getPlayerCount()) {
+			final it = nodes.iterator();
+			final n = it.next;
+			final h = it.hasNext;
+			do {
+				final node = n();
+
+				var entryPercs = [];
+				var outPercs = [];
+				entryPercs.resize(node.input.length);
+
+				for (i in 0...entryPercs.length)
+					entryPercs[i] = getPercent(node.input[i], player);
+
+				outPercs = node.func(entryPercs, player);
+
+				final nbl = node.output.length;
+				if (outPercs == null || outPercs.length < 0)
+					outPercs = [];
+
+				for (i in 0...nbl) {
+					final prc = outPercs[i];
+
+					if (!Math.isNaN(prc) && prc != 0)
+						setPercent(node.output[i], prc, player);
+				}
+			} while (h());
+		}
+	}
+
 	override function update(elapsed:Float):Void {
 		// Update Event Timeline
 		events.update(Adapter.instance.getCurrentBeat());
+
+		updateNodes();
 	}
 
 	override public function draw() {
 		__drawPlayField();
+		super.draw();
+	}
+
+	override public function destroy() {
+		arrowRenderer.dispose();
+		holdRenderer.dispose();
+		receptorRenderer.dispose();
+		attachmentRenderer.dispose();
+		pathRenderer.dispose();
+		super.destroy();
 	}
 
 	var drawCB:Array<{callback:Void->Void, z:Float}> = [];
+
+	private function getVisibility(obj:flixel.FlxObject) {
+		obj.visible = false;
+		return obj._fmVisible;
+	}
 
 	private function __drawPlayField() {
 		drawCB = [];
@@ -105,8 +177,9 @@ class PlayField extends FlxBasic {
 				new Vector3D(getPercent('viewUpX', i), 1 + getPercent('viewUpY', i), getPercent('viewUpZ', i)));
 
 			// tap notes
-			for (arrow in curItems[1]) {
-				arrow.visible = false;
+			for (arrow in (curItems[1] != null ? curItems[1] : [])) {
+				if (!getVisibility(arrow))
+					continue;
 
 				arrowRenderer.prepare(arrow);
 				drawCB.push({
@@ -118,8 +191,9 @@ class PlayField extends FlxBasic {
 			}
 
 			// hold notes
-			for (arrow in curItems[2]) {
-				arrow.visible = false;
+			for (arrow in (curItems[2] != null ? curItems[2] : [])) {
+				if (!getVisibility(arrow))
+					continue;
 
 				holdRenderer.prepare(arrow);
 				drawCB.push({
@@ -131,8 +205,10 @@ class PlayField extends FlxBasic {
 			}
 
 			// receptors
-			for (receptor in curItems[0]) {
-				receptor.visible = false;
+			for (receptor in (curItems[0] != null ? curItems[0] : [])) {
+				if (!getVisibility(receptor))
+					continue;
+
 				receptorRenderer.prepare(receptor);
 				if (Manager.instance.renderArrowPaths)
 					pathRenderer.prepare(receptor);

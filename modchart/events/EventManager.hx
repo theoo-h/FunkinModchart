@@ -49,7 +49,11 @@ class EventManager {
 
 	public function getLastEventBefore(event:Event) {
 		final playerEvents = table.get(event.name.toLowerCase());
-		final eventList = playerEvents != null ? playerEvents[event.field] : null;
+
+		if (playerEvents == null || playerEvents[event.field] == null)
+			return null;
+
+		final eventList = playerEvents[event.field];
 		if (eventList != null) {
 			final lastIndex = eventList.indexOf(event);
 			if (lastIndex > 0) {

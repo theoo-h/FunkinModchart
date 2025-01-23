@@ -55,7 +55,7 @@ class Reverse extends Modifier {
 		var centerPercent = getPercent('centered', params.field);
 		shift = FlxMath.lerp(shift, (HEIGHT * 0.5) - ARROW_SIZEDIV2, centerPercent);
 
-		// TODO: long holds
+		// TODO: long, straight and short holds
 		var distance = params.hDiff;
 
 		distance *= 0.45 * Adapter.instance.getCurrentScrollSpeed();

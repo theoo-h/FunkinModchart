@@ -12,6 +12,7 @@ interface IAdapter {
 	public function getStaticCrochet():Float; // Beat crochet without bpm changes
 	public function getCurrentBeat():Float; // Current beat
 	public function getCurrentScrollSpeed():Float; // Current arrow scroll speed
+	public function getBeatFromStep(step:Float):Float;
 
 	// Arrow-related stuff
 	public function getDefaultReceptorX(lane:Int, player:Int):Float; // Get default strum x position

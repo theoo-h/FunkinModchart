@@ -75,6 +75,9 @@ class Psych implements IAdapter {
 		return __fCrochet + 8;
 	}
 
+	public function getBeatFromStep(step:Float)
+		return step * .25;
+
 	public function arrowHit(arrow:FlxSprite) {
 		if (arrow is Note)
 			return cast(arrow, Note).wasGoodHit;

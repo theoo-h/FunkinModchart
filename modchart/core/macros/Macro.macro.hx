@@ -11,16 +11,40 @@ class Macro {
 		Compiler.include("modchart.standalone.adapters." + haxe.macro.Context.definedValue("FM_ENGINE").toLowerCase());
 	}
 
-	public static function addProperty_z():Array<Field> {
-		var fields = Context.getBuildFields();
+	public static function addModchartStorage():Array<Field> {
+		final fields = Context.getBuildFields();
+		final pos = Context.currentPos();
+
+		for (f in fields) {
+			if (f.name == 'set_visible') {
+				switch (f.kind) {
+					case FFun(fun):
+						fun.expr = macro {
+							visible = value;
+							_fmVisible = value;
+						};
+					default:
+						// do nothing
+				}
+			}
+		}
 
 		// uses _z to prevent collisions with other classes
-		fields.push({
+		final zField:Field = {
 			name: "_z",
 			access: [APublic],
 			kind: FieldType.FVar(macro :Float, macro $v{0}),
-			pos: Context.currentPos()
-		});
+			pos: pos
+		};
+		final visField:Field = {
+			name: "_fmVisible",
+			access: [APublic],
+			kind: FieldType.FVar(macro :Null<Bool>, macro true),
+			pos: pos
+		};
+
+		fields.push(zField);
+		fields.push(visField);
 
 		return fields;
 	}
