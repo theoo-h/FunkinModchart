@@ -13,6 +13,7 @@ import modchart.events.EventManager;
 import modchart.events.types.EaseEvent;
 import modchart.events.types.RepeaterEvent;
 import modchart.events.types.SetEvent;
+import modchart.events.types.AddEvent;
 import openfl.geom.Vector3D;
 
 // TODO: make this extend to flxsprite and use parented transformation matrix
