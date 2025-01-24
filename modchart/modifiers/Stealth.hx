@@ -64,8 +64,8 @@ class Stealth extends Modifier {
 	override public function visuals(data:Visuals, params:RenderParams) {
 		final field = params.field;
 
-		final visibility = getPercent(params.arrow ? 'stealth' : 'dark', field);
-		data.alpha = (getPercent('alpha', field) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2))) + getPercent('alphaOffset', field);
+		final visibility = getPercent(params.arrow ? 'stealth' : 'dark', field) + getPercent(params.arrow ? 'stealth' : 'dark' + Std.string(params.receptor), field);
+		data.alpha = ((getPercent('alpha', field) + getPercent('alpha' + Std.string(params.receptor), field)) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2))) + getPercent('alphaOffset', field);
 		data.glow += getPercent('flash', field) + (visibility * 2);
 
 		// sudden & hidden
