@@ -1,7 +1,8 @@
 ## Current supported FNF engines/frameworks
 
 ## Codename Engine
-- Beta
+- Beta *last tested commit: 94db415*
+
 - `FM_ENGINE`: "CODENAME"
 - `FM_ENGINE_VERSION`: ""
 ## Psych Engine

@@ -34,7 +34,7 @@ class Boost extends Modifier {
 			// Decelerate / Brake
 			final scale2 = HEIGHT * (1 + getPercent('brakeScale', field));
 
-			var off2 = params.hDiff * 1.5 / ((params.hDiff + (scale2) / 1.2) / scale);
+			var off2 = params.hDiff * 1.5 / ((params.hDiff + (scale2) / 1.2) / scale2);
 			curPos.y += ModchartUtil.clamp(-brake * (off2 - params.hDiff), -600, 600);
 		}
 		if (wave != 0) {

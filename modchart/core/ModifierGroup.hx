@@ -33,7 +33,7 @@ class ModifierGroup {
 		'square' => Square,
 		'zigzag' => ZigZag,
 		'beat' => Beat,
-		'accelerate' => Accelerate,
+		'boost' => Boost,
 		'receptorscroll' => ReceptorScroll,
 		'sawtooth' => SawTooth,
 		'mini' => Mini,

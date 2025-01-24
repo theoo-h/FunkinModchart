@@ -1,7 +1,7 @@
 package modchart.standalone;
 
 class Adapter {
-	public static var instance(default, null):IAdapter;
+	public static var instance:IAdapter;
 	private static var ENGINE_NAME:String = haxe.macro.Compiler.getDefine("FM_ENGINE");
 
 	public static function init() {

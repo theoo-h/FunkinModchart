@@ -11,7 +11,6 @@ import openfl.geom.Vector3D;
 /**
  * An Path Manager for FunkinModchart
  *
- * TODO: Make the trajectory interpolation LINEAR
  * @author TheoDev
  */
 @:skipModifier
@@ -20,11 +19,6 @@ class PathModifier extends Modifier {
 	private var __pathBound:Float = 1500;
 
 	public var pathOffset:Vector3D = new Vector3D();
-
-	// TODO
-	public var pathEase:Float->Float = (t) -> t;
-	// set this to false if wanna extra performance
-	public var pathLinear:Bool = false;
 
 	public function new(pf:PlayField, path:Array<PathNode>) {
 		super(pf);

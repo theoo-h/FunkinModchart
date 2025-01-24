@@ -65,7 +65,7 @@ class Stealth extends Modifier {
 		final field = params.field;
 
 		final vMod = params.arrow ? 'stealth' : 'dark';
-		final visibility = getPercent(vMod, field) + getPercent(vmod + Std.string(params.receptor), field);
+		final visibility = getPercent(vMod, field) + getPercent(vMod + Std.string(params.receptor), field);
 		data.alpha = ((getPercent('alpha', field) + getPercent('alpha' + Std.string(params.receptor), field)) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2)))
 			+ getPercent('alphaOffset', field);
 		data.glow += getPercent('flash', field) + (visibility * 2);
