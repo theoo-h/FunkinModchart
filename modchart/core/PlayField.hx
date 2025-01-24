@@ -133,6 +133,8 @@ class PlayField extends FlxBasic {
 			do {
 				final node = n();
 
+     if (node == null) continue;
+
 				var entryPercs = [];
 				var outPercs = [];
 				entryPercs.resize(node.input.length);
