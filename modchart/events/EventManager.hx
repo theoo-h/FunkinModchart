@@ -47,29 +47,33 @@ class EventManager {
 		}
 	}
 
-	public function getLastEventBefore(event:Event) {
+	public function getLastEventBefore(event:Event):Event {
 		final playerEvents = table.get(event.name.toLowerCase());
-
-		if (playerEvents == null || playerEvents[event.field] == null)
+		if (playerEvents == null) {
 			return null;
-
-		final eventList = playerEvents[event.field];
-		if (eventList != null) {
-			final lastIndex = eventList.indexOf(event);
-			if (lastIndex > 0) {
-				final possibleEvent = eventList[lastIndex - 1];
-				if (possibleEvent != null)
-					return possibleEvent;
-			}
 		}
+	
+		final eventList = playerEvents[event.field];
+		if (eventList == null) {
+			return null;
+		}
+	
+		final lastIndex = eventList.indexOf(event);
+		if (lastIndex > 0) {
+			final possibleEvent = eventList[lastIndex - 1];
+			return possibleEvent != null ? possibleEvent : null;
+		}
+	
 		return null;
 	}
 
 	private function sortEvents() {
 		for (modTab in table.iterator()) {
-			for (events in modTab) {
-				events.sort(__sortFunction);
-			}
+			if (modTab == null)
+				continue;
+			for (events in modTab)
+				if (events != null && events.length > 0)
+					events.sort(__sortFunction);
 		}
 	}
 
