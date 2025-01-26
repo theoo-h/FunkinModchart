@@ -6,20 +6,36 @@ import openfl.geom.Vector3D;
 
 class Bumpy extends Modifier {
 
+	public function new(pf) {
+		super(pf);
+
+		var stuff = ['','Angle'];
+		for (i in 0...stuff.length){
+			setPercent('bumpy'+stuff[i]+'Mult', 1, -1);
+			setPercent('bumpy'+stuff[i]+'XMult', 1, -1);
+			setPercent('bumpy'+stuff[i]+'YMult', 1, -1);
+			setPercent('bumpy'+stuff[i]+'ZMult', 1, -1);
+		}
+	}
+
 	function applyBumpy(curPos:Vector3D, params:RenderParams, axis:String, realAxis:String) {
 		final receptorName = Std.string(params.receptor);
 		final field = params.field;
 		var hDiff = params.hDiff;
 
+		var offset = getPercent('bumpy'+axis+'Offset', field) + getPercent('bumpy'+axis+receptorName+'Offset', field);
+		var period = getPercent('bumpy'+axis+'Period', field) + getPercent('bumpy'+axis+receptorName+'Period', field);
+		var mult = getPercent('bumpy'+axis+'Mult', field) + getPercent('bumpy'+axis+receptorName+'Mult', field);
+
 		var shift = 0.;
 
-		var bumpyMath = (40 * sin(
-				(hDiff + (100.0 * (getPercent('bumpy'+axis+'Offset', field) + getPercent('bumpy'+axis+receptorName+'Offset', field)))) 
-				/ (((getPercent('bumpy'+axis+'Period', field) + getPercent('bumpy'+axis+receptorName+'Period', field))
-				* ((getPercent('bumpy'+axis+'Mult', field) + getPercent('bumpy'+axis+receptorName+'Mult', field))*24.0)) + 24.0)
-			));
+		var scrollSpeed = getScrollSpeed();
 
-		shift += bumpyMath * (getPercent('bumpy'+axis, field) + getPercent('bumpy'+axis+receptorName, field));
+		var bumpyMath = 40 * sin(((hDiff*0.01) + (100.0 * offset) / ((period * (mult*24.0)) + 24.0)) / ((scrollSpeed * mult)/2)) * (getKeyCount()/2.0);
+
+		//var bumpyMath = (40 * sin((hDiff + (100.0 * offset)) / ((period * (mult*24.0)) + 24.0)));
+
+		shift += (getPercent('bumpy'+axis, field) + getPercent('bumpy'+axis+receptorName, field)) * bumpyMath;
 
 		switch (realAxis) {
 			case 'x':
@@ -36,15 +52,17 @@ class Bumpy extends Modifier {
 		final field = params.field;
 		var hDiff = params.hDiff;
 
+		var offset = getPercent('bumpyAngle'+axis+'Offset', field) + getPercent('bumpyAngle'+axis+receptorName+'Offset', field);
+		var period = getPercent('bumpyAngle'+axis+'Period', field) + getPercent('bumpyAngle'+axis+receptorName+'Period', field);
+		var mult = getPercent('bumpyAngle'+axis+'Mult', field) + getPercent('bumpyAngle'+axis+receptorName+'Mult', field);
+
 		var shift = 0.;
 
-		var bumpyMath = (40 * sin(
-			(hDiff + (100.0 * (getPercent('bumpyAngle'+axis+'Offset', field) + getPercent('bumpyAngle'+axis+receptorName+'Offset', field)))) 
-			/ (((getPercent('bumpyAngle'+axis+'Period', field) + getPercent('bumpyAngle'+axis+receptorName+'Period', field))
-			* ((getPercent('bumpyAngle'+axis+'Mult', field) + getPercent('bumpyAngle'+axis+receptorName+'Mult', field))*24.0)) + 24.0)
-		));
+		var scrollSpeed = getScrollSpeed();
+
+		var bumpyMath = 40 * sin(((hDiff*0.01) + (100.0 * offset) / ((period * (mult*24.0)) + 24.0)) / ((scrollSpeed * mult)/2)) * (getKeyCount()/2.0);
 	
-		shift += bumpyMath * (getPercent('bumpyAngle'+axis, field) + getPercent('bumpyAngle'+axis+receptorName, field));
+		shift += (getPercent('bumpyAngle'+axis, field) + getPercent('bumpyAngle'+axis+receptorName, field)) * bumpyMath;
 
 		switch (realAxis) {
 			case 'x':
