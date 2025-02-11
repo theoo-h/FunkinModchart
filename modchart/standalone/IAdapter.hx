@@ -18,9 +18,10 @@ interface IAdapter {
 	public function getDefaultReceptorX(lane:Int, player:Int):Float; // Get default strum x position
 	public function getDefaultReceptorY(lane:Int, player:Int):Float; // Get default strum y position
 	public function getTimeFromArrow(arrow:FlxSprite):Float; // Get strum time for arrow
-	public function isTapNote(sprite:FlxSprite):Bool; // If the sprite is an arrow, return true, if it is an receptor/strum, return false
+	public function isTapNote(sprite:FlxSprite):Bool; // If the sprite is an arrow, return true, if it is an lane/strum, return false
 	public function isHoldEnd(sprite:FlxSprite):Bool; // If its the hold end
 	public function arrowHit(sprite:FlxSprite):Bool; // If the arrow was hitted
+	public function getHoldParentTime(sprite:FlxSprite):Float;
 
 	public function getLaneFromArrow(sprite:FlxSprite):Int; // Get lane/note data from arrow
 	public function getPlayerFromArrow(sprite:FlxSprite):Int; // Get player from arrow
@@ -36,7 +37,7 @@ interface IAdapter {
 	public function getDownscroll():Bool; // Get if it is downscroll
 
 	/**
-	 * Get the every arrow/receptor indexed by player.
+	 * Get the every arrow/lane indexed by player.
 	 * Example:
 	 * [
 	 *      [ // Player 0

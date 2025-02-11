@@ -22,6 +22,8 @@ class Macro {
 						fun.expr = macro {
 							visible = value;
 							_fmVisible = value;
+
+							return value;
 						};
 					default:
 						// do nothing

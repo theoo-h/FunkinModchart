@@ -1,4 +1,4 @@
-package modchart.core;
+package modchart.core.environments;
 
 interface IEnvironment {
 	public var parent:Manager;

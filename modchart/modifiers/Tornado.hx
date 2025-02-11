@@ -10,7 +10,7 @@ class Tornado extends Modifier {
 	// math from open itg
 	// hmm, looks familiar.... isnt this invert sine?
 	override public function render(pos:Vector3D, params:RenderParams) {
-		var tornado = getPercent('tornado', params.field);
+		var tornado = getPercent('tornado', params.player);
 
 		if (tornado == 0)
 			return pos;
@@ -19,13 +19,13 @@ class Tornado extends Modifier {
 		var bWideField = keyCount > 4;
 		var iTornadoWidth = bWideField ? 4 : 3;
 
-		var iColNum = params.receptor;
+		var iColNum = params.lane;
 		var iStartCol = iColNum - iTornadoWidth;
 		var iEndCol = iColNum + iTornadoWidth;
 		iStartCol = Math.round(ModchartUtil.clamp(iStartCol, 0, keyCount));
 		iEndCol = Math.round(ModchartUtil.clamp(iEndCol, 0, keyCount));
 
-		var fXOffset = ((ARROW_SIZE * 1.5) - (ARROW_SIZE * params.receptor));
+		var fXOffset = ((ARROW_SIZE * 1.5) - (ARROW_SIZE * params.lane));
 
 		var fMinX = -fXOffset;
 		var fMaxX = fXOffset;
@@ -34,7 +34,7 @@ class Tornado extends Modifier {
 		var fPositionBetween = scale(fRealPixelOffset, fMinX, fMaxX, -1, 1);
 
 		var fRads = Math.acos(fPositionBetween);
-		fRads += (params.hDiff * 0.8) * 6 / HEIGHT;
+		fRads += (params.distance * 0.8) * 6 / HEIGHT;
 
 		final fAdjustedPixelOffset = scale(cos(fRads), -1, 1, fMinX, fMaxX);
 

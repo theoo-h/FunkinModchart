@@ -9,17 +9,17 @@ class Confusion extends Modifier {
 	static final dNames = ['x' => 'roll', 'y' => 'twirl', 'z' => 'dizzy'];
 
 	public function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
-		final receptorName = Std.string(params.receptor);
-		final field = params.field;
+		final receptorName = Std.string(params.lane);
+		final player = params.player;
 
 		var angle = 0.;
 		// real confusion
-		angle -= (params.fBeat * (getPercent('confusion' + axis, field) + getPercent('confusion' + axis + receptorName, field))) % 360;
+		angle -= (params.curBeat * (getPercent('confusion' + axis, player) + getPercent('confusion' + axis + receptorName, player))) % 360;
 		// offset
-		angle += getPercent('confusionOffset' + axis, field) + getPercent('confusionOffset' + axis + receptorName, field);
+		angle += getPercent('confusionOffset' + axis, player) + getPercent('confusionOffset' + axis + receptorName, player);
 		// dizzy mods
 		final cName = dNames.get(realAxis);
-		angle += getPercent(cName, field) * (params.hDiff * 0.1 * (1 + getPercent('${cName}Speed', field)));
+		angle += getPercent(cName, player) * (params.distance * 0.1 * (1 + getPercent('${cName}Speed', player)));
 
 		switch (realAxis) {
 			case 'x':

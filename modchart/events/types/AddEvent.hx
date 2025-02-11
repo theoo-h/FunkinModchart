@@ -17,9 +17,9 @@ typedef AddData = {
 class AddEvent extends Event {
 	public var data:AddData;
 
-	public function new(mod:String, beat:Float, len:Float, target:Float, ease:EaseFunction, field:Int, parent:EventManager) {
+	public function new(mod:String, beat:Float, len:Float, target:Float, ease:EaseFunction, player:Int, parent:EventManager) {
 		this.name = mod;
-		this.field = field;
+		this.player = player;
 
 		this.data = {
 			startBeat: beat,
@@ -40,19 +40,19 @@ class AddEvent extends Event {
 			return;
 
 		if (curBeat < data.endBeat) {
-
-			if (additionPerc == null) additionPerc = getModPercent(name, field);
+			if (additionPerc == null)
+				additionPerc = getModPercent(name, player);
 
 			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
 			// maybe we should make it use bound?
-			var out = FlxMath.lerp(additionPerc, additionPerc + target, data.ease(progress)); //it "adds" value to the perc instead of rewrite it
-			setModPercent(name, out, field);
+			var out = FlxMath.lerp(additionPerc, additionPerc + target, data.ease(progress)); // it "adds" value to the perc instead of rewrite it
+			setModPercent(name, out, player);
 			fired = false;
 		} else if (curBeat >= data.endBeat) {
 			fired = true;
 
 			// we're using the ease function bc it may dont return 1
-			setModPercent(name, data.ease(1) * (additionPerc + target), field);
+			setModPercent(name, data.ease(1) * (additionPerc + target), player);
 		}
 	}
 }

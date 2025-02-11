@@ -7,14 +7,14 @@ import openfl.geom.Vector3D;
 
 class OpponentSwap extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		final field = params.field;
-		final perc = getPercent('opponentSwap', field);
+		final player = params.player;
+		final perc = getPercent('opponentSwap', player);
 
 		if (perc == 0)
 			return curPos;
 
-		var distX = WIDTH / getPlayerCount();
-		curPos.x -= distX * ModchartUtil.sign((field + 1) * 2 - 3) * perc;
+		var distX = WIDTH * .5;
+		curPos.x -= distX * ModchartUtil.sign((player + 1) * 2 - 3) * perc;
 		return curPos;
 	}
 

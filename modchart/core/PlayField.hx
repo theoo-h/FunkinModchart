@@ -4,22 +4,24 @@ import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxEase.EaseFunction;
+import modchart.core.graphics.ModchartCamera3D;
 import modchart.core.graphics.ModchartGraphics.ModchartArrowPath;
 import modchart.core.graphics.ModchartGraphics.ModchartArrowRenderer;
 import modchart.core.graphics.ModchartGraphics.ModchartHoldRenderer;
 import modchart.core.util.ModchartUtil;
 import modchart.events.Event;
 import modchart.events.EventManager;
+import modchart.events.types.AddEvent;
 import modchart.events.types.EaseEvent;
 import modchart.events.types.RepeaterEvent;
 import modchart.events.types.SetEvent;
-import modchart.events.types.AddEvent;
 import openfl.geom.Vector3D;
 
 // TODO: make this extend to flxsprite and use parented transformation matrix
 class PlayField extends FlxBasic {
 	public var events:EventManager;
 	public var modifiers:ModifierGroup;
+	public var camera3D:ModchartCamera3D;
 
 	private var arrowRenderer:ModchartArrowRenderer;
 	private var receptorRenderer:ModchartArrowRenderer;
@@ -38,6 +40,21 @@ class PlayField extends FlxBasic {
 		attachmentRenderer = new ModchartArrowRenderer(this);
 		holdRenderer = new ModchartHoldRenderer(this);
 		pathRenderer = new ModchartArrowPath(this);
+
+		camera3D = new ModchartCamera3D();
+
+		// default mods
+		addModifier('reverse');
+		addModifier('transform');
+		addModifier('confusion');
+		addModifier('stealth');
+		addModifier('skew');
+		addModifier('zoom');
+
+		setPercent('arrowPathAlpha', 1, -1);
+		setPercent('arrowPathThickness', 1, -1);
+		setPercent('arrowPathDivisions', 1, -1);
+		setPercent('rotateHoldY', 1, -1);
 	}
 
 	public function registerModifier(name:String, mod:Class<Modifier>)
@@ -104,6 +121,14 @@ class PlayField extends FlxBasic {
 	public function callback(beat:Float, callback:Event->Void):Void
 		addEvent(new Event(beat, callback, events));
 
+	public function alias(name:String, alias:String) {
+		aliases.push({
+			parent: name,
+			alias: alias
+		});
+	}
+
+	private var aliases:Array<ModAlias> = [];
 	private var nodes:Array<Node> = [];
 
 	/**
@@ -135,7 +160,8 @@ class PlayField extends FlxBasic {
 				if (node == null)
 					continue;
 
-     if (node == null) continue;
+				if (node == null)
+					continue;
 
 				var entryPercs = [];
 				var outPercs = [];
@@ -184,7 +210,7 @@ class PlayField extends FlxBasic {
 	var drawCB:Array<{callback:Void->Void, z:Float}> = [];
 
 	private function getVisibility(obj:flixel.FlxObject) {
-		obj.visible = false;
+		@:bypassAccessor obj.visible = false;
 		return obj._fmVisible;
 	}
 
@@ -193,60 +219,79 @@ class PlayField extends FlxBasic {
 
 		var playerItems:Array<Array<Array<FlxSprite>>> = Adapter.instance.getArrowItems();
 
+		// used for preallocate
+		var receptorLength = 0;
+		var arrowLength = 0;
+		var holdLength = 0;
+
+		for (i in 0...playerItems.length) {
+			final curItems = playerItems[i];
+
+			receptorLength = receptorLength + curItems[0].length;
+			arrowLength = arrowLength + curItems[1].length;
+			holdLength = holdLength + curItems[2].length;
+		}
+
+		receptorRenderer.preallocate(receptorLength);
+		arrowRenderer.preallocate(arrowLength);
+		holdRenderer.preallocate(holdLength);
+		if (Manager.instance.renderArrowPaths)
+			pathRenderer.preallocate(receptorLength);
+
 		// i is player index
 		for (i in 0...playerItems.length) {
 			var curItems:Array<Array<FlxSprite>> = playerItems[i];
 
-			// update view matrix
-			ModchartUtil.updateViewMatrix( // View Position
-				new Vector3D(getPercent('viewX', i), getPercent('viewY', i), getPercent('viewZ', i) + -0.71), // View Point
-				new Vector3D(getPercent('viewLookX', i), getPercent('viewLookY', i), getPercent('viewLookZ', i)), // up
-				new Vector3D(getPercent('viewUpX', i), 1 + getPercent('viewUpY', i), getPercent('viewUpZ', i)));
+			// tap arrow
+			if (curItems[1] != null && curItems[1].length > 0) {
+				for (arrow in curItems[1]) {
+					if (!getVisibility(arrow))
+						continue;
 
-			// tap notes
-			for (arrow in (curItems[1] != null ? curItems[1] : [])) {
-				if (!getVisibility(arrow))
-					continue;
-
-				arrowRenderer.prepare(arrow);
-				drawCB.push({
-					callback: () -> {
-						arrowRenderer.shift();
-					},
-					z: arrow._z - 2
-				});
+					arrowRenderer.prepare(arrow);
+					drawCB.push({
+						callback: () -> {
+							arrowRenderer.shift();
+						},
+						z: arrow._z - 2
+					});
+				}
 			}
 
-			// hold notes
-			for (arrow in (curItems[2] != null ? curItems[2] : [])) {
-				if (!getVisibility(arrow))
-					continue;
+			// holds
+			if (curItems[2] != null && curItems[2].length > 0) {
+				for (hold in curItems[2]) {
+					if (!getVisibility(hold))
+						continue;
 
-				holdRenderer.prepare(arrow);
-				drawCB.push({
-					callback: () -> {
-						holdRenderer.shift();
-					},
-					z: arrow._z - 1
-				});
+					holdRenderer.prepare(hold);
+					drawCB.push({
+						callback: () -> {
+							holdRenderer.shift();
+						},
+						z: hold._z - 1
+					});
+				}
 			}
 
 			// receptors
-			for (receptor in (curItems[0] != null ? curItems[0] : [])) {
-				if (!getVisibility(receptor))
-					continue;
+			if (curItems[0] != null && curItems[0].length > 0) {
+				for (receptor in curItems[0]) {
+					if (!getVisibility(receptor))
+						continue;
 
-				receptorRenderer.prepare(receptor);
-				if (Manager.instance.renderArrowPaths)
-					pathRenderer.prepare(receptor);
-
-				drawCB.push({
-					callback: () -> {
-						receptorRenderer.shift();
-					},
-					z: receptor._z
-				});
+					receptorRenderer.prepare(receptor);
+					if (Manager.instance.renderArrowPaths)
+						pathRenderer.prepare(receptor);
+					drawCB.push({
+						callback: () -> {
+							receptorRenderer.shift();
+						},
+						z: receptor._z
+					});
+				}
 			}
+			continue;
 		}
 
 		if (Manager.instance.renderArrowPaths)

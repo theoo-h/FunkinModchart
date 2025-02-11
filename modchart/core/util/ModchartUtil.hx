@@ -5,61 +5,41 @@ import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
+import haxe.ds.Vector;
 import modchart.Manager;
-import modchart.core.util.Constants.SimplePoint;
+import modchart.core.Quanterion;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
 
 using StringTools;
 
-@:keep
-class ModchartUtil {
-	private static var __viewMatrix:Matrix3D = new Matrix3D();
-
-	public static function updateViewMatrix(position:Vector3D, lookAt:Vector3D, up:Vector3D) {
-		__viewMatrix.pointAt(position, lookAt, up);
-		return __viewMatrix;
-	}
-
-	public static function applyViewMatrix(vector:Vector3D) {
-		var translatedVector = __viewMatrix.transformVector(vector.subtract(new Vector3D(FlxG.width * .5, FlxG.height * .5)));
-		return translatedVector.add(new Vector3D(FlxG.width * .5, FlxG.height * .5));
-	}
-
-	inline public static function rotate(x:Float, y:Float, angle:Float):SimplePoint {
-		if ((angle % 360) == 0)
-			return new SimplePoint(x, y);
-
-		final sin = ModchartUtil.sin(angle);
-		final cos = ModchartUtil.cos(angle);
-
-		return new SimplePoint(x * cos - y * sin, x * sin + y * cos);
-	};
-
-	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float) {
+@:keep class ModchartUtil {
+	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float):Vector3D {
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return vec;
 
 		final RAD = FlxAngle.TO_RAD;
 
-		final rotateZ = rotate(vec.x, vec.y, angleZ * RAD);
-		final offZ = new Vector3D(rotateZ.x, rotateZ.y, vec.z);
+		// Crear cuaterniones para cada eje
+		final quatZ = Quaternion.fromAxisAngle(new Vector3D(0, 0, 1), angleZ * RAD);
+		final quatY = Quaternion.fromAxisAngle(new Vector3D(0, 1, 0), angleY * RAD);
+		final quatX = Quaternion.fromAxisAngle(new Vector3D(1, 0, 0), angleX * RAD);
 
-		final rotateY = rotate(offZ.x, offZ.z, angleY * RAD);
-		final offY = new Vector3D(rotateY.x, offZ.y, rotateY.y);
+		// Aplicar rotaciones en orden Z → Y → X
+		final finalQuat = quatX.multiply(quatY.multiply(quatZ));
 
-		final rotateX = rotate(offY.z, offY.y, angleX * RAD);
-		final offX = new Vector3D(offY.x, rotateX.y, rotateX.x);
-
-		return offX;
+		// Rotar el vector con el cuaternión final
+		return finalQuat.rotateVector(vec);
 	}
 
-	inline static final near:Int = 0;
-	inline static final far:Int = 1;
-	inline static final range:Int = -1;
+	// 90 degrees as default
+	static var fov:Float = Math.PI / 2;
+	static var near:Int = 0;
+	static var far:Int = 1;
+	static var range:Int = -1;
 
-	// stolen & improved from schmovin (Camera3DTransforms)
-	inline static public function perspective(pos:Vector3D, ?origin:Vector3D) {
+	// Based on schmovin's perspective projection math
+	inline static public function project(pos:Vector3D, ?origin:Vector3D) {
 		final fov = Math.PI / 2;
 
 		if (origin == null)
@@ -68,7 +48,7 @@ class ModchartUtil {
 
 		final worldZ = Math.min(pos.z - 1, 0); // bound to 1000 z
 
-		final halfFovTan = 1 / ModchartUtil.tan(fov / 2);
+		final halfFovTan = 1 / ModchartUtil.tan(fov * .5);
 		final rangeDivision = 1 / range;
 
 		final projectionScale = (near + far) * rangeDivision;
@@ -81,7 +61,7 @@ class ModchartUtil {
 		return projectedPos;
 	}
 
-	inline static public function getHoldVertex(upper:Array<Vector3D>, lower:Array<Vector3D>) {
+	inline static public function buildHoldVertices(upper:Array<Vector3D>, lower:Array<Vector3D>) {
 		return [
 			upper[0].x, upper[0].y,
 			upper[1].x, upper[1].y,
@@ -116,35 +96,25 @@ class ModchartUtil {
 		return new Vector3D(Manager.ARROW_SIZEDIV2, Manager.ARROW_SIZEDIV2, 0, 0);
 	}
 
-	// dude wtf it works
-	public inline static function sign(x:Int) {
-		#if cpp
-		return (x >> 31) | ((x != 0) ? 1 : 0);
-		#else
+	public inline static function sign(x:Int)
 		return x == 0 ? 0 : x > 0 ? 1 : -1;
-		#end
-	}
 
 	public inline static function clamp(n:Float, l:Float, h:Float) {
-		return Math.min(Math.max(n, l), h);
+		if (n < l)
+			return l;
+		if (n > h)
+			return h;
+		return n;
 	}
 
-	// no way guys, regular sinus is faster than fastSin :surprised:
-	// (in hl fastSin is still faster than regular sin)
-	// https://github.com/HaxeFlixel/flixel/issues/3215#issuecomment-2226858302
-	// https://try.haxe.org/#847eac2B
 	public static inline function sin(num:Float)
-		return #if !hl Math.sin(num) #else FlxMath.fastSin(num) #end;
+		return FlxMath.fastSin(num);
 
 	public static inline function cos(num:Float)
-		return #if !hl Math.cos(num) #else FlxMath.fastCos(num) #end;
+		return FlxMath.fastCos(num);
 
 	public static inline function tan(num:Float)
-		return #if !hl Math.tan(num) #else sin(num) / cos(num) #end;
-
-	inline public static var HOLD_SIZE:Float = 44 * 0.7;
-	inline public static var ARROW_SIZE:Float = 160 * 0.7;
-	inline public static var ARROW_SIZEDIV2:Float = (160 * 0.7) * 0.5;
+		return sin(num) / cos(num);
 
 	inline public static function lerpVector3D(start:Vector3D, end:Vector3D, ratio:Float) {
 		final diff = end.subtract(start);
@@ -153,22 +123,11 @@ class ModchartUtil {
 		return start.add(diff);
 	}
 
-	inline public static function applyVectorZoom(vec:Vector3D, zoom:Float) {
-		if (zoom != 1) {
-			var centerX = FlxG.width * 0.5;
-			var centerY = FlxG.height * 0.5;
-
-			vec.x = (vec.x - centerX) * zoom + centerX;
-			vec.y = (vec.y - centerY) * zoom + centerY;
-		}
-
-		return vec;
-	}
-
 	public static function coolTextFile(path:String):Array<String> {
 		var trim:String;
 		return [
-			for (line in openfl.utils.Assets.getText(path).split("\n")) if ((trim = line.trim()) != "" && !trim.startsWith("#")) trim
+			for (line in openfl.utils.Assets.getText(path).split("\n"))
+				if ((trim = line.trim()) != "" && !trim.startsWith("#")) trim
 		];
 	}
 }

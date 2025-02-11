@@ -38,25 +38,25 @@ class Manager extends FlxBasic {
 	}
 
 	@:noCompletion
-	private function __playfieldChoice(func:PlayField->Void, field:Int = -1) {
-		if (field != -1)
-			return func(playfields[field]);
+	private inline function __playfieldChoice(func:PlayField->Void, player:Int = -1) {
+		if (player != -1)
+			return func(playfields[player]);
 		else
 			for (pf in playfields)
 				func(pf);
 	}
 
-	public inline function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
-		__playfieldChoice((pf) -> pf.registerModifier(name, mod), field);
+	public inline function registerModifier(name:String, mod:Class<Modifier>, player:Int = -1)
+		__playfieldChoice((pf) -> pf.registerModifier(name, mod), player);
 
-	public inline function addModifier(name:String, field:Int = -1)
-		__playfieldChoice((pf) -> pf.addModifier(name), field);
+	public inline function addModifier(name:String, player:Int = -1)
+		__playfieldChoice((pf) -> pf.addModifier(name), player);
 
-	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
-		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
+	public inline function setPercent(name:String, value:Float, player:Int = -1, player:Int = -1)
+		__playfieldChoice((pf) -> pf.setPercent(name, value, player), player);
 
-	public inline function getPercent(name:String, player:Int = 0, field:Int = 0):Float {
-		final possiblePlayfield = playfields[field];
+	public inline function getPercent(name:String, player:Int = 0, player:Int = 0):Float {
+		final possiblePlayfield = playfields[player];
 
 		if (possiblePlayfield != null)
 			return possiblePlayfield.getPercent(name, player);
@@ -88,19 +88,11 @@ class Manager extends FlxBasic {
 	public inline function node(input:Array<String>, output:Array<String>, func:NodeFunction, field:Int = -1)
 		__playfieldChoice((pf) -> pf.node(input, output, func), field);
 
+	public inline function alias(name:String, alias:String, field:Int)
+		__playfieldChoice((pf) -> pf.alias(name, alias), field);
+
 	public function addPlayfield() {
 		playfields.push(new PlayField());
-
-		// default mods
-		addModifier('reverse', playfields.length - 1);
-		addModifier('stealth', playfields.length - 1);
-		addModifier('confusion', playfields.length - 1);
-		addModifier('skew', playfields.length - 1);
-
-		setPercent('arrowPathAlpha', 1, -1, playfields.length - 1);
-		setPercent('arrowPathThickness', 1, -1, playfields.length - 1);
-		setPercent('arrowPathDivisions', 1, -1, playfields.length - 1);
-		setPercent('rotateHoldY', 1, -1, playfields.length - 1);
 	}
 
 	override function update(elapsed:Float):Void {

@@ -21,18 +21,18 @@ class Reverse extends Modifier {
 		var kNum = getKeyCount();
 		var val:Float = 0;
 		if (dir >= Math.floor(kNum * 0.5))
-			val += getPercent("split", player);
+			val = val + getPercent("split", player);
 
 		if ((dir % 2) == 1)
-			val += getPercent("alternate", player);
+			val = val + getPercent("alternate", player);
 
 		var first = kNum * 0.25;
 		var last = kNum - 1 - first;
 
 		if (dir >= first && dir <= last)
-			val += getPercent("cross", player);
+			val = val + getPercent("cross", player);
 
-		val += getPercent('reverse', player) + getPercent("reverse" + Std.string(dir), player);
+		val = val + getPercent('reverse', player) + getPercent("reverse" + Std.string(dir), player);
 
 		if (getPercent("unboundedReverse", player) == 0) {
 			val %= 2;
@@ -47,50 +47,50 @@ class Reverse extends Modifier {
 	}
 
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		var field = params.field;
-		var initialY = Adapter.instance.getDefaultReceptorY(params.receptor, field) + ARROW_SIZEDIV2;
-		var reversePerc = getReverseValue(params.receptor, field);
+		var player = params.player;
+		var initialY = Adapter.instance.getDefaultReceptorY(params.lane, player) + ARROW_SIZEDIV2;
+		var reversePerc = getReverseValue(params.lane, player);
 		var shift = FlxMath.lerp(initialY, HEIGHT - initialY, reversePerc);
 
-		var centerPercent = getPercent('centered', params.field);
+		var centerPercent = getPercent('centered', params.player);
 		shift = FlxMath.lerp(shift, (HEIGHT * 0.5) - ARROW_SIZEDIV2, centerPercent);
 
 		// TODO: long, straight and short holds
-		var distance = params.hDiff;
+		var distance = params.distance;
 
 		distance *= 0.45 * Adapter.instance.getCurrentScrollSpeed();
 
 		var scroll = new Vector3D(0, FlxMath.lerp(distance, -distance, reversePerc));
 		scroll = applyScrollMods(scroll, params);
 
-		curPos.x += scroll.x;
+		curPos.x = curPos.x + scroll.x;
 		curPos.y = shift + scroll.y;
-		curPos.z += scroll.z;
+		curPos.z = curPos.z + scroll.z;
 
 		return curPos;
 	}
 
 	function applyScrollMods(scroll:Vector3D, params:RenderParams) {
-		var field = params.field;
+		var player = params.player;
 		var angleX = 0.;
 		var angleY = 0.;
 		var angleZ = 0.;
 
 		// Speed
-		scroll.y = scroll.y * (getPercent('xmod', field))
-			+ (1 + getPercent('scrollSpeed', field) + getPercent('scrollSpeed' + Std.string(params.receptor), field));
+		scroll.y = scroll.y * (getPercent('xmod', player))
+			+ (1 + getPercent('scrollSpeed', player) + getPercent('scrollSpeed' + Std.string(params.lane), player));
 
 		// Main
-		angleX += getPercent('scrollAngleX', field);
-		angleY += getPercent('scrollAngleY', field);
-		angleZ += getPercent('scrollAngleZ', field);
+		angleX = angleX + getPercent('scrollAngleX', player);
+		angleY = angleY + getPercent('scrollAngleY', player);
+		angleZ = angleZ + getPercent('scrollAngleZ', player);
 
 		// Curved
-		final shift:Float = params.hDiff * 0.25 * (1 + getPercent('curvedScrollPeriod', field));
+		final shift:Float = params.distance * 0.25 * (1 + getPercent('curvedScrollPeriod', player));
 
-		angleX += shift * getPercent('curvedScrollX', field);
-		angleY += shift * getPercent('curvedScrollY', field);
-		angleZ += shift * getPercent('curvedScrollZ', field);
+		angleX = angleX + shift * getPercent('curvedScrollX', player);
+		angleY = angleY + shift * getPercent('curvedScrollY', player);
+		angleZ = angleZ + shift * getPercent('curvedScrollZ', player);
 
 		// angleY doesnt do anything if angleX and angleZ are disabled
 		if (angleX == 0 && angleZ == 0)

@@ -2,8 +2,8 @@
     "name": "funkin-modchart",
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
-    "version": "1.1.1",
-    "releasenote": "New feature: Nodes. Minor bugfixes and optimizations.",
+    "version": "1.2.0",
+    "releasenote": "Fix 3D Projection on Arrow rotation. Switching from Euler Angles to Quanterions. Fix typos and refactoring. Huge optimizations.",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {

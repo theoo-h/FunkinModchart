@@ -25,7 +25,7 @@ class ArrowShape extends PathModifier {
 	}
 
 	override function render(pos:Vector3D, params:RenderParams) {
-		var perc = getPercent('arrowshape', params.field);
+		var perc = getPercent('arrowshape', params.player);
 
 		if (perc == 0)
 			return pos;

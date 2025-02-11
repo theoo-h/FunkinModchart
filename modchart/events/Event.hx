@@ -7,7 +7,7 @@ class Event {
 	public var target:Float;
 
 	public var beat:Float;
-	public var field:Int;
+	public var player:Int;
 
 	public var callback:Event->Void;
 	public var parent:EventManager;

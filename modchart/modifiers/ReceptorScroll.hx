@@ -10,16 +10,16 @@ import openfl.geom.Vector3D;
 
 class ReceptorScroll extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		final perc = getPercent('receptorScroll', params.field);
+		final perc = getPercent('receptorScroll', params.player);
 
 		if (perc == 0)
 			return curPos;
 
 		final moveSpeed = Adapter.instance.getStaticCrochet() * 4;
 
-		var diff = -params.hDiff;
-		var sPos = Adapter.instance.getSongPosition();
-		var vDiff = -(diff - sPos) / moveSpeed;
+		var diff = -params.distance;
+		var songTime = Adapter.instance.getSongPosition();
+		var vDiff = -(diff - songTime) / moveSpeed;
 		var reversed = Math.floor(vDiff) % 2 == 0;
 
 		var startY = curPos.y;
@@ -35,15 +35,15 @@ class ReceptorScroll extends Modifier {
 	}
 
 	override public function visuals(data:Visuals, params:RenderParams):Visuals {
-		final perc = getPercent('receptorScroll', params.field);
+		final perc = getPercent('receptorScroll', params.player);
 		if (perc == 0)
 			return data;
 
-		var bar = params.sPos / (Adapter.instance.getStaticCrochet() * .25);
-		var time = params.hDiff;
+		var bar = params.songTime / (Adapter.instance.getStaticCrochet() * .25);
+		var hitTime = params.distance;
 
-		data.alpha = FlxMath.bound((1400 - time) / 200, 0, 0.3) * perc;
-		if ((params.hDiff + params.sPos) < Math.floor(bar + 1) * Adapter.instance.getStaticCrochet() * 4)
+		data.alpha = FlxMath.bound((1400 - hitTime) / 200, 0, 0.3) * perc;
+		if ((params.distance + params.songTime) < Math.floor(bar + 1) * Adapter.instance.getStaticCrochet() * 4)
 			data.alpha = 1;
 
 		return data;

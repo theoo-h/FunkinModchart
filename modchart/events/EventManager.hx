@@ -19,15 +19,15 @@ class EventManager {
 	public function add(event:Event) {
 		if (event.name != null) {
 			final lwr = event.name.toLowerCase();
-			var field = event.field;
+			var player = event.player;
 
 			var entry = table.get(lwr);
 			if (entry == null)
 				table.set(lwr, entry = []);
-			if (entry[field] == null)
-				entry[field] = [];
+			if (entry[player] == null)
+				entry[player] = [];
 
-			entry[field].push(event);
+			entry[player].push(event);
 		}
 
 		eventList.push(event);
@@ -52,18 +52,18 @@ class EventManager {
 		if (playerEvents == null) {
 			return null;
 		}
-	
-		final eventList = playerEvents[event.field];
+
+		final eventList = playerEvents[event.player];
 		if (eventList == null) {
 			return null;
 		}
-	
+
 		final lastIndex = eventList.indexOf(event);
 		if (lastIndex > 0) {
 			final possibleEvent = eventList[lastIndex - 1];
 			return possibleEvent != null ? possibleEvent : null;
 		}
-	
+
 		return null;
 	}
 
@@ -75,6 +75,7 @@ class EventManager {
 				if (events != null && events.length > 0)
 					events.sort(__sortFunction);
 		}
+		eventList.sort(__sortFunction);
 	}
 
 	@:noCompletion

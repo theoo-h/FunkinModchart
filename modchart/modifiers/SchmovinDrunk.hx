@@ -8,8 +8,8 @@ final thtdiv = 1 / 222;
 
 class SchmovinDrunk extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		var phaseShift = params.receptor * 0.5 + (params.hDiff * thtdiv) * Math.PI;
-		curPos.x += sin(params.fBeat * .25 * Math.PI + phaseShift) * ARROW_SIZEDIV2 * getPercent('schmovinDrunk', params.field);
+		var phaseShift = params.lane * 0.5 + (params.distance * thtdiv) * Math.PI;
+		curPos.x += sin(params.curBeat * .25 * Math.PI + phaseShift) * ARROW_SIZEDIV2 * getPercent('schmovinDrunk', params.player);
 
 		return curPos;
 	}

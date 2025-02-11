@@ -36,7 +36,7 @@ class ModifierGroup {
 		'boost' => Boost,
 		'receptorscroll' => ReceptorScroll,
 		'sawtooth' => SawTooth,
-		'mini' => Mini,
+		'zoom' => Zoom,
 		'rotate' => Rotate,
 		'fieldrotate' => FieldRotate,
 		'centerrotate' => CenterRotate,
@@ -83,19 +83,7 @@ class ModifierGroup {
 
 	// just render mods with the perspective stuff included
 	public function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
-		var visuals:Visuals = {
-			scaleX: 1.,
-			scaleY: 1.,
-			angleX: 0.,
-			angleY: 0.,
-			angleZ: 0.,
-			alpha: 1.,
-			zoom: 1.,
-			glow: 0.,
-			glowR: 1.,
-			glowG: 1.,
-			glowB: 1.
-		};
+		var visuals:Visuals = {};
 
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
@@ -107,16 +95,13 @@ class ModifierGroup {
 			final mod = modifiers.get(sortedMods[i]);
 
 			final args:RenderParams = {
-				sPos: songPos,
-				fBeat: beat,
-				time: data.time + posDiff,
-				hDiff: data.hDiff + posDiff,
-				receptor: data.receptor,
-				field: data.field,
-				arrow: data.arrow,
-				__holdParentTime: data.__holdParentTime,
-				__holdLength: data.__holdLength,
-				__holdOffset: data.__holdOffset
+				songTime: songPos,
+				curBeat: beat,
+				hitTime: data.hitTime + posDiff,
+				distance: data.distance + posDiff,
+				lane: data.lane,
+				player: data.player,
+				isTapArrow: data.isTapArrow
 			}
 
 			if (!mod.shouldRun(args))
@@ -127,10 +112,9 @@ class ModifierGroup {
 			if (allowVis)
 				visuals = mod.visuals(visuals, args);
 		}
-		pos = ModchartUtil.applyViewMatrix(pos);
 		pos.z *= 0.001;
 		return {
-			pos: ModchartUtil.perspective(pos),
+			pos: ModchartUtil.project(pos),
 			visuals: visuals
 		};
 	}
@@ -146,6 +130,8 @@ class ModifierGroup {
 
 	public function addModifier(name:String) {
 		var lowerName = name.toLowerCase();
+		if (modifiers.exists(lowerName))
+			return;
 		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
@@ -160,26 +146,26 @@ class ModifierGroup {
 		__allocModSorting(newArr);
 	}
 
-	public function setPercent(name:String, value:Float, field:Int = -1) {
+	public function setPercent(name:String, value:Float, player:Int = -1) {
 		var lowerName = name.toLowerCase();
 		final possiblePercs = percents.get(lowerName);
 		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
 
-		if (field == -1)
+		if (player == -1)
 			for (k => _ in percs)
 				percs.set(k, value);
 		else
-			percs.set(field, value);
+			percs.set(player, value);
 
 		percents.set(lowerName, percs);
 	}
 
-	public function getPercent(name:String, field:Int):Float {
+	public function getPercent(name:String, player:Int):Float {
 		final percs = percents.get(name.toLowerCase());
 
 		if (percs != null) {
 			// Map.get can return null
-			final possiblePerc:Null<Float> = percs.get(field);
+			final possiblePerc:Null<Float> = percs.get(player);
 			return possiblePerc != null ? possiblePerc : 0;
 		}
 		return 0;

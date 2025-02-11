@@ -9,7 +9,7 @@ import openfl.geom.Vector3D;
 class FieldRotate extends Rotate {
 	override public function getOrigin(curPos:Vector3D, params:RenderParams):Vector3D {
 		var x:Float = (WIDTH * 0.5) - ARROW_SIZE - 54 + ARROW_SIZE * 1.5;
-		switch (params.field) {
+		switch (params.player) {
 			case 0:
 				x -= WIDTH * 0.5 - ARROW_SIZE * 2 - 100;
 			case 1:
