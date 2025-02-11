@@ -14,21 +14,18 @@ import openfl.geom.Vector3D;
 using StringTools;
 
 @:keep class ModchartUtil {
+	// NO MORE GIMBAL LOCK
 	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float):Vector3D {
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return vec;
 
 		final RAD = FlxAngle.TO_RAD;
 
-		// Crear cuaterniones para cada eje
-		final quatZ = Quaternion.fromAxisAngle(new Vector3D(0, 0, 1), angleZ * RAD);
-		final quatY = Quaternion.fromAxisAngle(new Vector3D(0, 1, 0), angleY * RAD);
-		final quatX = Quaternion.fromAxisAngle(new Vector3D(1, 0, 0), angleX * RAD);
+		final quatZ = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleZ * RAD);
+		final quatY = Quaternion.fromAxisAngle(Vector3D.Y_AXIS, angleY * RAD);
+		final quatX = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleX * RAD);
 
-		// Aplicar rotaciones en orden Z → Y → X
 		final finalQuat = quatX.multiply(quatY.multiply(quatZ));
-
-		// Rotar el vector con el cuaternión final
 		return finalQuat.rotateVector(vec);
 	}
 
