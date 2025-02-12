@@ -89,3 +89,11 @@
 - Switching from Euler Angles to Quanterions.
 - Fix typos and refactoring.
 - Huge optimizations.
+
+# 12/02/25
+- Fixed 3D Camera Offsets (was breaking some stuff)
+- Optimized `ModifierGroup` percent management (now uses `haxe.ds.Vector` instead of `IntMap`)
+- Optimized a lot of stuff (added preallocation on most stuff possible)
+- Fixed `Rotate` (base) modifier (the rotation origin was 'wrong')
+- Fixed a oopsie i did (X Rotation was not applied cus a mistake i did lol)
+- Addition on `Codename` adapter: Now it read the strum real position (so u can position them without using modchart things)

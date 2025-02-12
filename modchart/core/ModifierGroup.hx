@@ -63,7 +63,7 @@ class ModifierGroup {
 
 	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
 
-	private var percents:StringMap<IntMap<Float>> = new StringMap();
+	private var percents:StringMap<Vector<Float>> = new StringMap();
 	private var modifiers:StringMap<Modifier> = new StringMap();
 
 	private var sortedMods:Vector<String>;
@@ -88,21 +88,21 @@ class ModifierGroup {
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
 
-		var songPos = Adapter.instance.getSongPosition();
-		var beat = Adapter.instance.getCurrentBeat();
+		final songPos = Adapter.instance.getSongPosition();
+		final beat = Adapter.instance.getCurrentBeat();
+
+		final args:RenderParams = {
+			songTime: songPos,
+			curBeat: beat,
+			hitTime: data.hitTime + posDiff,
+			distance: data.distance + posDiff,
+			lane: data.lane,
+			player: data.player,
+			isTapArrow: data.isTapArrow
+		}
 
 		for (i in 0...sortedMods.length) {
 			final mod = modifiers.get(sortedMods[i]);
-
-			final args:RenderParams = {
-				songTime: songPos,
-				curBeat: beat,
-				hitTime: data.hitTime + posDiff,
-				distance: data.distance + posDiff,
-				lane: data.lane,
-				player: data.player,
-				isTapArrow: data.isTapArrow
-			}
 
 			if (!mod.shouldRun(args))
 				continue;
@@ -147,35 +147,34 @@ class ModifierGroup {
 	}
 
 	public function setPercent(name:String, value:Float, player:Int = -1) {
-		var lowerName = name.toLowerCase();
-		final possiblePercs = percents.get(lowerName);
-		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
+		var lwr = name.toLowerCase();
+		var possiblePercs = percents.get(lwr);
+		var generate = possiblePercs == null;
+		var percs = generate ? __getAllocatedPercs() : possiblePercs;
 
 		if (player == -1)
-			for (k => _ in percs)
-				percs.set(k, value);
+			for (_ in 0...percs.length)
+				percs[_] = value;
 		else
-			percs.set(player, value);
+			percs[player] = value;
 
-		percents.set(lowerName, percs);
+		// if the percent list already was created, we dont need to re-set the list
+		if (generate)
+			percents.set(lwr, percs);
 	}
 
 	public function getPercent(name:String, player:Int):Float {
 		final percs = percents.get(name.toLowerCase());
 
-		if (percs != null) {
-			// Map.get can return null
-			final possiblePerc:Null<Float> = percs.get(player);
-			return possiblePerc != null ? possiblePerc : 0;
-		}
+		if (percs != null)
+			return percs[player];
 		return 0;
 	}
 
-	private inline function getDefaultPerc():IntMap<Float> {
-		final percMap = new IntMap<Float>();
-
-		for (i in 0...Adapter.instance.getPlayerCount())
-			percMap.set(i, 0.);
-		return percMap;
+	private inline function __getAllocatedPercs():Vector<Float> {
+		final vector = new Vector<Float>(Adapter.instance.getPlayerCount());
+		for (i in 0...vector.length)
+			vector[i] = 0;
+		return vector;
 	}
 }

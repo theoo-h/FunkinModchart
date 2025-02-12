@@ -18,6 +18,7 @@ import modchart.modifiers.*;
 
 @:allow(modchart.core.ModifierGroup)
 @:allow(modchart.core.graphics.ModchartGraphics)
+@:access(modchart.core.PlayField)
 class Manager extends FlxBasic {
 	public static var instance:Manager;
 
@@ -91,9 +92,8 @@ class Manager extends FlxBasic {
 	public inline function alias(name:String, alias:String, field:Int)
 		__playfieldChoice((pf) -> pf.alias(name, alias), field);
 
-	public function addPlayfield() {
+	public inline function addPlayfield()
 		playfields.push(new PlayField());
-	}
 
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
@@ -102,21 +102,24 @@ class Manager extends FlxBasic {
 	}
 
 	override function draw():Void {
+		var total = 0;
 		var drawQueue:Array<{callback:Void->Void, z:Float}> = [];
 
 		__playfieldChoice(pf -> {
 			pf.draw();
 
-			@:privateAccess
-			drawQueue = drawQueue.concat(pf.drawCB);
+			total += pf.drawCB.length;
+		});
+
+		var j = 0;
+		__playfieldChoice(pf -> {
+			for (x in pf.drawCB)
+				drawQueue[j++] = x;
 		});
 
 		drawQueue.sort((a, b) -> {
 			return Math.round(b.z - a.z);
 		});
-
-		var sprs = [];
-		sprs.resize(drawQueue.length);
 
 		for (item in drawQueue)
 			item.callback();

@@ -45,7 +45,6 @@ class PlayField extends FlxBasic {
 
 		// default mods
 		addModifier('reverse');
-		addModifier('transform');
 		addModifier('confusion');
 		addModifier('stealth');
 		addModifier('skew');
@@ -238,6 +237,14 @@ class PlayField extends FlxBasic {
 		if (Manager.instance.renderArrowPaths)
 			pathRenderer.preallocate(receptorLength);
 
+		drawCB.resize(receptorLength + arrowLength + holdLength);
+
+		var j = 0;
+		inline function queue(f:{callback:Void->Void, z:Float}) {
+			drawCB[j] = f;
+			j++;
+		}
+
 		// i is player index
 		for (i in 0...playerItems.length) {
 			var curItems:Array<Array<FlxSprite>> = playerItems[i];
@@ -249,7 +256,7 @@ class PlayField extends FlxBasic {
 						continue;
 
 					arrowRenderer.prepare(arrow);
-					drawCB.push({
+					queue({
 						callback: () -> {
 							arrowRenderer.shift();
 						},
@@ -265,7 +272,7 @@ class PlayField extends FlxBasic {
 						continue;
 
 					holdRenderer.prepare(hold);
-					drawCB.push({
+					queue({
 						callback: () -> {
 							holdRenderer.shift();
 						},
@@ -283,7 +290,7 @@ class PlayField extends FlxBasic {
 					receptorRenderer.prepare(receptor);
 					if (Manager.instance.renderArrowPaths)
 						pathRenderer.prepare(receptor);
-					drawCB.push({
+					queue({
 						callback: () -> {
 							receptorRenderer.shift();
 						},

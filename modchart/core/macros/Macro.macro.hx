@@ -54,6 +54,41 @@ class Macro {
 	public static function buildFlxCamera():Array<Field> {
 		var fields = Context.getBuildFields();
 
+		// idk why when i dont change the general draw items pooling system, theres so much graphic issues (with colors and uvs)
+		/*
+			var newField:Field = {
+				name: '__fmStartTrianglesBatch',
+				pos: Context.currentPos(),
+				access: [APrivate],
+				kind: FFun({
+					args: [
+						{
+							name: "graphic",
+							type: macro :flixel.graphics.FlxGraphic
+						},
+						{
+							name: "blend",
+							type: macro :openfl.display.BlendMode
+						},
+						{
+							name: "shader",
+							type: macro :flixel.system.FlxAssets.FlxShader
+						},
+						{
+							name: "antialiasing",
+							type: macro :Bool,
+							value: macro $v{false}
+						}
+					],
+					expr: macro {
+						return getNewDrawTrianglesItem(graphic, antialiasing, true, blend, true, shader);
+					},
+					ret: macro :flixel.graphics.tile.FlxDrawTrianglesItem
+				})
+			};
+			fields.push(newField);
+		 */
+
 		for (f in fields) {
 			if (f.name == 'startTrianglesBatch') {
 				switch (f.kind) {
@@ -144,7 +179,7 @@ class Macro {
 							inflateBounds(bounds, tempX, tempY);
 						}
 
-						i += 2;
+						i = i + 2;
 					}
 
 					var indicesLength:Int = indices.length;
@@ -165,17 +200,21 @@ class Macro {
 								this.colors[prevColorsLength + i] = colors[i];
 							}
 
-							colorsPosition += numberOfVertices;
+							colorsPosition = colorsPosition + numberOfVertices;
 						}
 
-						verticesPosition += verticesLength;
-						indicesPosition += indicesLength;
+						verticesPosition = verticesPosition + verticesLength;
+						indicesPosition = indicesPosition + indicesLength;
 					}
 
 					position.putWeak();
 					cameraBounds.putWeak();
 
 					final indDiv = (1 / indicesLength);
+
+					var curAlphas = [];
+					curAlphas.resize(indicesLength);
+					var j = 0;
 
 					for (_ in 0...indicesLength) {
 						final possibleTransform = transforms[Std.int(_ * indDiv * transforms.length)];
@@ -185,8 +224,10 @@ class Macro {
 						if (possibleTransform != null)
 							alphaMultiplier = possibleTransform.alphaMultiplier;
 
-						alphas.push(alphaMultiplier);
+						curAlphas[j++] = alphaMultiplier;
 					}
+
+					alphas = alphas.concat(curAlphas);
 
 					if (colored || hasColorOffsets) {
 						if (colorMultipliers == null)
@@ -195,30 +236,45 @@ class Macro {
 						if (colorOffsets == null)
 							colorOffsets = [];
 
+						var curMultipliers = [];
+						var curOffsets = [];
+
+						var multCount = 0;
+						var offCount = 0;
+
+						curMultipliers.resize(indicesLength * (3 + 1));
+						curOffsets.resize(indicesLength * 4);
+
 						for (_ in 0...indicesLength) {
 							final transform = transforms[Std.int(_ * indDiv * transforms.length)];
 							if (transform != null) {
-								colorMultipliers.push(transform.redMultiplier);
-								colorMultipliers.push(transform.greenMultiplier);
-								colorMultipliers.push(transform.blueMultiplier);
+								curMultipliers[multCount + 0] = transform.redMultiplier;
+								curMultipliers[multCount + 1] = transform.greenMultiplier;
+								curMultipliers[multCount + 2] = transform.blueMultiplier;
 
-								colorOffsets.push(transform.redOffset);
-								colorOffsets.push(transform.greenOffset);
-								colorOffsets.push(transform.blueOffset);
-								colorOffsets.push(transform.alphaOffset);
+								curOffsets[offCount + 0] = transform.redOffset;
+								curOffsets[offCount + 1] = transform.greenOffset;
+								curOffsets[offCount + 2] = transform.blueOffset;
+								curOffsets[offCount + 3] = transform.alphaOffset;
 							} else {
-								colorMultipliers.push(1);
-								colorMultipliers.push(1);
-								colorMultipliers.push(1);
+								curMultipliers[multCount + 0] = 1;
+								curMultipliers[multCount + 1] = 1;
+								curMultipliers[multCount + 2] = 1;
 
-								colorOffsets.push(0);
-								colorOffsets.push(0);
-								colorOffsets.push(0);
-								colorOffsets.push(0);
+								curOffsets[offCount + 0] = 0;
+								curOffsets[offCount + 1] = 0;
+								curOffsets[offCount + 2] = 0;
+								curOffsets[offCount + 3] = 0;
 							}
 
-							colorMultipliers.push(1);
+							curMultipliers[multCount + 3] = 1;
+
+							multCount = multCount + (3 + 1);
+							offCount = offCount + 4;
 						}
+
+						colorMultipliers = colorMultipliers.concat(curMultipliers);
+						colorOffsets = colorOffsets.concat(curOffsets);
 					}
 				}
 			}),

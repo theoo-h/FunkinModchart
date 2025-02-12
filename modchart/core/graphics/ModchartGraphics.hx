@@ -135,6 +135,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 				__matrix.identity();
 			}
+			rotation.x = rotation.x * zScale * visuals.scaleX;
+			rotation.y = rotation.y * zScale * visuals.scaleY;
 
 			var view = new Vector3D(rotation.x + curPoint.x, rotation.y + curPoint.y, rotation.z);
 			if (Config.CAMERA3D_ENABLED)
@@ -143,8 +145,6 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			// The result of the perspective projection of rotation
 			final projection = ModchartUtil.project(view);
-			projection.x *= output1.visuals.scaleX * zScale;
-			projection.y *= output1.visuals.scaleY * zScale;
 
 			quad.x = projection.x;
 			quad.y = projection.y;
@@ -191,6 +191,9 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		var vertices:Array<Float> = [];
 		var transfTotal:Array<ColorTransform> = [];
+		transfTotal.resize(HOLD_SUBDIVISIONS);
+
+		var tID = 0;
 
 		var lastVis:Visuals = null;
 		var lastQuad:Array<Vector3D> = null;
@@ -226,11 +229,12 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			if (Math.isNaN(depth))
 				depth = topQuads[2].z * 1000;
 
-			alphaTotal += topVisuals.alpha;
+			alphaTotal = alphaTotal + topVisuals.alpha;
 
-			transfTotal.push(new ColorTransform(1 - topVisuals.glow, 1 - topVisuals.glow, 1 - topVisuals.glow, topVisuals.alpha * arrow.alpha,
-				Math.round(topVisuals.glowR * topVisuals.glow * 255), Math.round(topVisuals.glowG * topVisuals.glow * 255),
-				Math.round(topVisuals.glowB * topVisuals.glow * 255)));
+			final negGlow = 1 - topVisuals.glow;
+			final absGlow = topVisuals.glow * 255;
+			transfTotal[tID++] = new ColorTransform(negGlow, negGlow, negGlow, topVisuals.alpha * arrow.alpha, Math.round(topVisuals.glowR * absGlow),
+				Math.round(topVisuals.glowG * absGlow), Math.round(topVisuals.glowB * absGlow));
 		}
 
 		arrow._z = depth;
@@ -260,8 +264,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
 
-		@:privateAccess
-		for (camera in cameras) {
+		@:privateAccess for (camera in cameras) {
 			var cTransforms = instruction.colorData.copy();
 
 			for (t in cTransforms)
@@ -396,6 +399,8 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 				rotation.x = __matrix.__transformX(rotation.x, rotation.y);
 				rotation.y = __matrix.__transformY(rotation.x, rotation.y);
 			}
+			rotation.x = rotation.x * depthScale * output.visuals.scaleX;
+			rotation.y = rotation.y * depthScale * output.visuals.scaleY;
 
 			var view = new Vector3D(rotation.x + arrowPosition.x, rotation.y + arrowPosition.y, rotation.z);
 			if (Config.CAMERA3D_ENABLED)
@@ -404,8 +409,6 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 
 			// The result of the perspective projection of rotation
 			final projection = ModchartUtil.project(view);
-			projection.x *= depthScale * output.visuals.scaleX;
-			projection.y *= depthScale * output.visuals.scaleY;
 
 			planeVertices[vertPointer] = projection.x;
 			planeVertices[vertPointer + 1] = projection.y;
@@ -440,9 +443,10 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			uvRectangle.width,  uvRectangle.height, 1 / projectionZ[3]  // bottom right
 		]);
         // @formatter:on
-		var color = new ColorTransform(1 - output.visuals.glow, 1 - output.visuals.glow, 1 - output.visuals.glow, arrow.alpha * output.visuals.alpha,
-			Math.round(output.visuals.glowR * output.visuals.glow * 255), Math.round(output.visuals.glowG * output.visuals.glow * 255),
-			Math.round(output.visuals.glowB * output.visuals.glow * 255));
+		final absGlow = output.visuals.glow * 255;
+		final negGlow = 1 - output.visuals.glow;
+		var color = new ColorTransform(negGlow, negGlow, negGlow, arrow.alpha * output.visuals.alpha, Math.round(output.visuals.glowR * absGlow),
+			Math.round(output.visuals.glowG * absGlow), Math.round(output.visuals.glowB * absGlow));
 
 		// make the instruction
 		var newInstruction:FMDrawInstruction = {};
@@ -529,6 +533,9 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 		pathVector.incrementBy(ModchartUtil.getHalfPos());
 
 		var pointData:Array<Array<Dynamic>> = [];
+		pointData.resize(divisions);
+
+		var pID = 0;
 
 		var songPos = Adapter.instance.getSongPosition();
 
@@ -554,7 +561,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 				|| (position.y >= __display.pixels.rect.height + ARROW_PATH_BOUNDARY_OFFSET))
 				continue;
 
-			pointData.push([!moved, position.x, position.y]);
+			pointData[pID++] = [!moved, position.x, position.y];
 
 			moved = true;
 		}

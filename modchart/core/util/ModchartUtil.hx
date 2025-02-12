@@ -23,7 +23,7 @@ using StringTools;
 
 		final quatZ = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleZ * RAD);
 		final quatY = Quaternion.fromAxisAngle(Vector3D.Y_AXIS, angleY * RAD);
-		final quatX = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleX * RAD);
+		final quatX = Quaternion.fromAxisAngle(Vector3D.X_AXIS, angleX * RAD);
 
 		final finalQuat = quatX.multiply(quatY.multiply(quatZ));
 		return finalQuat.rotateVector(vec);

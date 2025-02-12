@@ -27,7 +27,8 @@ class Rotate extends Modifier {
 	}
 
 	public function getOrigin(curPos:Vector3D, params:RenderParams):Vector3D {
-		return new Vector3D(40 + WIDTH / 2 * params.player + 2 * ARROW_SIZE + ARROW_SIZEDIV2, HEIGHT * 0.5);
+		var fixedLane = Math.round(getKeyCount(params.player) * .5);
+		return new Vector3D(getReceptorX(fixedLane, params.player), getReceptorY(fixedLane, params.player) + ARROW_SIZEDIV2);
 	}
 
 	public function getRotateName():String

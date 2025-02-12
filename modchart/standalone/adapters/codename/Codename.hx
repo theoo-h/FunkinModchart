@@ -125,12 +125,12 @@ class Codename implements IAdapter {
 
 	public function getDefaultReceptorX(lane:Int, player:Int):Float {
 		@:privateAccess
-		return PlayState.instance.strumLines.members[player].startingPos.x + ((Manager.ARROW_SIZE) * lane);
+		return PlayState.instance.strumLines.members[player].members[lane].x;
 	}
 
 	public function getDefaultReceptorY(lane:Int, player:Int):Float {
 		@:privateAccess
-		return PlayState.instance.strumLines.members[player].startingPos.y;
+		return PlayState.instance.strumLines.members[player].members[lane].y;
 	}
 
 	public function getArrowCamera():Array<FlxCamera>
