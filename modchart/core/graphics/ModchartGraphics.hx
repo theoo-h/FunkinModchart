@@ -111,6 +111,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		var quad0 = new Vector3D(-unit.y * size, unit.x * size);
 		var quad1 = new Vector3D(unit.y * size, -unit.x * size);
+
 		@:privateAccess
 		for (i in 0...2) {
 			var visuals = switch (i) {
@@ -124,7 +125,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				default: null;
 			}
 			var rotation = ModchartUtil.rotate3DVector(quad, visuals.angleX * instance.getPercent('rotateHoldX', params.player),
-				visuals.angleY * instance.getPercent('rotateHoldY', params.player), visuals.angleZ * instance.getPercent('rotateHoldZ', params.player));
+				visuals.angleY * instance.getPercent('rotateHoldY', params.player), (visuals.angleZ * instance.getPercent('rotateHoldZ', params.player)));
 
 			if (visuals.skewX != 0 || visuals.skewY != 0) {
 				__matrix.b = ModchartUtil.tan(visuals.skewY * FlxAngle.TO_RAD);
@@ -144,7 +145,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			view.z *= 0.001;
 
 			// The result of the perspective projection of rotation
-			final projection = ModchartUtil.project(view);
+			var projection = ModchartUtil.project(view);
 
 			quad.x = projection.x;
 			quad.y = projection.y;
@@ -387,7 +388,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			rotationVector.setTo(planeVertices[vertPointer], planeVertices[vertPointer + 1], 0);
 
 			// The result of the vert rotation
-			var rotation = ModchartUtil.rotate3DVector(rotationVector, output.visuals.angleX, output.visuals.angleY, output.visuals.angleZ);
+			var rotation = ModchartUtil.rotate3DVector(rotationVector, output.visuals.angleX, output.visuals.angleY, ModchartUtil.getFrameAngle(arrow) + output.visuals.angleZ);
 
 			// apply skewness
 			if (output.visuals.skewX != 0 || output.visuals.skewY != 0) {

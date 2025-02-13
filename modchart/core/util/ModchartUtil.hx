@@ -14,6 +14,16 @@ import openfl.geom.Vector3D;
 using StringTools;
 
 @:keep class ModchartUtil {
+	// pain (we need this if we want support for sprite sheet packer)
+	inline public static function getFrameAngle(spr:FlxSprite):Float {
+		return switch (spr.frame.angle) {
+			case ANGLE_90: 90;
+			case ANGLE_NEG_90: -90;
+			case ANGLE_270: 270;
+			default: 0; // ANGLE_0
+		}
+	}
+
 	// NO MORE GIMBAL LOCK
 	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float):Vector3D {
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
@@ -68,21 +78,62 @@ using StringTools;
 	}
 
 	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int) {
+		var frameAngle = -ModchartUtil.getFrameAngle(arrow);
+
 		var uv = new DrawData<Float>(8 * subs, true, []);
 
 		var frameUV = arrow.frame.uv;
+		var frameWidth = frameUV.width - frameUV.x;
 		var frameHeight = frameUV.height - frameUV.y;
 
 		var subDivided = 1.0 / subs;
 
+		// if the frame doesnt have rotation, we skip the rotated uv shit
+		if ((frameAngle % 360) == 0) {
+			for (curSub in 0...subs) {
+				var uvOffset = subDivided * curSub;
+				var subIndex = curSub * 8;
+
+				uv[subIndex] = uv[subIndex + 4] = frameUV.x;
+				uv[subIndex + 2] = uv[subIndex + 6] = frameUV.width;
+				uv[subIndex + 1] = uv[subIndex + 3] = frameUV.y + uvOffset * frameHeight;
+				uv[subIndex + 5] = uv[subIndex + 7] = frameUV.y + (uvOffset + subDivided) * frameHeight;
+			}
+			return uv;
+		}
+
+		var angleRad = frameAngle * (Math.PI / 180);
+		var cosA = ModchartUtil.cos(angleRad);
+		var sinA = ModchartUtil.sin(angleRad);
+
+		var uCenter = (frameUV.x + frameUV.width) * 0.5;
+		var vCenter = (frameUV.y + frameUV.height) * 0.5;
+
+		// my brain is not braining anymore
+		// TODO: fix this cuz it sucks (also, the uv rect for some reason becomes smaller)
 		for (curSub in 0...subs) {
 			var uvOffset = subDivided * curSub;
 			var subIndex = curSub * 8;
 
-			uv[subIndex] = uv[subIndex + 4] = frameUV.x;
-			uv[subIndex + 2] = uv[subIndex + 6] = frameUV.width;
-			uv[subIndex + 1] = uv[subIndex + 3] = frameUV.y + uvOffset * frameHeight;
-			uv[subIndex + 5] = uv[subIndex + 7] = frameUV.y + (uvOffset + subDivided) * frameHeight;
+			// uv coords before rotation
+			var uvCoords = [
+				[frameUV.x, frameUV.y + uvOffset * frameHeight], // tl
+				[frameUV.width, frameUV.y + uvOffset * frameHeight], // tr
+				[frameUV.x, frameUV.y + (uvOffset + subDivided) * frameHeight], // bl
+				[frameUV.width, frameUV.y + (uvOffset + subDivided) * frameHeight] // br
+			];
+
+			// apply rotation
+			for (i in 0...4) {
+				var u = uvCoords[i][0] - uCenter;
+				var v = uvCoords[i][1] - vCenter;
+
+				var uRot = u * cosA - v * sinA;
+				var vRot = u * sinA + v * cosA;
+
+				uv[subIndex + i * 2] = uRot + uCenter;
+				uv[subIndex + i * 2 + 1] = vRot + vCenter;
+			}
 		}
 
 		return uv;

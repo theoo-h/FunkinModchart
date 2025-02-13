@@ -50,14 +50,14 @@ class Manager extends FlxBasic {
 	public inline function registerModifier(name:String, mod:Class<Modifier>, player:Int = -1)
 		__playfieldChoice((pf) -> pf.registerModifier(name, mod), player);
 
-	public inline function addModifier(name:String, player:Int = -1)
-		__playfieldChoice((pf) -> pf.addModifier(name), player);
+	public inline function addModifier(name:String, field:Int = -1)
+		__playfieldChoice((pf) -> pf.addModifier(name), field);
 
-	public inline function setPercent(name:String, value:Float, player:Int = -1, player:Int = -1)
-		__playfieldChoice((pf) -> pf.setPercent(name, value, player), player);
+	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
+		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
 
-	public inline function getPercent(name:String, player:Int = 0, player:Int = 0):Float {
-		final possiblePlayfield = playfields[player];
+	public inline function getPercent(name:String, player:Int = 0, field:Int = 0):Float {
+		final possiblePlayfield = playfields[field];
 
 		if (possiblePlayfield != null)
 			return possiblePlayfield.getPercent(name, player);

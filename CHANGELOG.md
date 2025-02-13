@@ -97,3 +97,7 @@
 - Fixed `Rotate` (base) modifier (the rotation origin was 'wrong')
 - Fixed a oopsie i did (X Rotation was not applied cus a mistake i did lol)
 - Addition on `Codename` adapter: Now it read the strum real position (so u can position them without using modchart things)
+
+# 13/02/25
+- Added properly support for Sprite Sheet Packed (i just added frame angles lol)
+- New Adapter: FPS Plus
