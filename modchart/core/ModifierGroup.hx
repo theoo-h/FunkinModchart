@@ -119,6 +119,14 @@ class ModifierGroup {
 		};
 	}
 
+	// TODO: add `activeMods` var (for optimization) and percentBackup for editor (can also be helpful for activeMods handling or idk)
+	var activeMods:Vector<String>;
+	var percentsBackup:StringMap<Vector<Float>>;
+
+	public function refreshActiveMods() {}
+
+	public function refreshPercentBackup() {}
+
 	public function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
 		if (MODIFIER_REGISTRY.get(lowerName) != null) {

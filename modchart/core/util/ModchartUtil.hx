@@ -106,11 +106,11 @@ using StringTools;
 		var cosA = ModchartUtil.cos(angleRad);
 		var sinA = ModchartUtil.sin(angleRad);
 
-		var uCenter = (frameUV.x + frameUV.width) * 0.5;
-		var vCenter = (frameUV.y + frameUV.height) * 0.5;
+		var uCenter = frameUV.x + frameWidth * .5;
+		var vCenter = frameUV.y + frameHeight * .5;
 
 		// my brain is not braining anymore
-		// TODO: fix this cuz it sucks (also, the uv rect for some reason becomes smaller)
+		// i give up
 		for (curSub in 0...subs) {
 			var uvOffset = subDivided * curSub;
 			var subIndex = curSub * 8;
@@ -125,8 +125,8 @@ using StringTools;
 
 			// apply rotation
 			for (i in 0...4) {
-				var u = uvCoords[i][0] - uCenter;
-				var v = uvCoords[i][1] - vCenter;
+				var u = uvCoords[i][0] - uCenter; // x
+				var v = uvCoords[i][1] - vCenter; // y
 
 				var uRot = u * cosA - v * sinA;
 				var vRot = u * sinA + v * cosA;
