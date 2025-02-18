@@ -2,6 +2,7 @@ package modchart.standalone;
 
 import flixel.FlxCamera;
 import flixel.FlxSprite;
+import haxe.ds.Vector;
 
 interface IAdapter {
 	public function onModchartingInitialization():Void;

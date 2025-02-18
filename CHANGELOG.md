@@ -101,3 +101,8 @@
 # 13/02/25
 - Added properly support for Sprite Sheet Packed (i just added frame angles lol)
 - New Adapter: FPS Plus
+
+# 18/08/25
+- Tons of optimization and code improvements
+- Added longHolds modifier
+- Z-Sorting was Fixed

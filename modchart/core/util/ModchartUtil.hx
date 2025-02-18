@@ -49,6 +49,8 @@ using StringTools;
 	inline static public function project(pos:Vector3D, ?origin:Vector3D) {
 		final fov = Math.PI / 2;
 
+		var originalZ = pos.z;
+
 		if (origin == null)
 			origin = new Vector3D(FlxG.width / 2, FlxG.height / 2);
 		pos.decrementBy(origin);
@@ -65,6 +67,8 @@ using StringTools;
 		final projectedPos = new Vector3D(pos.x * halfFovTan, pos.y * halfFovTan, projectionZ * projectionZ, projectionZ);
 		projectedPos.project();
 		projectedPos.incrementBy(origin);
+
+		projectedPos.w = (projectedPos.z - 1) * 1000;
 		return projectedPos;
 	}
 

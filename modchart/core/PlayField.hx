@@ -193,8 +193,8 @@ class PlayField extends FlxBasic {
 	}
 
 	override public function draw() {
-		__drawPlayField();
 		super.draw();
+		__drawPlayField();
 	}
 
 	override public function destroy() {
@@ -215,6 +215,9 @@ class PlayField extends FlxBasic {
 
 	private function __drawPlayField() {
 		drawCB = [];
+
+		// TODO: prepare arrow paths shit
+		var pathAlphaTotal = .0;
 
 		var playerItems:Array<Array<Array<FlxSprite>>> = Adapter.instance.getArrowItems();
 
@@ -257,10 +260,8 @@ class PlayField extends FlxBasic {
 
 					arrowRenderer.prepare(arrow);
 					queue({
-						callback: () -> {
-							arrowRenderer.shift();
-						},
-						z: arrow._z - 2
+						callback: arrowRenderer.shift,
+						z: arrow._z
 					});
 				}
 			}
@@ -273,10 +274,8 @@ class PlayField extends FlxBasic {
 
 					holdRenderer.prepare(hold);
 					queue({
-						callback: () -> {
-							holdRenderer.shift();
-						},
-						z: hold._z - 1
+						callback: holdRenderer.shift,
+						z: hold._z
 					});
 				}
 			}
@@ -291,15 +290,15 @@ class PlayField extends FlxBasic {
 					if (Manager.instance.renderArrowPaths)
 						pathRenderer.prepare(receptor);
 					queue({
-						callback: () -> {
-							receptorRenderer.shift();
-						},
+						callback: receptorRenderer.shift,
 						z: receptor._z
 					});
 				}
 			}
-			continue;
 		}
+
+		for (r in [receptorRenderer, arrowRenderer, holdRenderer])
+			r.sort();
 
 		if (Manager.instance.renderArrowPaths)
 			pathRenderer.shift();

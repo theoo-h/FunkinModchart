@@ -71,8 +71,11 @@ class Stealth extends Modifier {
 		data.glow += getPercent('flash', player) + (visibility * 2);
 
 		// sudden & hidden
-		computeSudden(data, params);
-		computeHidden(data, params);
+		if (params.isTapArrow) // non receptor
+		{
+			computeSudden(data, params);
+			computeHidden(data, params);
+		}
 
 		return data;
 	}

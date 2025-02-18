@@ -21,7 +21,11 @@ class ArrowData {
 
 	public var lane:Int = 0;
 	public var player:Int = 0;
+
+	public var hitten:Bool = false;
 	public var isTapArrow:Bool = false;
+
+	private var __holdSubdivisionOffset:Float = .0;
 }
 
 @:structInit
