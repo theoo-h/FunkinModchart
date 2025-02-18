@@ -106,3 +106,6 @@
 - Tons of optimization and code improvements
 - Added longHolds modifier
 - Z-Sorting was Fixed
+
+# 18/08/25 #2
+- Fix receptor, arrow, hold draw order.

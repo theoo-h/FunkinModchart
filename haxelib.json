@@ -3,7 +3,7 @@
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
     "version": "1.2.0",
-    "releasenote": "",
+    "releasenote": "FPS Plus Support, Optimizations and Improvements",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {

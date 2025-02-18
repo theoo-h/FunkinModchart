@@ -1,4 +1,5 @@
 #if !macro
+import modchart.Config;
 import modchart.Manager;
 import modchart.Modifier;
 import modchart.core.util.Constants.ArrowData;

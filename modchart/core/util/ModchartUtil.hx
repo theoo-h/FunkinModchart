@@ -6,7 +6,6 @@ import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import haxe.ds.Vector;
-import modchart.Manager;
 import modchart.core.Quanterion;
 import openfl.geom.Matrix3D;
 import openfl.geom.Vector3D;
@@ -30,12 +29,38 @@ using StringTools;
 			return vec;
 
 		final RAD = FlxAngle.TO_RAD;
-
-		final quatZ = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleZ * RAD);
-		final quatY = Quaternion.fromAxisAngle(Vector3D.Y_AXIS, angleY * RAD);
 		final quatX = Quaternion.fromAxisAngle(Vector3D.X_AXIS, angleX * RAD);
+		final quatY = Quaternion.fromAxisAngle(Vector3D.Y_AXIS, angleY * RAD);
+		final quatZ = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleZ * RAD);
 
-		final finalQuat = quatX.multiply(quatY.multiply(quatZ));
+		var finalQuat:Quaternion;
+		// pain
+		switch (Config.ROTATION_ORDER) {
+			case X_Y_Z:
+				finalQuat = quatX.multiply(quatY.multiply(quatZ));
+			case X_Z_Y:
+				finalQuat = quatX.multiply(quatZ.multiply(quatY));
+			case Y_X_Z:
+				finalQuat = quatY.multiply(quatX.multiply(quatZ));
+			case Y_Z_X:
+				finalQuat = quatY.multiply(quatZ.multiply(quatX));
+			case Z_X_Y:
+				finalQuat = quatZ.multiply(quatX.multiply(quatY));
+			case Z_Y_X:
+				finalQuat = quatZ.multiply(quatY.multiply(quatX));
+			case X_Y_X:
+				finalQuat = quatX.multiply(quatY.multiply(quatX));
+			case X_Z_X:
+				finalQuat = quatX.multiply(quatZ.multiply(quatX));
+			case Y_X_Y:
+				finalQuat = quatY.multiply(quatX.multiply(quatY));
+			case Y_Z_Y:
+				finalQuat = quatY.multiply(quatZ.multiply(quatY));
+			case Z_X_Z:
+				finalQuat = quatZ.multiply(quatX.multiply(quatZ));
+			case Z_Y_Z:
+				finalQuat = quatZ.multiply(quatY.multiply(quatZ));
+		}
 		return finalQuat.rotateVector(vec);
 	}
 

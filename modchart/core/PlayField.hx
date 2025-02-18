@@ -252,16 +252,18 @@ class PlayField extends FlxBasic {
 		for (i in 0...playerItems.length) {
 			var curItems:Array<Array<FlxSprite>> = playerItems[i];
 
-			// tap arrow
-			if (curItems[1] != null && curItems[1].length > 0) {
-				for (arrow in curItems[1]) {
-					if (!getVisibility(arrow))
+			// receptors
+			if (curItems[0] != null && curItems[0].length > 0) {
+				for (receptor in curItems[0]) {
+					if (!getVisibility(receptor))
 						continue;
 
-					arrowRenderer.prepare(arrow);
+					receptorRenderer.prepare(receptor);
+					if (Manager.instance.renderArrowPaths)
+						pathRenderer.prepare(receptor);
 					queue({
-						callback: arrowRenderer.shift,
-						z: arrow._z
+						callback: receptorRenderer.shift,
+						z: receptor._z
 					});
 				}
 			}
@@ -280,18 +282,16 @@ class PlayField extends FlxBasic {
 				}
 			}
 
-			// receptors
-			if (curItems[0] != null && curItems[0].length > 0) {
-				for (receptor in curItems[0]) {
-					if (!getVisibility(receptor))
+			// tap arrow
+			if (curItems[1] != null && curItems[1].length > 0) {
+				for (arrow in curItems[1]) {
+					if (!getVisibility(arrow))
 						continue;
 
-					receptorRenderer.prepare(receptor);
-					if (Manager.instance.renderArrowPaths)
-						pathRenderer.prepare(receptor);
+					arrowRenderer.prepare(arrow);
 					queue({
-						callback: receptorRenderer.shift,
-						z: receptor._z
+						callback: arrowRenderer.shift,
+						z: arrow._z
 					});
 				}
 			}
