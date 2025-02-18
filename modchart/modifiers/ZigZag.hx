@@ -6,15 +6,15 @@ import openfl.geom.Vector3D;
 
 class ZigZag extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		final zigzag = getPercent('zigZag', params.field);
+		final zigzag = getPercent('zigZag', params.player);
 
 		if (zigzag == 0)
 			return curPos;
 
-		var theta = -params.hDiff / ARROW_SIZE * Math.PI;
+		var theta = -params.distance / ARROW_SIZE * Math.PI;
 		var outRelative = Math.acos(cos(theta + Math.PI / 2)) / Math.PI * 2 - 1;
 
-		curPos.x += outRelative * ARROW_SIZEDIV2;
+		curPos.x += outRelative * ARROW_SIZEDIV2 * zigzag;
 
 		return curPos;
 	}

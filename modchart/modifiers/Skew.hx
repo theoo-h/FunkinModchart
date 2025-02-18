@@ -8,10 +8,10 @@ import openfl.geom.Vector3D;
 
 class Skew extends Modifier {
 	override public function visuals(data:Visuals, params:RenderParams):Visuals {
-		var receptorName = Std.string(params.receptor);
-		var field = params.field;
-		final x = getPercent('skewX', field) + getPercent('skewX' + receptorName, field);
-		final y = getPercent('skewY', field) + getPercent('skewY' + receptorName, field);
+		var receptorName = Std.string(params.lane);
+		var player = params.player;
+		final x = getPercent('skewX', player) + getPercent('skewX' + receptorName, player);
+		final y = getPercent('skewY', player) + getPercent('skewY' + receptorName, player);
 
 		data.skewX += x;
 		data.skewY += y;

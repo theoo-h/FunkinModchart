@@ -2,38 +2,8 @@ package modchart.standalone;
 
 import flixel.FlxCamera;
 import flixel.FlxSprite;
+import haxe.ds.Vector;
 
-/*
-	class EAdapter implements IAdapter
-	{
-	public function onModchartingInitialization():Void {}
-
-	// Song-related stuff
-	public function getSongPosition():Float        {return 0;}
-	public function getStaticCrochet():Float       {return 0;}
-	public function getCurrentBeat():Float         {return 0;}
-	public function getCurrentScrollSpeed():Float  {return 0;}
-
-	// Arrow-related stuff
-	public function getDefaultReceptorX(lane:Int, player:Int):Float {return 0;}
-	public function getDefaultReceptorY(lane:Int, player:Int):Float {return 0;}
-	public function getTimeFromArrow(arrow:FlxSprite):Float         {return 0;}
-	public function isTapNote(sprite:FlxSprite):Bool                {return false;}
-	public function isHoldEnd(sprite:FlxSprite):Bool                {return false;}
-	public function arrowHit(sprite:FlxSprite):Bool              {return false;}
-
-	public function getLaneFromArrow(sprite:FlxSprite):Int          {return 0;}
-	public function getPlayerFromArrow(sprite:FlxSprite):Int        {return 0;}
-
-	public function getKeyCount():Int       {return 0;};
-	public function getPlayerCount():Int    {return 0;};
-
-	public function getArrowCamera():Array<FlxCamera> {return [];};
-
-	public function getHoldSubdivisions():Int  {return 0;};
-
-	public function getArrowItems():Array<Array<Array<FlxSprite>>> {return [];};
-}*/
 interface IAdapter {
 	public function onModchartingInitialization():Void;
 
@@ -43,14 +13,16 @@ interface IAdapter {
 	public function getStaticCrochet():Float; // Beat crochet without bpm changes
 	public function getCurrentBeat():Float; // Current beat
 	public function getCurrentScrollSpeed():Float; // Current arrow scroll speed
+	public function getBeatFromStep(step:Float):Float;
 
 	// Arrow-related stuff
 	public function getDefaultReceptorX(lane:Int, player:Int):Float; // Get default strum x position
 	public function getDefaultReceptorY(lane:Int, player:Int):Float; // Get default strum y position
 	public function getTimeFromArrow(arrow:FlxSprite):Float; // Get strum time for arrow
-	public function isTapNote(sprite:FlxSprite):Bool; // If the sprite is an arrow, return true, if it is an receptor/strum, return false
+	public function isTapNote(sprite:FlxSprite):Bool; // If the sprite is an arrow, return true, if it is an lane/strum, return false
 	public function isHoldEnd(sprite:FlxSprite):Bool; // If its the hold end
 	public function arrowHit(sprite:FlxSprite):Bool; // If the arrow was hitted
+	public function getHoldParentTime(sprite:FlxSprite):Float;
 
 	public function getLaneFromArrow(sprite:FlxSprite):Int; // Get lane/note data from arrow
 	public function getPlayerFromArrow(sprite:FlxSprite):Int; // Get player from arrow
@@ -66,7 +38,7 @@ interface IAdapter {
 	public function getDownscroll():Bool; // Get if it is downscroll
 
 	/**
-	 * Get the every arrow/receptor indexed by player.
+	 * Get the every arrow/lane indexed by player.
 	 * Example:
 	 * [
 	 *      [ // Player 0

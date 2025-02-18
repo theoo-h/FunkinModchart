@@ -19,7 +19,7 @@ class Codename implements IAdapter {
 
 		for (strumLine in PlayState.instance.strumLines.members) {
 			strumLine.forEach(strum -> {
-				strum.extra.set('field', strumLine.ID);
+				strum.extra.set('player', strumLine.ID);
 				// i guess ???
 				strum.extra.set('lane', strumLine.members.indexOf(strum));
 			});
@@ -41,6 +41,10 @@ class Codename implements IAdapter {
 
 	public function getStaticCrochet():Float {
 		return __fCrochet;
+	}
+
+	public function getBeatFromStep(step:Float):Float {
+		return step * Conductor.stepsPerBeat;
 	}
 
 	public function arrowHit(arrow:FlxSprite) {
@@ -77,10 +81,15 @@ class Codename implements IAdapter {
 			return note.strumLine.ID;
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
-			return strum.extra.get('field');
+			return strum.extra.get('player');
 		}
 
 		return 0;
+	}
+
+	public function getHoldParentTime(arrow:FlxSprite) {
+		final note:Note = cast arrow;
+		return note.strumTime;
 	}
 
 	// im so fucking sorry for those conditionals
@@ -106,22 +115,22 @@ class Codename implements IAdapter {
 	}
 
 	public function getHoldSubdivisions():Int {
-		final val = Options.hold_subs;
-		return val < 1 ? 1 : Options.hold_subs;
+		final val = Options.modchartingHoldSubdivisions;
+		return val < 1 ? 1 : val;
 	}
 
 	public function getDownscroll():Bool {
 		return Options.downscroll;
 	}
 
-	public function getDefaultReceptorX(lane:Int, field:Int):Float {
+	public function getDefaultReceptorX(lane:Int, player:Int):Float {
 		@:privateAccess
-		return PlayState.instance.strumLines.members[field].startingPos.x + ((Manager.ARROW_SIZE) * lane);
+		return PlayState.instance.strumLines.members[player].members[lane].x;
 	}
 
-	public function getDefaultReceptorY(lane:Int, field:Int):Float {
+	public function getDefaultReceptorY(lane:Int, player:Int):Float {
 		@:privateAccess
-		return PlayState.instance.strumLines.members[field].startingPos.y;
+		return PlayState.instance.strumLines.members[player].members[lane].y;
 	}
 
 	public function getArrowCamera():Array<FlxCamera>
@@ -134,6 +143,7 @@ class Codename implements IAdapter {
 	// 0 receptors
 	// 1 tap arrows
 	// 2 hold arrows
+	// 3 lane attachments
 	public function getArrowItems() {
 		var pspr:Array<Array<Array<FlxSprite>>> = [];
 
@@ -141,6 +151,11 @@ class Codename implements IAdapter {
 
 		for (i in 0...strumLineMembers.length) {
 			final sl = strumLineMembers[i];
+
+			if (!sl.visible)
+				continue;
+
+			final splashHandler = PlayState.instance.splashHandler;
 
 			// this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
 			pspr[i] = [];

@@ -1,1 +1,5 @@
 .git
+
+# currently on dev
+.modchart/environments/*
+.modchart/core/IEnvironment.hx

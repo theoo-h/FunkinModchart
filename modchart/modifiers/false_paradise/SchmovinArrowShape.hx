@@ -63,15 +63,15 @@ class SchmovinArrowShape extends Modifier {
 		if (_path == null)
 			_path = LoadPath();
 
-		final perc = getPercent('schmovinArrowShape', params.field);
+		final perc = getPercent('schmovinArrowShape', params.player);
 
 		if (perc == 0)
 			return curPos;
 
-		var path = GetPointAlongPath(params.hDiff / 1500.0 * _pathDistance);
+		var path = GetPointAlongPath(params.distance / 1500.0 * _pathDistance);
 
 		return ModchartUtil.lerpVector3D(curPos,
-			path.add(new Vector3D(WIDTH * .5, HEIGHT * .5 + 280, params.receptor * getPercent('schmovinArrowShapeOffset', params.field) + curPos.z)), perc);
+			path.add(new Vector3D(WIDTH * .5, HEIGHT * .5 + 280, params.lane * getPercent('schmovinArrowShapeOffset', params.player) + curPos.z)), perc);
 	}
 
 	override public function shouldRun(params:RenderParams):Bool

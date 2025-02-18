@@ -6,13 +6,13 @@ import openfl.geom.Vector3D;
 
 class Tipsy extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		var field = params.field;
-		var speed = getPercent('tipsySpeed', field);
-		var offset = getPercent('tipsyOffset', field);
+		var player = params.player;
+		var speed = getPercent('tipsySpeed', player);
+		var offset = getPercent('tipsyOffset', player);
 
-		var tipsy = (cos((params.sPos * 0.001 * ((speed * 1.2) + 1.2) + params.receptor * ((offset * 1.8) + 1.8))) * ARROW_SIZE * .4);
+		var tipsy = (cos((params.songTime * 0.001 * ((speed * 1.2) + 1.2) + params.lane * ((offset * 1.8) + 1.8))) * ARROW_SIZE * .4);
 
-		var tipAddition = new Vector3D(getPercent('tipsyX', field), getPercent('tipsyY', field) + getPercent('tipsy', field), getPercent('tipsyZ', field));
+		var tipAddition = new Vector3D(getPercent('tipsyX', player), getPercent('tipsyY', player) + getPercent('tipsy', player), getPercent('tipsyZ', player));
 		tipAddition.scaleBy(tipsy);
 
 		return curPos.add(tipAddition);

@@ -6,15 +6,15 @@ import openfl.geom.Vector3D;
 
 class Square extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
-		var field = params.field;
-		final squarep = getPercent('square', field);
+		var player = params.player;
+		final squarep = getPercent('square', player);
 
 		if (squarep == 0)
 			return curPos;
 
-		final offset = getPercent("squareOffset", field);
-		final period = getPercent("squarePeriod", field);
-		final amp = (Math.PI * (params.hDiff + offset) / (ARROW_SIZE + (period * ARROW_SIZE)));
+		final offset = getPercent("squareOffset", player);
+		final period = getPercent("squarePeriod", player);
+		final amp = (Math.PI * (params.distance + offset) / (ARROW_SIZE + (period * ARROW_SIZE)));
 
 		curPos.x += squarep * square(amp);
 

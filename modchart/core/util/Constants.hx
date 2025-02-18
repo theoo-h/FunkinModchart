@@ -1,37 +1,31 @@
 package modchart.core.util;
 
-class Constants {
-	public static var MODIFIER_LIST:Map<String, Class<Modifier>>;
-}
+class Constants {}
 
 @:structInit
 class RenderParams {
-	public var sPos:Float;
-	public var time:Float;
-	public var fBeat:Float;
-	public var hDiff:Float;
-	public var receptor:Int;
-	public var field:Int;
-	public var arrow:Bool;
+	public var songTime:Float;
+	public var hitTime:Float;
+	public var distance:Float;
+	public var curBeat:Float;
 
-	// for hold mods
-	public var __holdParentTime:Float = 0;
-	public var __holdLength:Float = 0;
-	public var __holdOffset:Float = 0;
+	public var lane:Int = 0;
+	public var player:Int = 0;
+	public var isTapArrow:Bool = false;
 }
 
 @:structInit
 class ArrowData {
-	public var time:Float;
-	public var hDiff:Float;
-	public var receptor:Int;
-	public var field:Int;
-	public var arrow:Bool;
+	public var hitTime:Float = 0;
+	public var distance:Float = 0;
 
-	// for hold mods
-	public var __holdParentTime:Float = 0;
-	public var __holdLength:Float = 0;
-	public var __holdOffset:Float = 0;
+	public var lane:Int = 0;
+	public var player:Int = 0;
+
+	public var hitten:Bool = false;
+	public var isTapArrow:Bool = false;
+
+	private var __holdSubdivisionOffset:Float = .0;
 }
 
 @:structInit
@@ -39,7 +33,6 @@ class Visuals {
 	public var scaleX:Float = 1;
 	public var scaleY:Float = 1;
 	public var alpha:Float = 1;
-	public var zoom:Float = 0;
 	public var glow:Float = 0;
 	public var glowR:Float = 1;
 	public var glowG:Float = 1;
@@ -51,12 +44,36 @@ class Visuals {
 	public var skewY:Float = 0;
 }
 
-class SimplePoint {
-	public var x:Float;
-	public var y:Float;
-
-	public function new(x:Float, y:Float) {
-		this.x = x;
-		this.y = y;
-	}
+@:publicFields
+@:structInit
+class HoldSegment {
+	var origin:Vector3D;
+	var left:Vector3D;
+	var right:Vector3D;
 }
+
+@:publicFields
+@:structInit
+class Node {
+	public var input:Array<String> = [];
+	public var output:Array<String> = [];
+	public var func:NodeFunction = (_, o) -> _;
+}
+
+@:publicFields
+@:structInit
+class ModAlias {
+	public var parent:String;
+	public var alias:String;
+}
+
+/*
+	abstract ModScheme(Dynamic) from Dynamic from String from Array<String> to Dynamic {
+	public inline function get():ModScheme
+	{
+		return this is String ? [this] : this;
+	}
+	}
+ */
+// (InputModPercents, PlayerNumber) -> OutputModPercents
+typedef NodeFunction = (Array<Float>, Int) -> Array<Float>;

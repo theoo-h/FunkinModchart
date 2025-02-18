@@ -9,13 +9,13 @@ import openfl.geom.Vector3D;
 class Rotate extends Modifier {
 	override public function render(curPos:Vector3D, params:RenderParams) {
 		var rotateName = getRotateName();
-		var field = params.field;
+		var player = params.player;
 
-		var angleX = getPercent(rotateName + 'X', field);
-		var angleY = getPercent(rotateName + 'Y', field);
-		var angleZ = getPercent(rotateName + 'Z', field);
+		var angleX = getPercent(rotateName + 'X', player);
+		var angleY = getPercent(rotateName + 'Y', player);
+		var angleZ = getPercent(rotateName + 'Z', player);
 
-		// does angleY work here if angleX and angleZ are disabled?
+		// does angleY work here if angleX and angleZ are disabled? - ye
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return curPos;
 
@@ -27,7 +27,8 @@ class Rotate extends Modifier {
 	}
 
 	public function getOrigin(curPos:Vector3D, params:RenderParams):Vector3D {
-		return new Vector3D(40 + WIDTH / 2 * params.field + 2 * ARROW_SIZE + ARROW_SIZEDIV2, HEIGHT * 0.5);
+		var fixedLane = Math.round(getKeyCount(params.player) * .5);
+		return new Vector3D(getReceptorX(fixedLane, params.player), getReceptorY(fixedLane, params.player) + ARROW_SIZEDIV2);
 	}
 
 	public function getRotateName():String

@@ -2,6 +2,8 @@ package modchart;
 
 import flixel.FlxBasic;
 import flixel.tweens.FlxEase.EaseFunction;
+import flixel.util.FlxSort;
+import haxe.ds.ArraySort;
 import modchart.core.ModifierGroup;
 import modchart.core.PlayField;
 import modchart.core.graphics.ModchartGraphics.ModchartArrowPath;
@@ -18,6 +20,7 @@ import modchart.modifiers.*;
 
 @:allow(modchart.core.ModifierGroup)
 @:allow(modchart.core.graphics.ModchartGraphics)
+@:access(modchart.core.PlayField)
 class Manager extends FlxBasic {
 	public static var instance:Manager;
 
@@ -38,22 +41,22 @@ class Manager extends FlxBasic {
 	}
 
 	@:noCompletion
-	private function __playfieldChoice(func:PlayField->Void, field:Int = -1) {
-		if (field != -1)
-			return func(playfields[field]);
+	private inline function __forEachPlayfield(func:PlayField->Void, player:Int = -1) {
+		if (player != -1)
+			return func(playfields[player]);
 		else
 			for (pf in playfields)
 				func(pf);
 	}
 
-	public inline function registerModifier(name:String, mod:Class<Modifier>, field:Int = -1)
-		__playfieldChoice((pf) -> pf.registerModifier(name, mod), field);
+	public inline function registerModifier(name:String, mod:Class<Modifier>, player:Int = -1)
+		__forEachPlayfield((pf) -> pf.registerModifier(name, mod), player);
 
 	public inline function addModifier(name:String, field:Int = -1)
-		__playfieldChoice((pf) -> pf.addModifier(name), field);
+		__forEachPlayfield((pf) -> pf.addModifier(name), field);
 
 	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
-		__playfieldChoice((pf) -> pf.setPercent(name, value, player), field);
+		__forEachPlayfield((pf) -> pf.setPercent(name, value, player), field);
 
 	public inline function getPercent(name:String, player:Int = 0, field:Int = 0):Float {
 		final possiblePlayfield = playfields[field];
@@ -65,66 +68,70 @@ class Manager extends FlxBasic {
 	}
 
 	public inline function addEvent(event:Event, field:Int = -1)
-		__playfieldChoice((pf) -> pf.addEvent(event), field);
+		__forEachPlayfield((pf) -> pf.addEvent(event), field);
 
 	public inline function set(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
-		__playfieldChoice((pf) -> pf.set(name, beat, value, player), field);
+		__forEachPlayfield((pf) -> pf.set(name, beat, value, player), field);
 
 	public inline function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
-		__playfieldChoice((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
+		__forEachPlayfield((pf) -> pf.ease(name, beat, length, value, easeFunc, player), field);
+
+	public inline function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1, field:Int = -1)
+		__forEachPlayfield((pf) -> pf.add(name, beat, length, value, easeFunc, player), field);
+
+	public inline function setAdd(name:String, beat:Float, value:Float, player:Int = -1, field:Int = -1)
+		__forEachPlayfield((pf) -> pf.setAdd(name, beat, value, player), field);
 
 	public inline function repeater(beat:Float, length:Float, callback:Event->Void, field:Int = -1)
-		__playfieldChoice((pf) -> pf.repeater(beat, length, callback), field);
+		__forEachPlayfield((pf) -> pf.repeater(beat, length, callback), field);
 
 	public inline function callback(beat:Float, callback:Event->Void, field:Int = -1)
-		__playfieldChoice((pf) -> pf.callback(beat, callback), field);
+		__forEachPlayfield((pf) -> pf.callback(beat, callback), field);
 
-	public function addPlayfield() {
+	public inline function node(input:Array<String>, output:Array<String>, func:NodeFunction, field:Int = -1)
+		__forEachPlayfield((pf) -> pf.node(input, output, func), field);
+
+	public inline function alias(name:String, alias:String, field:Int)
+		__forEachPlayfield((pf) -> pf.alias(name, alias), field);
+
+	public inline function addPlayfield()
 		playfields.push(new PlayField());
-
-		// default mods
-		addModifier('reverse', playfields.length - 1);
-		addModifier('stealth', playfields.length - 1);
-		addModifier('confusion', playfields.length - 1);
-		addModifier('skew', playfields.length - 1);
-
-		setPercent('arrowPathAlpha', 1, -1, playfields.length - 1);
-		setPercent('arrowPathThickness', 1, -1, playfields.length - 1);
-		setPercent('arrowPathDivisions', 1, -1, playfields.length - 1);
-		setPercent('rotateHoldY', 1, -1, playfields.length - 1);
-	}
 
 	override function update(elapsed:Float):Void {
 		super.update(elapsed);
 
-		__playfieldChoice(pf -> pf.update(elapsed));
+		__forEachPlayfield(pf -> pf.update(elapsed));
 	}
 
 	override function draw():Void {
-		var drawQueue:Array<{callback:Void->Void, z:Float}> = [];
-
-		__playfieldChoice(pf -> {
+		var total = 0;
+		__forEachPlayfield(pf -> {
 			pf.draw();
 
-			@:privateAccess
-			drawQueue = drawQueue.concat(pf.drawCB);
+			total += pf.drawCB.length;
+		});
+
+		var drawQueue:haxe.ds.Vector<Funny> = new haxe.ds.Vector<Funny>(total);
+
+		var j = 0;
+		__forEachPlayfield(pf -> {
+			for (x in pf.drawCB)
+				drawQueue[j++] = x;
 		});
 
 		drawQueue.sort((a, b) -> {
-			return Math.round(b.z - a.z);
+			return FlxSort.byValues(FlxSort.DESCENDING, a.z, b.z);
 		});
 
-		var sprs = [];
-		sprs.resize(drawQueue.length);
-
-		for (item in drawQueue)
+		for (item in drawQueue) {
 			item.callback();
+		}
 	}
 
 	override function destroy():Void {
 		super.destroy();
 
-		__playfieldChoice(pf -> {
+		__forEachPlayfield(pf -> {
 			pf.destroy();
 		});
 	}
@@ -134,3 +141,5 @@ class Manager extends FlxBasic {
 	public static var ARROW_SIZE:Float = 160 * 0.7;
 	public static var ARROW_SIZEDIV2:Float = (160 * 0.7) * 0.5;
 }
+
+typedef Funny = {callback:Void->Void, z:Float};

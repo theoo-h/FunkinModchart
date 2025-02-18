@@ -33,10 +33,10 @@ class ModifierGroup {
 		'square' => Square,
 		'zigzag' => ZigZag,
 		'beat' => Beat,
-		'accelerate' => Accelerate,
+		'boost' => Boost,
 		'receptorscroll' => ReceptorScroll,
 		'sawtooth' => SawTooth,
-		'mini' => Mini,
+		'zoom' => Zoom,
 		'rotate' => Rotate,
 		'fieldrotate' => FieldRotate,
 		'centerrotate' => CenterRotate,
@@ -63,7 +63,7 @@ class ModifierGroup {
 
 	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
 
-	private var percents:StringMap<IntMap<Float>> = new StringMap();
+	private var percents:StringMap<Vector<Float>> = new StringMap();
 	private var modifiers:StringMap<Modifier> = new StringMap();
 
 	private var sortedMods:Vector<String>;
@@ -83,41 +83,26 @@ class ModifierGroup {
 
 	// just render mods with the perspective stuff included
 	public function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
-		var visuals:Visuals = {
-			scaleX: 1.,
-			scaleY: 1.,
-			angleX: 0.,
-			angleY: 0.,
-			angleZ: 0.,
-			alpha: 1.,
-			zoom: 1.,
-			glow: 0.,
-			glowR: 1.,
-			glowG: 1.,
-			glowB: 1.
-		};
+		var visuals:Visuals = {};
 
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
 
-		var songPos = Adapter.instance.getSongPosition();
-		var beat = Adapter.instance.getCurrentBeat();
+		final songPos = Adapter.instance.getSongPosition();
+		final beat = Adapter.instance.getCurrentBeat();
+
+		final args:RenderParams = {
+			songTime: songPos,
+			curBeat: beat,
+			hitTime: data.hitTime + posDiff,
+			distance: data.distance + posDiff,
+			lane: data.lane,
+			player: data.player,
+			isTapArrow: data.isTapArrow
+		}
 
 		for (i in 0...sortedMods.length) {
 			final mod = modifiers.get(sortedMods[i]);
-
-			final args:RenderParams = {
-				sPos: songPos,
-				fBeat: beat,
-				time: data.time + posDiff,
-				hDiff: data.hDiff + posDiff,
-				receptor: data.receptor,
-				field: data.field,
-				arrow: data.arrow,
-				__holdParentTime: data.__holdParentTime,
-				__holdLength: data.__holdLength,
-				__holdOffset: data.__holdOffset
-			}
 
 			if (!mod.shouldRun(args))
 				continue;
@@ -127,13 +112,20 @@ class ModifierGroup {
 			if (allowVis)
 				visuals = mod.visuals(visuals, args);
 		}
-		pos = ModchartUtil.applyViewMatrix(pos);
 		pos.z *= 0.001;
 		return {
-			pos: ModchartUtil.perspective(pos),
+			pos: ModchartUtil.project(pos),
 			visuals: visuals
 		};
 	}
+
+	// TODO: add `activeMods` var (for optimization) and percentBackup for editor (can also be helpful for activeMods handling or idk)
+	var activeMods:Vector<String>;
+	var percentsBackup:StringMap<Vector<Float>>;
+
+	public function refreshActiveMods() {}
+
+	public function refreshPercentBackup() {}
 
 	public function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
@@ -146,6 +138,8 @@ class ModifierGroup {
 
 	public function addModifier(name:String) {
 		var lowerName = name.toLowerCase();
+		if (modifiers.exists(lowerName))
+			return;
 		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
@@ -160,36 +154,35 @@ class ModifierGroup {
 		__allocModSorting(newArr);
 	}
 
-	public function setPercent(name:String, value:Float, field:Int = -1) {
-		var lowerName = name.toLowerCase();
-		final possiblePercs = percents.get(lowerName);
-		final percs = possiblePercs != null ? possiblePercs : getDefaultPerc();
+	public function setPercent(name:String, value:Float, player:Int = -1) {
+		var lwr = name.toLowerCase();
+		var possiblePercs = percents.get(lwr);
+		var generate = possiblePercs == null;
+		var percs = generate ? __getAllocatedPercs() : possiblePercs;
 
-		if (field == -1)
-			for (k => _ in percs)
-				percs.set(k, value);
+		if (player == -1)
+			for (_ in 0...percs.length)
+				percs[_] = value;
 		else
-			percs.set(field, value);
+			percs[player] = value;
 
-		percents.set(lowerName, percs);
+		// if the percent list already was created, we dont need to re-set the list
+		if (generate)
+			percents.set(lwr, percs);
 	}
 
-	public function getPercent(name:String, field:Int):Float {
+	public function getPercent(name:String, player:Int):Float {
 		final percs = percents.get(name.toLowerCase());
 
-		if (percs != null) {
-			// Map.get can return null
-			final possiblePerc:Null<Float> = percs.get(field);
-			return possiblePerc != null ? possiblePerc : 0;
-		}
+		if (percs != null)
+			return percs[player];
 		return 0;
 	}
 
-	private function getDefaultPerc():IntMap<Float> {
-		final percMap = new IntMap<Float>();
-
-		for (i in 0...Adapter.instance.getPlayerCount())
-			percMap.set(i, 0.);
-		return percMap;
+	private inline function __getAllocatedPercs():Vector<Float> {
+		final vector = new Vector<Float>(Adapter.instance.getPlayerCount());
+		for (i in 0...vector.length)
+			vector[i] = 0;
+		return vector;
 	}
 }

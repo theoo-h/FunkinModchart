@@ -12,7 +12,7 @@ class Drugged extends Modifier {
 		var amplitude = 1.;
 		var frequency = 1.;
 
-		var x = (params.hDiff * 0.009) + (params.receptor * 0.125);
+		var x = (params.distance * 0.009) + (params.lane * 0.125);
 		var y = 0.;
 		y = sin(x * frequency);
 		var t = 0.01 * (-Adapter.instance.getSongPosition() * 0.0025 * 130.0);
@@ -22,18 +22,18 @@ class Drugged extends Modifier {
 		y += sin(x * frequency * 3.1122 + t * 4.269) * 2.5;
 		y *= amplitude * 0.06;
 
-		curPos.x += y * getPercent('drugged', params.field) * ARROW_SIZE * 0.8;
+		curPos.x += y * getPercent('drugged', params.player) * ARROW_SIZE * 0.8;
 
 		return curPos;
 	}
 
 	override public function visuals(visuals:Visuals, params:RenderParams) {
-		var drug = getPercent('drugged', params.field);
+		var drug = getPercent('drugged', params.player);
 
 		var amplitude = 1.;
 		var frequency = 1.;
 
-		var x = (params.hDiff * 0.025) + (params.receptor * 0.3);
+		var x = (params.distance * 0.025) + (params.lane * 0.3);
 		var y = 0.;
 		y = sin(x * frequency);
 		var t = 0.01 * (-Adapter.instance.getSongPosition() * 0.005 * 130.0);
@@ -61,7 +61,7 @@ class Drugged extends Modifier {
 
 		return visuals;
 
-		// curPos.x += y * getPercent('drugged', params.field);
+		// curPos.x += y * getPercent('drugged', params.player);
 	}
 
 	override public function shouldRun(params:RenderParams):Bool

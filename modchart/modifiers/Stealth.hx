@@ -24,18 +24,18 @@ class Stealth extends Modifier {
 	}
 
 	function computeSudden(data:Visuals, params:RenderParams) {
-		final field = params.field;
+		final player = params.player;
 
-		final sudden = getPercent('sudden', field);
+		final sudden = getPercent('sudden', player);
 
 		if (sudden == 0)
 			return;
 
-		final start = getPercent('suddenStart', field) * 100;
-		final end = getPercent('suddenEnd', field) * 100;
-		final glow = getPercent('suddenGlow', field);
+		final start = getPercent('suddenStart', player) * 100;
+		final end = getPercent('suddenEnd', player) * 100;
+		final glow = getPercent('suddenGlow', player);
 
-		final alpha = FlxMath.remapToRange(FlxMath.bound(params.hDiff, end, start), end, start, 1, 0);
+		final alpha = FlxMath.remapToRange(FlxMath.bound(params.distance, end, start), end, start, 1, 0);
 
 		if (glow != 0)
 			data.glow += Math.max(0, (1 - alpha) * sudden * 2) * glow;
@@ -43,18 +43,18 @@ class Stealth extends Modifier {
 	}
 
 	function computeHidden(data:Visuals, params:RenderParams) {
-		final field = params.field;
+		final player = params.player;
 
-		final hidden = getPercent('hidden', field);
+		final hidden = getPercent('hidden', player);
 
 		if (hidden == 0)
 			return;
 
-		final start = getPercent('hiddenStart', field) * 100;
-		final end = getPercent('hiddenEnd', field) * 100;
-		final glow = getPercent('hiddenGlow', field);
+		final start = getPercent('hiddenStart', player) * 100;
+		final end = getPercent('hiddenEnd', player) * 100;
+		final glow = getPercent('hiddenGlow', player);
 
-		final alpha = FlxMath.remapToRange(FlxMath.bound(params.hDiff, end, start), end, start, 0, 1);
+		final alpha = FlxMath.remapToRange(FlxMath.bound(params.distance, end, start), end, start, 0, 1);
 
 		if (glow != 0)
 			data.glow += Math.max(0, (1 - alpha) * hidden * 2) * glow;
@@ -62,15 +62,20 @@ class Stealth extends Modifier {
 	}
 
 	override public function visuals(data:Visuals, params:RenderParams) {
-		final field = params.field;
+		final player = params.player;
 
-		final visibility = getPercent(params.arrow ? 'stealth' : 'dark', field);
-		data.alpha = (getPercent('alpha', field) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2))) + getPercent('alphaOffset', field);
-		data.glow += getPercent('flash', field) + (visibility * 2);
+		final vMod = params.isTapArrow ? 'stealth' : 'dark';
+		final visibility = getPercent(vMod, player) + getPercent(vMod + Std.string(params.lane), player);
+		data.alpha = ((getPercent('alpha', player) + getPercent('alpha' + Std.string(params.lane), player)) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2)))
+			+ getPercent('alphaOffset', player);
+		data.glow += getPercent('flash', player) + (visibility * 2);
 
 		// sudden & hidden
-		computeSudden(data, params);
-		computeHidden(data, params);
+		if (params.isTapArrow) // non receptor
+		{
+			computeSudden(data, params);
+			computeHidden(data, params);
+		}
 
 		return data;
 	}

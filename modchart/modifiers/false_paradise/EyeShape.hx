@@ -71,12 +71,12 @@ class EyeShape extends Modifier {
 		if (_path == null)
 			_path = loadPath();
 
-		final perc = getPercent('eyeShape', params.field);
+		final perc = getPercent('eyeShape', params.player);
 
 		if (perc == 0)
 			return curPos;
 
-		var path = getPositionAt(params.hDiff / 2000.0 * _pathDistance);
+		var path = getPositionAt(params.distance / 2000.0 * _pathDistance);
 
 		return ModchartUtil.lerpVector3D(curPos, path.add(new Vector3D(WIDTH * .5 - 264 - 272, HEIGHT * .5 + 280 - 260)), perc);
 	}
