@@ -2,8 +2,8 @@ package modchart.core.macros;
 
 import haxe.macro.Compiler;
 import haxe.macro.Context;
-import haxe.macro.Expr.FieldType;
 import haxe.macro.Expr;
+import haxe.macro.Type.ClassField;
 
 class Macro {
 	public static function includeFiles() {

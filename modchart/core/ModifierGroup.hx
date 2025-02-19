@@ -20,7 +20,7 @@ class ModifierOutput {
 }
 
 @:allow(modchart.Modifier)
-class ModifierGroup {
+final class ModifierGroup {
 	public static var GLOBAL_MODIFIERS:Map<String, Class<Modifier>> = [
 		'reverse' => Reverse,
 		'transform' => Transform,
@@ -134,6 +134,15 @@ class ModifierGroup {
 			return;
 		}
 		MODIFIER_REGISTRY.set(lowerName, modifier);
+	}
+
+	public function addScriptedModifier(name:String, instance:Modifier) {
+		var lowerName = name.toLowerCase();
+		modifiers.set(lowerName, instance);
+
+		final newArr = sortedMods.toArray();
+		newArr.push(lowerName);
+		__allocModSorting(newArr);
 	}
 
 	public function addModifier(name:String) {

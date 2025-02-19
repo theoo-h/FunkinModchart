@@ -68,6 +68,9 @@ class PlayField extends FlxBasic {
 	public function addModifier(name:String)
 		return modifiers.addModifier(name);
 
+	public function addScriptedModifier(name:String, instance:Modifier)
+		return modifiers.addScriptedModifier(name, instance);
+
 	public function addEvent(event:Event) {
 		events.add(event);
 	}

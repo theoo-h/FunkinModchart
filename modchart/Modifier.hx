@@ -18,14 +18,17 @@ class Modifier {
 		this.pf = pf;
 	}
 
+	// @:overridable
 	public function render(curPos:Vector3D, params:RenderParams) {
 		return curPos;
 	}
 
+	// @:overridable
 	public function visuals(data:Visuals, params:RenderParams):Visuals {
 		return data;
 	}
 
+	// @:settable
 	public function shouldRun(params:RenderParams):Bool
 		return false;
 

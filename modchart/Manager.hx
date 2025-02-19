@@ -21,7 +21,7 @@ import modchart.modifiers.*;
 @:allow(modchart.core.ModifierGroup)
 @:allow(modchart.core.graphics.ModchartGraphics)
 @:access(modchart.core.PlayField)
-class Manager extends FlxBasic {
+final class Manager extends FlxBasic {
 	public static var instance:Manager;
 
 	// turn on if u wanna arrow paths
@@ -54,6 +54,9 @@ class Manager extends FlxBasic {
 
 	public inline function addModifier(name:String, field:Int = -1)
 		__forEachPlayfield((pf) -> pf.addModifier(name), field);
+
+	public inline function addScriptedModifier(name:String, instance:Modifier, field:Int = -1)
+		__forEachPlayfield((pf) -> pf.addScriptedModifier(name, instance), field);
 
 	public inline function setPercent(name:String, value:Float, player:Int = -1, field:Int = -1)
 		__forEachPlayfield((pf) -> pf.setPercent(name, value, player), field);

@@ -3,9 +3,8 @@ package modchart.core;
 import modchart.core.util.ModchartUtil;
 import openfl.geom.Vector3D;
 
-@:structInit
 @:publicFields
-class Quaternion {
+final class Quaternion {
 	var x:Float;
 	var y:Float;
 	var z:Float;
