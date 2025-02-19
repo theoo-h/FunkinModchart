@@ -109,3 +109,6 @@
 
 # 18/08/25 #2
 - Fix receptor, arrow, hold draw order.
+
+# 19/02/25
+- Scripted Modifier (again)
