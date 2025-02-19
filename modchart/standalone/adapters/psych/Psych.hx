@@ -29,7 +29,7 @@ class Psych implements IAdapter {
 		try {
 			setupLuaFunctions();
 		} catch (e) {
-			trace('[ From FunkinModchart Adapter ] Failed while adding lua functions: $e');
+			trace('[FunkinModchart Psych Adapter] Failed while adding lua functions: $e');
 		}
 	}
 

@@ -130,7 +130,7 @@ class ModifierGroup {
 	public function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
 		if (MODIFIER_REGISTRY.get(lowerName) != null) {
-			trace('There\'s already a modifier with name "$name" registered !');
+			trace('[FunkinModchart] There\'s already a modifier named "$name" registered !');
 			return;
 		}
 		MODIFIER_REGISTRY.set(lowerName, modifier);
@@ -142,7 +142,7 @@ class ModifierGroup {
 			return;
 		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
-			trace('$name modifier was not found !');
+			trace('[FunkinModchart] Modifier named "$name" was not found !');
 
 			return;
 		}
