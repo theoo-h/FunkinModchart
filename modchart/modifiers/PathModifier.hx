@@ -13,7 +13,7 @@ import openfl.geom.Vector3D;
  *
  * @author TheoDev
  */
-@:skipModifier
+@:dontSave
 class PathModifier extends Modifier {
 	private var __path:Vector<PathNode>;
 	private var __pathBound:Float = 1500;
@@ -57,6 +57,7 @@ class PathModifier extends Modifier {
 		return true;
 }
 
+@:dontSave
 @:structInit
 class PathNode {
 	public var x:Float;

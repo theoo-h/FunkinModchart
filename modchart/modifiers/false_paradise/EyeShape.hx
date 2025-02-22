@@ -7,6 +7,7 @@ import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.ModchartUtil;
 import openfl.geom.Vector3D;
 
+@:dontSave
 private class TimeVector extends Vector3D {
 	public var startDist = 0.0;
 	public var endDist = 0.0;

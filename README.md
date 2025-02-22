@@ -3,7 +3,7 @@
   <h4 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h4>
 </p>
 
-**FunkinModchart** is a tool designed to bring [NotITG](https://www.noti.tg/) visuals and capabilities to [Friday Night Funkin](https://ninja-muffin24.itch.io/funkin), adding modifiers to change the **arrow trajectory, colors, transparency and the  rotation angle through 3D Axes**, event system to change the modifier's percent easing or setting those to create endless amazing visual effects and even **more**!.
+**FunkinModchart** is a tool designed to bring [NotITG](https://www.noti.tg/) visuals and capabilities to [Friday Night Funkin](https://ninja-muffin24.itch.io/funkin) ***or VSRG games made in flixel***, adding modifiers to change the **arrow trajectory, colors, transparency and the  rotation angle through 3D Axes**, event system to change the modifier's percent easing or setting those to create endless amazing visual effects and even **more**!.
 
 This framework also provides **extra features** that can help you to make even more crazy visuals, as **arrow paths, 3D view camera, AFTs**, etc. *(If you have already modeled NotITG or StepMania, you know what I am talking about)*
 
@@ -56,9 +56,21 @@ To make a modchart you don't necessarily have to follow instructions, it's a mat
 <details>
 <summary><h2>Making your own Adapter</h2></summary>
 
-to do heheheh, if u know coding just check psych and codename adapters and u'll figure out (also check Adapter.hx and AdapterMacro.hx for more information)
-also OBVIOUSLY has to be an flixel-based fnf engine
+An **Adapter** is a wrapper class which contains all the methods required by the modchart manager to work.
+Before you make the Adapter for your Friday Night Funkin' Engine or your VSRG game, there are 2 requirements.
 
+### Your game should be made in HaxeFlixel
+I think this obvious since this was originally made for only **Friday Night Funkin'** engines, but just in case.
+### Your arrows, receptors and holds needs to be a FlxSprite
+FunkinModchart uses a group of custom renderers that takes a **FlxSprite** as input, so you can't use this tool if your arrow system is based on **3D Sprites** or complex graphic rendering, [at least not directly](ill_fill_this_up_when_newcodename_update_comes_out_lmfao).
+
+To make your own Adapter, read [read the methods of the interface](/modchart/standalone/IAdapter.hx), with a little analysis, you will understand how to make your own adapters.
+If you have not understood correctly, [you can rely on existing adapters](/modchart/standalone/adapters/).
+
+The name of your adapter class will be the name required in the "FM_ENGINE" define.
+One more thing you should keep in mind is that the class name must begin with a capital letter, and all other characters must begin with lowercase.
+
+In case you want to rewrite the adapter when the game is running, you can do so. (can be useful for editors or viewing modcharts outside of the playing field).
 </details>
 
 ## Credits

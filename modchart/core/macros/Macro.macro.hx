@@ -1,5 +1,6 @@
 package modchart.core.macros;
 
+import haxe.ds.StringMap;
 import haxe.macro.Compiler;
 import haxe.macro.Context;
 import haxe.macro.Expr;

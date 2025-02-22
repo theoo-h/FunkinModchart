@@ -4,6 +4,7 @@ import haxe.ds.IntMap;
 import haxe.ds.StringMap;
 import haxe.ds.Vector;
 import modchart.Modifier;
+import modchart.core.macros.ModifiersMacro;
 import modchart.core.util.Constants.ArrowData;
 import modchart.core.util.Constants.RenderParams;
 import modchart.core.util.Constants.Visuals;
@@ -21,68 +22,36 @@ class ModifierOutput {
 
 @:allow(modchart.Modifier)
 final class ModifierGroup {
-	public static var GLOBAL_MODIFIERS:Map<String, Class<Modifier>> = [
-		'reverse' => Reverse,
-		'transform' => Transform,
-		'opponentswap' => OpponentSwap,
-		'drunk' => Drunk,
-		'bumpy' => Bumpy,
-		'tipsy' => Tipsy,
-		'tornado' => Tornado,
-		'invert' => Invert,
-		'square' => Square,
-		'zigzag' => ZigZag,
-		'beat' => Beat,
-		'boost' => Boost,
-		'receptorscroll' => ReceptorScroll,
-		'sawtooth' => SawTooth,
-		'zoom' => Zoom,
-		'rotate' => Rotate,
-		'fieldrotate' => FieldRotate,
-		'centerrotate' => CenterRotate,
-		'confusion' => Confusion,
-		'stealth' => Stealth,
-		'scale' => Scale,
-		'skew' => Skew,
-		// YOU NEVER STOOD A CHANCE
-		'infinite' => Infinite,
-		'schmovindrunk' => SchmovinDrunk,
-		'schmovintipsy' => SchmovinTipsy,
-		'schmovintornado' => SchmovinTornado,
-		'wiggle' => Wiggle,
-		'arrowshape' => ArrowShape,
-		'eyeshape' => EyeShape,
-		'spiral' => Spiral,
-		'counterclockwise' => CounterClockWise,
-		'vibrate' => Vibrate,
-		'bounce' => Bounce,
-		'radionic' => Radionic,
-		'schmovinarrowshape' => SchmovinArrowShape,
-		'drugged' => Drugged
-	];
+	public static final COMPILED_MODIFIERS = ModifiersMacro.get();
 
-	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = GLOBAL_MODIFIERS;
+	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = new Map<String, Class<Modifier>>();
 
 	private var percents:StringMap<Vector<Float>> = new StringMap();
 	private var modifiers:StringMap<Modifier> = new StringMap();
 
-	private var sortedMods:Vector<String>;
+	@:noCompletion private var __sortedModifiers:Vector<Modifier> = new Vector<Modifier>(16);
+	@:noCompletion private var __sortedIDs:Vector<String> = new Vector<String>(16);
+	@:noCompletion private var __idCount:Int = 0;
+	@:noCompletion private var __modCount:Int = 0;
 
 	private var pf:PlayField;
 
-	public function new(pf:PlayField) {
-		this.pf = pf;
-
-		__allocModSorting([]);
+	inline private function __loadModifiers() {
+		for (cls in COMPILED_MODIFIERS) {
+			var name = Type.getClassName(cls);
+			name = name.substring(name.lastIndexOf('.') + 1, name.length);
+			MODIFIER_REGISTRY.set(name.toLowerCase(), cast cls);
+		}
 	}
 
-	@:dox(hide)
-	@:noCompletion private function __allocModSorting(newList:Array<String>) {
-		return sortedMods = Vector.fromArrayCopy(newList);
+	public function new(pf:PlayField) {
+		__loadModifiers();
+
+		this.pf = pf;
 	}
 
 	// just render mods with the perspective stuff included
-	public function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
+	public inline function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
 		var visuals:Visuals = {};
 
 		if (!allowVis && !allowPos)
@@ -101,8 +70,8 @@ final class ModifierGroup {
 			isTapArrow: data.isTapArrow
 		}
 
-		for (i in 0...sortedMods.length) {
-			final mod = modifiers.get(sortedMods[i]);
+		for (i in 0...__modCount) {
+			final mod = __sortedModifiers[i];
 
 			if (!mod.shouldRun(args))
 				continue;
@@ -112,7 +81,7 @@ final class ModifierGroup {
 			if (allowVis)
 				visuals = mod.visuals(visuals, args);
 		}
-		pos.z *= 0.001;
+		pos.z *= 0.001 * Config.Z_SCALE;
 		return {
 			pos: ModchartUtil.project(pos),
 			visuals: visuals
@@ -127,7 +96,7 @@ final class ModifierGroup {
 
 	public function refreshPercentBackup() {}
 
-	public function registerModifier(name:String, modifier:Class<Modifier>) {
+	public inline function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
 		if (MODIFIER_REGISTRY.get(lowerName) != null) {
 			trace('There\'s already a modifier with name "$name" registered !');
@@ -136,19 +105,14 @@ final class ModifierGroup {
 		MODIFIER_REGISTRY.set(lowerName, modifier);
 	}
 
-	public function addScriptedModifier(name:String, instance:Modifier) {
-		var lowerName = name.toLowerCase();
-		modifiers.set(lowerName, instance);
+	public inline function addScriptedModifier(name:String, instance:Modifier)
+		__addModifier(name, instance);
 
-		final newArr = sortedMods.toArray();
-		newArr.push(lowerName);
-		__allocModSorting(newArr);
-	}
-
-	public function addModifier(name:String) {
+	public inline function addModifier(name:String) {
 		var lowerName = name.toLowerCase();
 		if (modifiers.exists(lowerName))
 			return;
+
 		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
@@ -156,18 +120,14 @@ final class ModifierGroup {
 			return;
 		}
 		var newModifier = Type.createInstance(modifierClass, [pf]);
-		modifiers.set(lowerName, newModifier);
-
-		final newArr = sortedMods.toArray();
-		newArr.push(lowerName);
-		__allocModSorting(newArr);
+		__addModifier(lowerName, newModifier);
 	}
 
-	public function setPercent(name:String, value:Float, player:Int = -1) {
+	public inline function setPercent(name:String, value:Float, player:Int = -1) {
 		var lwr = name.toLowerCase();
 		var possiblePercs = percents.get(lwr);
 		var generate = possiblePercs == null;
-		var percs = generate ? __getAllocatedPercs() : possiblePercs;
+		var percs = generate ? __getPercentTemplate() : possiblePercs;
 
 		if (player == -1)
 			for (_ in 0...percs.length)
@@ -180,7 +140,7 @@ final class ModifierGroup {
 			percents.set(lwr, percs);
 	}
 
-	public function getPercent(name:String, player:Int):Float {
+	public inline function getPercent(name:String, player:Int):Float {
 		final percs = percents.get(name.toLowerCase());
 
 		if (percs != null)
@@ -188,7 +148,33 @@ final class ModifierGroup {
 		return 0;
 	}
 
-	private inline function __getAllocatedPercs():Vector<Float> {
+	@:noCompletion
+	inline private function __addModifier(name:String, modifier:Modifier) {
+		modifiers.set(name, modifier);
+
+		// update modifier identificators
+		if (__idCount > (__sortedIDs.length - 1)) {
+			final oldIDs = __sortedIDs.copy();
+			__sortedIDs = new Vector<String>(oldIDs.length + 8);
+
+			for (i in 0...oldIDs.length)
+				__sortedIDs[i] = oldIDs[i];
+		}
+		__sortedIDs[__idCount++] = name;
+
+		// update modifier list
+		if (__modCount > (__sortedModifiers.length - 1)) {
+			final oldMods = __sortedModifiers.copy();
+			__sortedModifiers = new Vector<Modifier>(oldMods.length + 8);
+
+			for (i in 0...oldMods.length)
+				__sortedModifiers[i] = oldMods[i];
+		}
+		__sortedModifiers[__modCount++] = modifier;
+	}
+
+	@:noCompletion
+	inline private function __getPercentTemplate():Vector<Float> {
 		final vector = new Vector<Float>(Adapter.instance.getPlayerCount());
 		for (i in 0...vector.length)
 			vector[i] = 0;

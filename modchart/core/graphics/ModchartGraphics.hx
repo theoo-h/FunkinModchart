@@ -7,9 +7,11 @@ import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxPoint;
+import flixel.math.FlxPoint;
 import flixel.util.FlxSort;
 import haxe.ds.ObjectMap;
 import haxe.ds.Vector as NativeVector;
+import modchart.core.ModifierGroup.ModifierOutput;
 import modchart.core.util.Constants.ArrowData;
 import modchart.core.util.Constants.Visuals;
 import modchart.core.util.ModchartUtil;
@@ -26,10 +28,11 @@ var __matrix:Matrix = new Matrix();
 var pathVector = new Vector3D();
 
 typedef HoldSegmentOutput = {
-	depth:Float,
+	origin:Vector3D,
 	left:Vector3D,
 	right:Vector3D,
-	visuals:Visuals
+	visuals:Visuals,
+	depth:Float
 }
 
 class ModchartRenderer<T:FlxBasic> extends FlxBasic {
@@ -92,33 +95,33 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		if (params.hitten && params.distance < 0)
 			params.distance = 0;
 
-		final origin = instance.modifiers.getPath(basePos.clone(), params);
-		final next = instance.modifiers.getPath(basePos.clone(), params, 1, false, true);
+		final size = hold.frame.frame.width * hold.scale.x * .5;
 
-		var depth = (origin.pos.z - 1) * 1000;
+		var origin:ModifierOutput = instance.modifiers.getPath(basePos.clone(), params);
+		final curPoint = origin.pos;
+		final depth = (origin.pos.z - 1) * 1000;
+		final zScale:Float = curPoint.z != 0 ? (1 / curPoint.z) : 1;
+		curPoint.z = 0;
 
-		var curPoint = origin.pos;
-		var nextPoint = next.pos;
+		var unit:Vector3D;
 
-		var zScale:Float = curPoint.z != 0 ? (1 / curPoint.z) : 1;
-		curPoint.z = nextPoint.z = 0;
+		if (Config.OPTIMIZE_HOLDS) {
+			unit = new Vector3D(0, 1, 0);
+		} else {
+			final next = instance.modifiers.getPath(basePos.clone(), params, 1, false, true);
+			next.pos.z = 0;
 
-		// normalized points difference (from 0-1)
-		var unit = nextPoint.subtract(curPoint);
-		unit.normalize();
-
-		var size = hold.frame.frame.width * hold.scale.x * .5;
+			// normalized points difference (from 0-1)
+			unit = next.pos.subtract(curPoint);
+			unit.normalize();
+		}
 
 		var quad0 = new Vector3D(-unit.y * size, unit.x * size);
 		var quad1 = new Vector3D(unit.y * size, -unit.x * size);
 
+		final visuals = origin.visuals;
 		@:privateAccess
 		for (i in 0...2) {
-			var visuals = switch (i) {
-				case 0: origin.visuals;
-				case 1: next.visuals;
-				default: null;
-			}
 			var quad = switch (i) {
 				case 0: quad0;
 				case 1: quad1;
@@ -160,6 +163,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			quad.z = projection.z;
 		}
 		return {
+			origin: curPoint,
 			left: quad0,
 			right: quad1,
 			visuals: origin.visuals,
@@ -284,6 +288,10 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			if (out1 == null)
 				out1 = getSegmentFunc(item, basePos, lastData != null ? lastData : getArrowParams(arrow, subOff));
+
+			if (shouldDraw(out1))
+				break;
+
 			var out2 = getSegmentFunc(item, basePos, (lastData = getArrowParams(arrow, subOff + subCr)));
 
 			lastSegment = out2;
@@ -322,6 +330,15 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		count++;
 
 		__lastHoldSubs = Adapter.instance.getHoldSubdivisions();
+	}
+
+	inline static final drawMargin = 50;
+
+	inline function shouldDraw(info:HoldSegmentOutput) {
+		return info.origin.x < -drawMargin
+			&& info.origin.x > FlxG.width + drawMargin
+			&& info.origin.y < -drawMargin
+			&& info.origin.y > FlxG.height + drawMargin;
 	}
 
 	override public function shift() {

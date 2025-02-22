@@ -56,26 +56,26 @@ class PlayField extends FlxBasic {
 		setPercent('rotateHoldY', 1, -1);
 	}
 
-	public function registerModifier(name:String, mod:Class<Modifier>)
+	public inline function registerModifier(name:String, mod:Class<Modifier>)
 		return modifiers.registerModifier(name, mod);
 
-	public function setPercent(name:String, value:Float, player:Int = -1)
+	public inline function setPercent(name:String, value:Float, player:Int = -1)
 		return modifiers.setPercent(name, value, player);
 
-	public function getPercent(name:String, player:Int)
+	public inline function getPercent(name:String, player:Int)
 		return modifiers.getPercent(name, player);
 
-	public function addModifier(name:String)
+	public inline function addModifier(name:String)
 		return modifiers.addModifier(name);
 
-	public function addScriptedModifier(name:String, instance:Modifier)
+	public inline function addScriptedModifier(name:String, instance:Modifier)
 		return modifiers.addScriptedModifier(name, instance);
 
-	public function addEvent(event:Event) {
+	public inline function addEvent(event:Event) {
 		events.add(event);
 	}
 
-	public function set(name:String, beat:Float, value:Float, player:Int = -1):Void {
+	public inline function set(name:String, beat:Float, value:Float, player:Int = -1):Void {
 		if (player == -1) {
 			for (curField in 0...Adapter.instance.getPlayerCount())
 				set(name, beat, value, curField);
@@ -85,7 +85,7 @@ class PlayField extends FlxBasic {
 		addEvent(new SetEvent(name.toLowerCase(), beat, value, player, events));
 	}
 
-	public function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
+	public inline function ease(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
 		if (player == -1) {
 			for (curField in 0...Adapter.instance.getPlayerCount())
 				ease(name, beat, length, value, easeFunc, curField);
@@ -95,7 +95,7 @@ class PlayField extends FlxBasic {
 		addEvent(new EaseEvent(name, beat, length, value, easeFunc, player, events));
 	}
 
-	public function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
+	public inline function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
 		if (player == -1) {
 			for (curField in 0...Adapter.instance.getPlayerCount())
 				add(name, beat, length, value, easeFunc, curField);
@@ -105,7 +105,7 @@ class PlayField extends FlxBasic {
 		addEvent(new AddEvent(name, beat, length, value, easeFunc, player, events));
 	}
 
-	public function setAdd(name:String, beat:Float, valueToAdd:Float, player:Int = -1):Void {
+	public inline function setAdd(name:String, beat:Float, valueToAdd:Float, player:Int = -1):Void {
 		var addition = getPercent(name, player == -1 ? 0 : player);
 		var value = addition + valueToAdd;
 		if (player == -1) {
@@ -117,13 +117,13 @@ class PlayField extends FlxBasic {
 		addEvent(new SetEvent(name.toLowerCase(), beat, value, player, events));
 	}
 
-	public function repeater(beat:Float, length:Float, callback:Event->Void):Void
+	public inline function repeater(beat:Float, length:Float, callback:Event->Void):Void
 		addEvent(new RepeaterEvent(beat, length, callback, events));
 
-	public function callback(beat:Float, callback:Event->Void):Void
+	public inline function callback(beat:Float, callback:Event->Void):Void
 		addEvent(new Event(beat, callback, events));
 
-	public function alias(name:String, alias:String) {
+	public inline function alias(name:String, alias:String) {
 		aliases.push({
 			parent: name,
 			alias: alias
@@ -139,7 +139,7 @@ class PlayField extends FlxBasic {
 	 * @param output Output Mods
 	 * @param func Processor function, Array<InputModPercs> -> Array<OutputModPercs>
 	 */
-	public function node(input:Array<String>, output:Array<String>, func:NodeFunction) {
+	public inline function node(input:Array<String>, output:Array<String>, func:NodeFunction) {
 		nodes.push({
 			input: input,
 			output: output,
