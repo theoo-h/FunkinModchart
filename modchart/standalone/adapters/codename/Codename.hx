@@ -5,7 +5,6 @@ import flixel.FlxSprite;
 import funkin.backend.system.Conductor;
 import funkin.game.Note;
 import funkin.game.PlayState;
-import funkin.game.Splash;
 import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.standalone.IAdapter;
@@ -71,9 +70,6 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('lane');
-		} else if (arrow is Splash) {
-			final splash:Splash = cast arrow;
-			return splash.strum.extra.get('lane');
 		}
 		return 0;
 	}
@@ -85,9 +81,6 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('player');
-		} else if (arrow is Splash) {
-			final splash:Splash = cast arrow;
-			return splash.strum.extra.get('player');
 		}
 
 		return 0;
