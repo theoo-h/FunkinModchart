@@ -131,6 +131,11 @@ class Psych implements IAdapter {
 		return 4;
 	}
 
+	public function getHoldParentTime(arrow:FlxSprite) {
+		final note:Note = cast arrow;
+		return note.strumTime;
+	}
+
 	// psych adjust the strum pos at the begin of playstate
 	public function getDownscroll():Bool {
 		return ClientPrefs.data.downScroll;

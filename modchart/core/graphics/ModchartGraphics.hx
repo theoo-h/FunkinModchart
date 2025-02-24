@@ -61,7 +61,11 @@ class ModchartRenderer<T:FlxBasic> extends FlxBasic {
 	}
 
 	public function sort() {
+		if (queue == null || queue.length <= 0)
+			return;
 		queue.sort((a, b) -> {
+			if (a == null || b == null)
+				return 0;
 			return FlxSort.byValues(FlxSort.DESCENDING, a.item._z, b.item._z);
 		});
 	}
@@ -239,6 +243,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	}
 
 	override public function prepare(item:FlxSprite):Void {
+		if (item.alpha <= 0)
+			return;
 		final arrow:FlxSprite = item;
 		final newInstruction:FMDrawInstruction = {};
 		final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions();
@@ -412,6 +418,9 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 	}
 
 	override public function prepare(arrow:FlxSprite) {
+		if (arrow.alpha <= 0)
+			return;
+
 		final arrowPosition = helperVector;
 
 		final player = Adapter.instance.getPlayerFromArrow(arrow);
@@ -552,23 +561,6 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		__drawInstruction(queue[postCount++]);
 	}
 
-	/*
-		override public function render(times:Null<Int>):Void
-		{
-			if (times == null)
-				times = queue.length;
-
-			var iterator = queue.iterator();
-			var count = 0;
-
-			@:privateAccess do {
-				__drawInstruction(iterator.next());
-
-				count++;
-			} while (count < times && iterator.hasNext());
-
-			queue = queue.splice(count, queue.length);
-	}*/
 	private function __drawInstruction(instruction:FMDrawInstruction) {
 		if (instruction.colorData[0].alphaMultiplier <= 0)
 			return;

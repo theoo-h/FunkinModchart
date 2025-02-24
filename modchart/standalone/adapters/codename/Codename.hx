@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import funkin.backend.system.Conductor;
 import funkin.game.Note;
 import funkin.game.PlayState;
+import funkin.game.Splash;
 import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.standalone.IAdapter;
@@ -70,8 +71,10 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('lane');
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strum.extra.get('lane');
 		}
-
 		return 0;
 	}
 
@@ -82,6 +85,9 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('player');
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strum.extra.get('player');
 		}
 
 		return 0;
@@ -143,7 +149,7 @@ class Codename implements IAdapter {
 	// 0 receptors
 	// 1 tap arrows
 	// 2 hold arrows
-	// 3 lane attachments
+	// 3 receptor attachments
 	public function getArrowItems() {
 		var pspr:Array<Array<Array<FlxSprite>>> = [];
 
@@ -154,8 +160,6 @@ class Codename implements IAdapter {
 
 			if (!sl.visible)
 				continue;
-
-			final splashHandler = PlayState.instance.splashHandler;
 
 			// this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
 			pspr[i] = [];

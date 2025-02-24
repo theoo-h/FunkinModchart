@@ -228,6 +228,7 @@ class PlayField extends FlxBasic {
 		var receptorLength = 0;
 		var arrowLength = 0;
 		var holdLength = 0;
+		var attachmentLength = 0;
 
 		for (i in 0...playerItems.length) {
 			final curItems = playerItems[i];
@@ -235,15 +236,17 @@ class PlayField extends FlxBasic {
 			receptorLength = receptorLength + curItems[0].length;
 			arrowLength = arrowLength + curItems[1].length;
 			holdLength = holdLength + curItems[2].length;
+			attachmentLength = attachmentLength + curItems[3].length;
 		}
 
+		attachmentRenderer.preallocate(attachmentLength);
 		receptorRenderer.preallocate(receptorLength);
 		arrowRenderer.preallocate(arrowLength);
 		holdRenderer.preallocate(holdLength);
 		if (Manager.instance.renderArrowPaths)
 			pathRenderer.preallocate(receptorLength);
 
-		drawCB.resize(receptorLength + arrowLength + holdLength);
+		drawCB.resize(receptorLength + arrowLength + holdLength + attachmentLength);
 
 		var j = 0;
 		inline function queue(f:{callback:Void->Void, z:Float}) {
@@ -256,7 +259,7 @@ class PlayField extends FlxBasic {
 			var curItems:Array<Array<FlxSprite>> = playerItems[i];
 
 			// receptors
-			if (curItems[0] != null && curItems[0].length > 0) {
+			if (receptorLength > 0) {
 				for (receptor in curItems[0]) {
 					if (!getVisibility(receptor))
 						continue;
@@ -272,7 +275,7 @@ class PlayField extends FlxBasic {
 			}
 
 			// holds
-			if (curItems[2] != null && curItems[2].length > 0) {
+			if (holdLength > 0) {
 				for (hold in curItems[2]) {
 					if (!getVisibility(hold))
 						continue;
@@ -286,7 +289,7 @@ class PlayField extends FlxBasic {
 			}
 
 			// tap arrow
-			if (curItems[1] != null && curItems[1].length > 0) {
+			if (arrowLength > 0) {
 				for (arrow in curItems[1]) {
 					if (!getVisibility(arrow))
 						continue;
@@ -298,9 +301,22 @@ class PlayField extends FlxBasic {
 					});
 				}
 			}
+
+			if (attachmentLength > 0) {
+				for (attachment in curItems[3]) {
+					if (!getVisibility(attachment))
+						continue;
+
+					attachmentRenderer.prepare(attachment);
+					queue({
+						callback: attachmentRenderer.shift,
+						z: attachment._z
+					});
+				}
+			}
 		}
 
-		for (r in [receptorRenderer, arrowRenderer, holdRenderer])
+		for (r in [receptorRenderer, arrowRenderer, holdRenderer, attachmentRenderer])
 			r.sort();
 
 		if (Manager.instance.renderArrowPaths)

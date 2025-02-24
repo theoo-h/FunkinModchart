@@ -29,6 +29,15 @@ class Macro {
 					default:
 						// do nothing
 				}
+			} else if (f.name == 'get_visible') {
+				switch (f.kind) {
+					case FFun(fun):
+						fun.expr = macro {
+							return _fmVisible;
+						};
+					default:
+						// do nothing
+				}
 			}
 		}
 
