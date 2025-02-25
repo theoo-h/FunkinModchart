@@ -3,6 +3,7 @@ package modchart.standalone.adapters.imaginative;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
 import imaginative.backend.music.Conductor;
+import imaginative.backend.scripting.types.GlobalScript;
 import imaginative.backend.system.Settings;
 import imaginative.objects.gameplay.arrows.ArrowField;
 import imaginative.objects.gameplay.arrows.Note;
@@ -19,27 +20,53 @@ class Imaginative implements IAdapter {
 
 	var startingFieldPositions:Array<Array<Float>> = [];
 
-	function refreshStartingPositions() {
-		startingFieldPositions.clear();
-		for (field in arrowFields) {
+	function refreshStartingPositions(?player:Int) {
+		if (player == null) {
+			startingFieldPositions.clear();
+			for (field in arrowFields) {
+				var positions:Array<Float> = [];
+				for (strum in field)
+					positions.push([strum.x, strum.y]);
+				startingFieldPositions.push(positions);
+			}
+		} else {
 			var positions:Array<Float> = [];
-			for (strum in field)
+			for (strum in arrowFields[player])
 				positions.push([strum.x, strum.y]);
-			startingFieldPositions.push(positions);
+			startingFieldPositions[player] = positions;
 		}
 	}
 
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		getConductor = () -> return Conductor.mainDirect;
-		if (PlayState.instance != null) {
+		if (PlayState.instance == null) {
+			getConductor = () -> return Conductor.mainDirect;
+			if (ArrowField.enemy != null)
+				arrowFields.push(ArrowField.enemy);
+			if (ArrowField.player != null)
+				arrowFields.push(ArrowField.player);
+			getCameras = () -> return arrowFields.length != 0 ? arrowFields[arrowFields.length - 1].cameras : [FlxG.camera];
+
+			// global script
+			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [FlxG.camera]);
+			GlobalScript.call('onModchartInit', [this]);
+			GlobalScript.set('refreshDefaultFieldPoses', refreshStartingPositions);
+		} else {
+			getConductor = () -> return Conductor.song;
 			var game:PlayState = PlayState.instance;
 			getCameras = () -> return [game.camHUD];
 			arrowFields = [
 				for (tag => field in game.arrowFieldMapping)
 					if (PlayState.chartData.fieldSettings.order.contains(tag)) field
 			];
+
+			// global script
+			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [game.camHUD]);
+			GlobalScript.call('onModchartInit', [this]);
+			GlobalScript.set('refreshDefaultFieldPoses', refreshStartingPositions);
+
+			// song scripts
 			game.scripts.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [game.camHUD]);
 			game.scripts.call('onModchartInit', [this]);
 			game.scripts.set('refreshDefaultFieldPoses', refreshStartingPositions);
@@ -56,6 +83,7 @@ class Imaginative implements IAdapter {
 	public function getCurrentBeat():Float
 		return getConductor().curBeatFloat;
 
+	// gonna be a little inaccurate due to strumlines having their own individual scrollspeed vars
 	public function getCurrentScrollSpeed():Float
 		return Settings.setupP1.enablePersonalScrollSpeed ? Settings.setupP1.personalScrollSpeed : PlayState.chartData.speed;
 
@@ -142,7 +170,7 @@ class Imaginative implements IAdapter {
 		return getCameras();
 
 	public function getHoldSubdivisions()
-		return 4;
+		return Settings.setup.qualityLevel > 0.7 ? 8 : 4;
 
 	public function getDownscroll()
 		return Settings.setupP1.downscroll;
@@ -151,9 +179,6 @@ class Imaginative implements IAdapter {
 		var items:Array<Array<Array<FlxSprite>>> = [];
 
 		for (i => field in arrowFields) {
-			if (!field.strums.visible)
-				continue;
-
 			var strums:Array<Strum> = field.strums.members.copy();
 			var notes:Array<Note> = [];
 			field.notes.forEachAlive((note:Note) -> {
@@ -164,7 +189,12 @@ class Imaginative implements IAdapter {
 				sustains.push(sustain);
 			});
 
-			items.push([strums, notes, sustains, []]);
+			items.push([
+				strums,
+				notes,
+				sustains,
+				field.members.copy().filter(sprite -> return !(sprite == strums || sprite == notes || sprite == sustains))
+			]);
 		}
 
 		return items;
