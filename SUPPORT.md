@@ -17,3 +17,8 @@
 
 - `FM_ENGINE`: "FPSPLUS"
 - `FM_ENGINE_VERSION`: ""
+## Imaginative Engine
+- Early Alpha
+
+- `FM_ENGINE`: "IMAGINATIVE"
+- `FM_ENGINE_VERSION`: ""
