@@ -104,7 +104,7 @@
 
 # 18/08/25
 - Tons of optimization and code improvements
-- Added longHolds modifier
+- Added longHolds modifier (nneds fix)
 - Z-Sorting was Fixed
 
 # 18/08/25 #2
@@ -112,3 +112,9 @@
 
 # 19/02/25
 - Scripted Modifier (again)
+
+# 3/01/25
+- Fixed longHolds modifier, now it looks good.
+- Added Hold Rotation Mods (Rotation with the parent note position as origin)
+- DizzyHolds modifier was added.
+- Added more customizable stuff on Config.hx (not everything works for now)

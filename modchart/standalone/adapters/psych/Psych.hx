@@ -22,9 +22,6 @@ import modchart.standalone.IAdapter;
 class Psych implements IAdapter {
 	private var __fCrochet:Float = 0;
 
-	private var __receptorXs:Array<Array<Float>>;
-	private var __receptorYs:Array<Array<Float>>;
-
 	public function new() {
 		try {
 			setupLuaFunctions();
@@ -35,20 +32,6 @@ class Psych implements IAdapter {
 
 	public function onModchartingInitialization() {
 		__fCrochet = Conductor.crochet;
-
-		__receptorXs = [];
-		__receptorYs = [];
-
-		@:privateAccess
-		PlayState.instance.strumLineNotes.forEachAlive(strumNote -> {
-			if (__receptorXs[strumNote.player] == null)
-				__receptorXs[strumNote.player] = [];
-			if (__receptorYs[strumNote.player] == null)
-				__receptorYs[strumNote.player] = [];
-
-			__receptorXs[strumNote.player][strumNote.noteData] = strumNote.x;
-			__receptorYs[strumNote.player][strumNote.noteData] = getDownscroll() ? FlxG.height - strumNote.y - Manager.ARROW_SIZE : strumNote.y;
-		});
 	}
 
 	private function setupLuaFunctions() {
@@ -133,7 +116,7 @@ class Psych implements IAdapter {
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
-		return note.strumTime;
+		return note.parent != null ? note.parent.strumTime : note.strumTime;
 	}
 
 	// psych adjust the strum pos at the begin of playstate
@@ -141,12 +124,18 @@ class Psych implements IAdapter {
 		return ClientPrefs.data.downScroll;
 	}
 
+	inline function getStrumFromInfo(lane:Int, player:Int) {
+		var group = player == 0 ? PlayState.instance.opponentStrums : PlayState.instance.playerStrums;
+		@:privateAccess
+		return group.getFirst(str -> str.noteData == lane);
+	}
+
 	public function getDefaultReceptorX(lane:Int, player:Int):Float {
-		return __receptorXs[player][lane];
+		return getStrumFromInfo(lane, player).x;
 	}
 
 	public function getDefaultReceptorY(lane:Int, player:Int):Float {
-		return __receptorYs[player][lane];
+		return getStrumFromInfo(lane, player).y;
 	}
 
 	public function getArrowCamera():Array<FlxCamera>

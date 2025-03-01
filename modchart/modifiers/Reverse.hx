@@ -93,8 +93,9 @@ class Reverse extends Modifier {
 		angleZ = angleZ + shift * getPercent('curvedScrollZ', player);
 
 		// angleY doesnt do anything if angleX and angleZ are disabled
-		if (angleX == 0 && angleZ == 0)
-			return scroll;
+		// discarted due to rotation order changes
+		// if (angleX == 0 && angleZ == 0)
+		//	return scroll;
 
 		scroll = ModchartUtil.rotate3DVector(scroll, angleX, angleY, angleZ);
 

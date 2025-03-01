@@ -6,6 +6,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
 import flixel.math.FlxPoint;
 import flixel.util.FlxSort;
@@ -78,6 +79,23 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 	var _indices:Null<Vector<Int>> = new Vector<Int>();
 
+	public function new(instance:PlayField) {
+		super(instance);
+
+		instance.setPercent('dizzyHolds', 1, -1);
+	}
+
+	inline private function __rotateTail(pos:Vector3D) {
+		if (__parentOutput == null || (__rotateX == 0 && __rotateY == 0 && __rotateZ == 0))
+			return pos;
+
+		var tailFactor = pos.subtract(__parentOutput.pos);
+		tailFactor = ModchartUtil.rotate3DVector(tailFactor, __rotateX, __rotateY, __rotateZ);
+		var output = __parentOutput.pos.add(tailFactor);
+		output.z *= 0.001 * Config.Z_SCALE;
+		return ModchartUtil.project(output, __parentOutput.pos);
+	}
+
 	/**
 	 * Returns the normal points along the hold path at specific hitTime using.
 	 *
@@ -88,21 +106,21 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	@:noCompletion
 	inline private function getHoldSegment(hold:FlxSprite, basePos:Vector3D, params:ArrowData):HoldSegmentOutput {
 		@:privateAccess
-		var holdOffset = params.__holdSubdivisionOffset;
-		final oldHitTime = params.hitTime;
+		var holdTime = params.hitTime;
+		var parentTime = Adapter.instance.getHoldParentTime(hold);
 
-		var hitTime = Adapter.instance.getHoldParentTime(hold);
-		hitTime = hitTime + (oldHitTime - hitTime) * __long;
+		var holdDistance = params.distance;
+		var parentDistance = Math.max(0, parentTime - Adapter.instance.getSongPosition());
 
-		params.hitTime = hitTime;
-		params.distance = hitTime - Adapter.instance.getSongPosition();
+		params.hitTime = FlxMath.lerp(parentTime, holdTime, __long);
+		params.distance = FlxMath.lerp(parentDistance, holdDistance, __long);
 		if (params.hitten && params.distance < 0)
 			params.distance = 0;
 
 		final size = hold.frame.frame.width * hold.scale.x * .5;
 
 		var origin:ModifierOutput = instance.modifiers.getPath(basePos.clone(), params);
-		final curPoint = origin.pos;
+		var curPoint = origin.pos;
 		final depth = (origin.pos.z - 1) * 1000;
 		final zScale:Float = curPoint.z != 0 ? (1 / curPoint.z) : 1;
 		curPoint.z = 0;
@@ -112,7 +130,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		if (Config.OPTIMIZE_HOLDS) {
 			unit = new Vector3D(0, 1, 0);
 		} else {
-			final next = instance.modifiers.getPath(basePos.clone(), params, 1, false, true);
+			var next = instance.modifiers.getPath(basePos.clone(), params, 1, false, true);
 			next.pos.z = 0;
 
 			// normalized points difference (from 0-1)
@@ -132,13 +150,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				default: null;
 			}
 			var rotation = quad;
-			var angX = visuals.angleX * __rotateX;
-			var angY = visuals.angleY * __rotateY;
-			var angZ = visuals.angleZ * __rotateZ;
-			var rotated = angX != 0 || angY != 0 || angZ != 0;
 
-			if (rotated)
-				rotation = ModchartUtil.rotate3DVector(quad, angX, angY, angZ);
+			rotation = ModchartUtil.rotate3DVector(quad, 0, visuals.angleY * __dizzy, 0);
 
 			if (visuals.skewX != 0 || visuals.skewY != 0) {
 				__matrix.identity();
@@ -153,14 +166,14 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			rotation.y = rotation.y * zScale * visuals.scaleY;
 
 			var view = new Vector3D(rotation.x + curPoint.x, rotation.y + curPoint.y, rotation.z);
+			view = __rotateTail(view);
 			if (Config.CAMERA3D_ENABLED)
 				view = instance.camera3D.applyViewTo(view);
 			view.z *= 0.001;
 
 			// The result of the perspective projection of rotation
 			var projection = view;
-			if (rotated)
-				projection = ModchartUtil.project(view);
+			projection = ModchartUtil.project(view);
 
 			quad.x = projection.x;
 			quad.y = projection.y;
@@ -181,6 +194,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	private var __rotateX:Float = 0;
 	private var __rotateY:Float = 0;
 	private var __rotateZ:Float = 0;
+	private var __dizzy:Float = 0;
+	private var __parentOutput:ModifierOutput;
 
 	/*
 		private function getStraightHoldSegment(hold:FlxSprite, basePos:Vector3D, params:ArrowData):Array<Dynamic> {
@@ -278,15 +293,32 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		// refresh global mods percents
 		__long = instance.getPercent('longHolds', player) - instance.getPercent('shortHolds', player) + 1;
 
-		__rotateX = instance.getPercent('rotateHoldX', player);
-		__rotateY = instance.getPercent('rotateHoldY', player);
-		__rotateZ = instance.getPercent('rotateHoldZ', player);
+		__dizzy = instance.getPercent('dizzyHolds', player);
+
+		__rotateX = instance.getPercent('holdRotateX', player);
+		__rotateY = instance.getPercent('holdRotateY', player);
+		__rotateZ = instance.getPercent('holdRotateZ', player);
+
+		var parentTime = Adapter.instance.getHoldParentTime(item);
+		var parentData:ArrowData = {
+			hitTime: parentTime,
+			// this fixed the clipping gaps
+			distance: Math.max(0, parentTime - Adapter.instance.getSongPosition()),
+			lane: lane,
+			player: player,
+			hitten: Adapter.instance.arrowHit(item),
+			isTapArrow: true
+		};
+		if (__rotateX != 0 || __rotateY != 0 || __rotateZ != 0) {
+			__parentOutput = instance.modifiers.getPath(basePos.clone(), parentData);
+			__parentOutput.pos.z = (__parentOutput.pos.z - 1) * 1000;
+		}
 
 		var getSegmentFunc = getHoldSegment;
 
 		var vertPointer = 0;
 
-		var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 : 1)) / HOLD_SUBDIVISIONS;
+		var subCr = ((Adapter.instance.getStaticCrochet() * .25) * ((Adapter.instance.isHoldEnd(item)) ? 0.6 * Config.HOLD_END_SCALE : 1)) / HOLD_SUBDIVISIONS;
 		for (sub in 0...HOLD_SUBDIVISIONS) {
 			var subOff = subCr * sub;
 
@@ -352,9 +384,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	}
 
 	private function __drawInstruction(instruction:FMDrawInstruction) {
-		if (cast(instruction.extra[0], Float) <= 0)
+		if (instruction == null)
 			return;
-
 		final item:FlxSprite = instruction.item;
 
 		var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
@@ -562,7 +593,7 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 	}
 
 	private function __drawInstruction(instruction:FMDrawInstruction) {
-		if (instruction.colorData[0].alphaMultiplier <= 0)
+		if (instruction == null)
 			return;
 
 		final item = instruction.item;
@@ -598,12 +629,12 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 		final fn = Adapter.instance.getPlayerFromArrow(item);
 
 		final alpha = instance.getPercent('arrowPathAlpha', fn);
-		final thickness = 1 + Math.round(instance.getPercent('arrowPathThickness', fn));
+		final thickness = 1 + Std.int(instance.getPercent('arrowPathThickness', fn));
 
 		if (alpha <= 0 || thickness <= 0)
 			return;
 
-		final divisions = Math.round(60 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
+		final divisions = Std.int(60 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
 		final limit = 1500 * (1 + instance.getPercent('arrowPathLength', fn));
 		final interval = limit / divisions;
 
@@ -631,9 +662,9 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 			}, 0, false);
 			final position = output.pos;
 
-			/**
-				* So it seems that if the lines are too far from the screen
-				causes HORRIBLE memory leaks (from 60mb to 3gb-5gb in 2 seconds WHAT THE FUCK)
+			/*
+			 * So it seems that if the lines are too far from the screen
+			 * causes HORRIBLE memory leaks (from 60mb to 3gb-5gb in 2 seconds WHAT THE FUCK)
 			 */
 			if ((position.x <= 0 - thickness - ARROW_PATH_BOUNDARY_OFFSET)
 				|| (position.x >= __display.pixels.rect.width + ARROW_PATH_BOUNDARY_OFFSET)
@@ -641,17 +672,13 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 				|| (position.y >= __display.pixels.rect.height + ARROW_PATH_BOUNDARY_OFFSET))
 				continue;
 
-			pointData[pID++] = [!moved, position.x, position.y];
+			pointData[pID++] = [!moved, position.x, position.y, position.z];
 
 			moved = true;
 		}
 
 		var newInstruction:FMDrawInstruction = {};
-		newInstruction.mappedExtra = [
-			'style' => [thickness, 0xFFFFFFFF, alpha],
-			'position' => pointData,
-			'lane' => lane
-		];
+		newInstruction.mappedExtra = ['s' => [thickness, 0xFFFFFFFF, alpha], 'pd' => pointData, 'l' => lane, 'p' => fn];
 
 		queue[count] = newInstruction;
 		count++;
@@ -717,7 +744,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 		__pathCommands.splice(0, __pathCommands.length);
 	}
 
-	inline static final ARROW_PATH_BOUNDARY_OFFSET:Float = 50;
+	inline static final ARROW_PATH_BOUNDARY_OFFSET:Float = 300;
 }
 
 // TODO: fix this, i have this class in private cuz it sucks and doesnt even draw anything

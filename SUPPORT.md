@@ -1,7 +1,7 @@
 ## Current supported FNF engines/frameworks
 
 ## Codename Engine
-- Beta *last tested commit: 94db415*
+- Beta
 
 - `FM_ENGINE`: "CODENAME"
 - `FM_ENGINE_VERSION`: ""
@@ -12,6 +12,9 @@
 
 - `FM_ENGINE`: "PSYCH"
 - `FM_ENGINE_VERSION`: "1.0" for 1.0 and 1.0b, "0.7" for 0.7.x, "0.6" for 0.6.x
+## PSlice Engine
+- `FM_ENGINE`: "PSLICE"
+- `FM_ENGINE_VERSION`: "1.0" (always put 1.0)
 ## FPS Plus
 - 6.x
 

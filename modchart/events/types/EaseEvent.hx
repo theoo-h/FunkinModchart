@@ -46,7 +46,15 @@ class EaseEvent extends Event {
 				final possibleLastEvent = parent.getLastEventBefore(this);
 
 				if (possibleLastEvent != null)
-					entryPerc = possibleLastEvent.target;
+				{
+					if (possibleLastEvent is EaseEvent)
+					{
+						var castedEvent:EaseEvent = cast possibleLastEvent;
+						// the ease function may not return 1
+						entryPerc = castedEvent.data.ease(1) * possibleLastEvent.target;
+					} else
+						entryPerc = possibleLastEvent.target;
+				}
 				else
 					entryPerc = getModPercent(name, player);
 			}

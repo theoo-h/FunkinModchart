@@ -233,16 +233,25 @@ class PlayField extends FlxBasic {
 		for (i in 0...playerItems.length) {
 			final curItems = playerItems[i];
 
-			receptorLength = receptorLength + curItems[0].length;
-			arrowLength = arrowLength + curItems[1].length;
-			holdLength = holdLength + curItems[2].length;
-			attachmentLength = attachmentLength + curItems[3].length;
+			if (curItems[0] != null)
+				receptorLength = receptorLength + curItems[0].length;
+			if (curItems[1] != null)
+				arrowLength = arrowLength + curItems[1].length;
+			if (curItems[2] != null)
+				holdLength = holdLength + curItems[2].length;
+			if (curItems[3] != null)
+				attachmentLength = attachmentLength + curItems[3].length;
 		}
 
-		attachmentRenderer.preallocate(attachmentLength);
-		receptorRenderer.preallocate(receptorLength);
-		arrowRenderer.preallocate(arrowLength);
-		holdRenderer.preallocate(holdLength);
+		if (receptorLength != 0)
+			receptorRenderer.preallocate(receptorLength);
+		if (arrowLength != 0)
+			arrowRenderer.preallocate(arrowLength);
+		if (holdLength != 0)
+			holdRenderer.preallocate(holdLength);
+		if (attachmentLength != 0)
+			attachmentRenderer.preallocate(attachmentLength);
+
 		if (Manager.instance.renderArrowPaths)
 			pathRenderer.preallocate(receptorLength);
 
@@ -302,6 +311,7 @@ class PlayField extends FlxBasic {
 				}
 			}
 
+			// attachments (splashes)
 			if (attachmentLength > 0) {
 				for (attachment in curItems[3]) {
 					if (!getVisibility(attachment))
