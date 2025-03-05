@@ -12,6 +12,12 @@ import imaginative.objects.gameplay.arrows.Sustain;
 import imaginative.states.PlayState;
 
 class Imaginative implements IAdapter {
+	/**
+	 * I normally use 4.3.6 and since this is supposed to work on older haxe versions I should probably do this. --@rodney528
+	 */
+	inline function checkIfNull<T>(val:Null<T>, def:T):Void
+		return val == null ? def : val;
+
 	// like this so scripts can fuck with it
 	public var getConductor:Void->Conductor;
 	public var getCameras:Void->Array<FlxCamera>;
@@ -49,7 +55,7 @@ class Imaginative implements IAdapter {
 			getCameras = () -> return arrowFields.length != 0 ? arrowFields[arrowFields.length - 1].cameras : [FlxG.camera];
 
 			// global script
-			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [FlxG.camera]);
+			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return checkIfNull(cameras, [FlxG.camera]));
 			GlobalScript.call('onModchartInit', [this]);
 			GlobalScript.set('refreshDefaultFieldPoses', refreshStartingPositions);
 		} else {
@@ -62,12 +68,12 @@ class Imaginative implements IAdapter {
 			];
 
 			// global script
-			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [game.camHUD]);
+			GlobalScript.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return checkIfNull(cameras, [FlxG.camera]));
 			GlobalScript.call('onModchartInit', [this]);
 			GlobalScript.set('refreshDefaultFieldPoses', refreshStartingPositions);
 
 			// song scripts
-			game.scripts.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return cameras ?? [game.camHUD]);
+			game.scripts.set('setModchartCameras', (cameras:Array<FlxCamera>) -> getCameras = () -> return checkIfNull(cameras, [FlxG.camera]));
 			game.scripts.call('onModchartInit', [this]);
 			game.scripts.set('refreshDefaultFieldPoses', refreshStartingPositions);
 		}
