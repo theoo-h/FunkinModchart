@@ -35,7 +35,7 @@ class Config {
 	 * However, it is not recommended for complex modcharts, as it may cause holds to look incorrect,
 	 * especially when rotation or complex paths are applied.
 	 * 
- 	 * Default: `false` (Regular hold rendering using the unit circle).
+	  	 * Default: `false` (Regular hold rendering using the unit circle).
 	 */
 	public static var OPTIMIZE_HOLDS:Bool = false;
 
@@ -66,5 +66,8 @@ class Config {
 	 */
 	public static var STYLED_ARROW_PATHS:Bool = false;
 
+	/**
+	 * Scales the hold end size.
+	 */
 	public static var HOLD_END_SCALE:Float = 1;
 }

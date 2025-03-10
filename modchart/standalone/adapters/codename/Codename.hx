@@ -9,6 +9,13 @@ import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.standalone.IAdapter;
 
+/**
+ * Codename Adapter for codename version before FunkinModchart being added
+ * This doesn't contain:
+ * Splashes
+ * Hold parent time (used to rotate the hold around the parent note, for long/short holds, etc), (should i add it using a work around??)
+ * Hold subdivision option
+ */
 class Codename implements IAdapter {
 	private var __fCrochet:Float = 0;
 
@@ -20,8 +27,6 @@ class Codename implements IAdapter {
 		for (strumLine in PlayState.instance.strumLines.members) {
 			strumLine.forEach(strum -> {
 				strum.extra.set('player', strumLine.ID);
-				// i guess ???
-				strum.extra.set('lane', strumLine.members.indexOf(strum));
 			});
 		}
 	}
@@ -69,7 +74,7 @@ class Codename implements IAdapter {
 			return note.strumID;
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
-			return strum.extra.get('lane');
+			return strum.ID;
 		}
 		return 0;
 	}
@@ -113,10 +118,8 @@ class Codename implements IAdapter {
 		return 0;
 	}
 
-	public function getHoldSubdivisions():Int {
-		final val = Options.modchartingHoldSubdivisions;
-		return val < 1 ? 1 : val;
-	}
+	public function getHoldSubdivisions():Int
+		return 4;
 
 	public function getDownscroll():Bool {
 		return Options.downscroll;

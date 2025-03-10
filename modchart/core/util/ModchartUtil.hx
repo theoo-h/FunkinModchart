@@ -194,6 +194,11 @@ using StringTools;
 		return sin(num) / cos(num);
 
 	inline public static function lerpVector3D(start:Vector3D, end:Vector3D, ratio:Float) {
+		if (ratio == 0)
+			return start;
+		if (ratio == 1)
+			return end;
+
 		final diff = end.subtract(start);
 		diff.scaleBy(ratio);
 

@@ -27,7 +27,7 @@ interface IAdapter {
 	public function getLaneFromArrow(sprite:FlxSprite):Int; // Get lane/note data from arrow
 	public function getPlayerFromArrow(sprite:FlxSprite):Int; // Get player from arrow
 
-	public function getKeyCount(?player:Int):Int; // Get total key count (4 for almost every engine)
+	public function getKeyCount(?player:Int):Int; // Get total key count from specific player (4 for almost every engine)
 	public function getPlayerCount():Int; // Get total player count (2 for almost every engine)
 
 	// Get cameras to render the arrows (camHUD for almost every engine)
@@ -44,12 +44,14 @@ interface IAdapter {
 	 *      [ // Player 0
 	 *          [strum1, strum2...],
 	 *          [arrow1, arrow2...],
-	 *          [hold1, hold2....]
+	 *          [hold1, hold2....],
+	 * 			[splash1, splash2....]
 	 *      ],
 	 *      [ // Player 2
 	 *          [strum1, strum2...],
 	 *          [arrow1, arrow2...],
-	 *          [hold1, hold2....]
+	 *          [hold1, hold2....],
+	 * 			[splash1, splash2....]
 	 *      ]
 	 * ]
 	 * @return Array<Array<Array<FlxSprite>>>

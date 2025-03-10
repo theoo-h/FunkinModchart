@@ -14,18 +14,13 @@ class Scale extends Modifier {
 		setPercent('scaleY', 1, -1);
 	}
 
-	public function applyScale(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
+	private inline function applyScale(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
 		var receptorName = Std.string(params.lane);
 		var player = params.player;
 
 		var scale = 1.;
-		var tinyPow = Math.pow(0.5, getPercent('tinyPow', player)); // does not need "lane" variant
-
 		// Scale
 		scale *= getPercent('scale' + axis, player) + getPercent('scale' + axis + receptorName, player);
-
-		// NotITG Scale (aka Tiny)
-		scale *= Math.pow(0.5, getPercent('tiny' + axis, player) + getPercent('tiny' + axis + receptorName, player)) * tinyPow;
 
 		switch (realAxis) {
 			case 'x':
@@ -41,17 +36,19 @@ class Scale extends Modifier {
 	override public function visuals(data:Visuals, params:RenderParams) {
 		var player = params.player;
 		var receptorName = Std.string(params.lane);
-		final scaleForce = getPercent('scaleForce' + receptorName, player) + getPercent('scaleForce' + receptorName, player);
-
-		if (scaleForce != 0) {
-			data.scaleX = scaleForce;
-			data.scaleY = scaleForce;
-			return data;
-		}
 
 		applyScale(data, params, '', '');
 		applyScale(data, params, 'x', 'x');
 		applyScale(data, params, 'y', 'y');
+
+		var tinyAmount = getPercent('tiny', player) + getPercent('tiny' + receptorName, player);
+
+		// NotITG Scale (aka Tiny)
+		if (tinyAmount != 0)
+			tinyAmount = Math.pow(0.5, tinyAmount);
+
+		data.scaleX *= 1 + tinyAmount;
+		data.scaleY *= 1 + tinyAmount;
 
 		return data;
 	}

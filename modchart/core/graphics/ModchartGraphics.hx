@@ -150,8 +150,10 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				default: null;
 			}
 			var rotation = quad;
+			var rotate = __dizzy != 0;
 
-			rotation = ModchartUtil.rotate3DVector(quad, 0, visuals.angleY * __dizzy, 0);
+			if (rotate)
+				rotation = ModchartUtil.rotate3DVector(quad, 0, visuals.angleY * __dizzy, 0);
 
 			if (visuals.skewX != 0 || visuals.skewY != 0) {
 				__matrix.identity();
@@ -173,7 +175,9 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			// The result of the perspective projection of rotation
 			var projection = view;
-			projection = ModchartUtil.project(view);
+
+			if (view.z != 0)
+				projection = ModchartUtil.project(view);
 
 			quad.x = projection.x;
 			quad.y = projection.y;
@@ -196,6 +200,8 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	private var __rotateZ:Float = 0;
 	private var __dizzy:Float = 0;
 	private var __parentOutput:ModifierOutput;
+	private var __centered2:Float = 0;
+	private var basePos:Vector3D;
 
 	/*
 		private function getStraightHoldSegment(hold:FlxSprite, basePos:Vector3D, params:ArrowData):Array<Dynamic> {
@@ -276,8 +282,9 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		final player = Adapter.instance.getPlayerFromArrow(item);
 		final lane = Adapter.instance.getLaneFromArrow(item);
 
-		final basePos = new Vector3D(Adapter.instance.getDefaultReceptorX(lane, player),
-			Adapter.instance.getDefaultReceptorY(lane, player)).add(ModchartUtil.getHalfPos());
+		basePos = ModchartUtil.getHalfPos();
+		basePos.x += Adapter.instance.getDefaultReceptorX(lane, player);
+		basePos.y += Adapter.instance.getDefaultReceptorY(lane, player);
 
 		var vertices:openfl.Vector<Float> = new openfl.Vector<Float>(8 * HOLD_SUBDIVISIONS, true);
 		var transfTotal:Array<ColorTransform> = [];
@@ -292,7 +299,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		// refresh global mods percents
 		__long = instance.getPercent('longHolds', player) - instance.getPercent('shortHolds', player) + 1;
-
+		__centered2 = instance.getPercent('centered2', player);
 		__dizzy = instance.getPercent('dizzyHolds', player);
 
 		__rotateX = instance.getPercent('holdRotateX', player);
@@ -326,9 +333,6 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			if (out1 == null)
 				out1 = getSegmentFunc(item, basePos, lastData != null ? lastData : getArrowParams(arrow, subOff));
-
-			if (shouldDraw(out1))
-				break;
 
 			var out2 = getSegmentFunc(item, basePos, (lastData = getArrowParams(arrow, subOff + subCr)));
 
@@ -401,12 +405,16 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		}
 	}
 
+	inline private function computeCentered2Height() {
+		var center = FlxG.height * .5;
+		var cury = basePos.y;
+	}
+
 	inline private function getArrowParams(arrow:FlxSprite, posOff:Float = 0):ArrowData {
 		final player = Adapter.instance.getPlayerFromArrow(arrow);
 		final lane = Adapter.instance.getLaneFromArrow(arrow);
 
-		final centered2 = instance.getPercent('centered2', player);
-		final timeC2 = flixel.FlxG.height * 0.25 * centered2;
+		final timeC2 = flixel.FlxG.height * 0.25 * __centered2;
 		final hitTime = Adapter.instance.getTimeFromArrow(arrow);
 
 		var pos = (hitTime - Adapter.instance.getSongPosition()) + posOff;

@@ -113,8 +113,13 @@
 # 19/02/25
 - Scripted Modifier (again)
 
-# 3/01/25
+# 3/03/25
 - Fixed longHolds modifier, now it looks good.
 - Added Hold Rotation Mods (Rotation with the parent note position as origin)
 - DizzyHolds modifier was added.
 - Added more customizable stuff on Config.hx (not everything works for now)
+
+# 10/03/25
+- New Modififier percents management system.
+- Optimizations.
+- WIP Cache System (Discarted for now)

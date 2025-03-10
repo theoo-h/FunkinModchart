@@ -1,4 +1,6 @@
 #if !macro
+import flixel.math.FlxMath;
+import flixel.tweens.FlxEase;
 import modchart.Config;
 import modchart.Manager;
 import modchart.Modifier;

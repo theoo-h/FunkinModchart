@@ -55,7 +55,6 @@ class Reverse extends Modifier {
 		var centerPercent = getPercent('centered', params.player);
 		shift = FlxMath.lerp(shift, (HEIGHT * 0.5) - ARROW_SIZEDIV2, centerPercent);
 
-		// TODO: long, straight and short holds
 		var distance = params.distance;
 
 		distance *= 0.45 * Adapter.instance.getCurrentScrollSpeed();
@@ -77,8 +76,7 @@ class Reverse extends Modifier {
 		var angleZ = 0.;
 
 		// Speed
-		scroll.y = scroll.y * (getPercent('xmod', player))
-			+ (1 + getPercent('scrollSpeed', player) + getPercent('scrollSpeed' + Std.string(params.lane), player));
+		scroll.y = scroll.y * (getPercent('xmod', player) + getPercent('xmod' + Std.string(params.lane), player));
 
 		// Main
 		angleX = angleX + getPercent('scrollAngleX', player);
@@ -93,9 +91,8 @@ class Reverse extends Modifier {
 		angleZ = angleZ + shift * getPercent('curvedScrollZ', player);
 
 		// angleY doesnt do anything if angleX and angleZ are disabled
-		// discarted due to rotation order changes
-		// if (angleX == 0 && angleZ == 0)
-		//	return scroll;
+		if (angleX == 0 && angleZ == 0)
+			return scroll;
 
 		scroll = ModchartUtil.rotate3DVector(scroll, angleX, angleY, angleZ);
 

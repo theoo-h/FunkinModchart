@@ -198,6 +198,7 @@ class PlayField extends FlxBasic {
 	override public function draw() {
 		super.draw();
 		__drawPlayField();
+		modifiers.postRender();
 	}
 
 	override public function destroy() {

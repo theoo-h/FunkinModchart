@@ -23,7 +23,7 @@ class Stealth extends Modifier {
 		setPercent('hiddenGlow', 1, -1);
 	}
 
-	function computeSudden(data:Visuals, params:RenderParams) {
+	private inline function computeSudden(data:Visuals, params:RenderParams) {
 		final player = params.player;
 
 		final sudden = getPercent('sudden', player);
@@ -42,7 +42,7 @@ class Stealth extends Modifier {
 		data.alpha *= alpha * sudden;
 	}
 
-	function computeHidden(data:Visuals, params:RenderParams) {
+	private inline function computeHidden(data:Visuals, params:RenderParams) {
 		final player = params.player;
 
 		final hidden = getPercent('hidden', player);
@@ -63,10 +63,11 @@ class Stealth extends Modifier {
 
 	override public function visuals(data:Visuals, params:RenderParams) {
 		final player = params.player;
+		final lane = params.lane;
 
 		final vMod = params.isTapArrow ? 'stealth' : 'dark';
-		final visibility = getPercent(vMod, player) + getPercent(vMod + Std.string(params.lane), player);
-		data.alpha = ((getPercent('alpha', player) + getPercent('alpha' + Std.string(params.lane), player)) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2)))
+		final visibility = getPercent(vMod, player) + getPercent(vMod + Std.string(lane), player);
+		data.alpha = ((getPercent('alpha', player) + getPercent('alpha' + Std.string(lane), player)) * (1 - ((Math.max(0.5, visibility) - 0.5) * 2)))
 			+ getPercent('alphaOffset', player);
 		data.glow += getPercent('flash', player) + (visibility * 2);
 
