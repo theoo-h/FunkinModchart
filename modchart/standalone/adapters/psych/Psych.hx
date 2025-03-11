@@ -116,18 +116,25 @@ class Psych implements IAdapter {
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
-		return note.parent != null ? note.parent.strumTime : note.strumTime;
+		return note.parent.strumTime;
 	}
 
-	// psych adjust the strum pos at the begin of playstate
 	public function getDownscroll():Bool {
+		#if (PSYCH >= "0.7")
 		return ClientPrefs.data.downScroll;
+		#else
+		return ClientPrefs.downScroll;
+		#end
 	}
 
 	inline function getStrumFromInfo(lane:Int, player:Int) {
 		var group = player == 0 ? PlayState.instance.opponentStrums : PlayState.instance.playerStrums;
-		@:privateAccess
-		return group.getFirst(str -> str.noteData == lane);
+		var strum = null;
+		group.forEach(str -> {
+			if (str.noteData == lane)
+				strum = str;
+		});
+		return strum;
 	}
 
 	public function getDefaultReceptorX(lane:Int, player:Int):Float {
