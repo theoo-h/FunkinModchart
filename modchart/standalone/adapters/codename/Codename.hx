@@ -138,9 +138,8 @@ class Codename implements IAdapter {
 	public function getArrowCamera():Array<FlxCamera>
 		return [PlayState.instance.camHUD];
 
-	public function getCurrentScrollSpeed():Float {
+	public function getCurrentScrollSpeed():Float
 		return PlayState.instance.scrollSpeed;
-	}
 
 	// 0 receptors
 	// 1 tap arrows

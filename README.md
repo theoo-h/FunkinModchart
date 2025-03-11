@@ -78,7 +78,7 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 
 **Ne_Eo (aka. Neo)**: Coder, bugfixes & Optimizer.
 
-**Edwhak**: Maintainer.
+**EdwhakKB**: Maintainer.
 
 **OpenITG:** Some math taken for modifiers.
 

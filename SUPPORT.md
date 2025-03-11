@@ -8,7 +8,7 @@
 ## Psych Engine
 - 1.0 (also 1.0b)
 - 0.7.x
-- 0.6.x
+- 0.6.x (WARNING: Due to the flixel version (5.1.0 and below), color transforms doesn't work)
 
 - `FM_ENGINE`: "PSYCH"
 - `FM_ENGINE_VERSION`: "1.0" for 1.0 and 1.0b, "0.7" for 0.7.x, "0.6" for 0.6.x

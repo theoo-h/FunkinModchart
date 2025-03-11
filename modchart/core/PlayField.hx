@@ -95,14 +95,14 @@ class PlayField extends FlxBasic {
 		addEvent(new EaseEvent(name, beat, length, value, easeFunc, player, events));
 	}
 
-	public inline function add(name:String, beat:Float, length:Float, value:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
+	public inline function add(name:String, beat:Float, length:Float, addition:Float = 1, easeFunc:EaseFunction, player:Int = -1):Void {
 		if (player == -1) {
 			for (curField in 0...Adapter.instance.getPlayerCount())
-				add(name, beat, length, value, easeFunc, curField);
+				add(name, beat, length, addition, easeFunc, curField);
 			return;
 		}
 
-		addEvent(new AddEvent(name, beat, length, value, easeFunc, player, events));
+		addEvent(new AddEvent(name, beat, length, addition, easeFunc, player, events));
 	}
 
 	public inline function setAdd(name:String, beat:Float, valueToAdd:Float, player:Int = -1):Void {

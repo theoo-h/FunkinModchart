@@ -123,3 +123,8 @@
 - New Modififier percents management system.
 - Optimizations.
 - WIP Cache System (Discarted for now)
+
+# 10/03/25 (#2)
+- WIP Documentation
+- ScriptedModifier -> DynamicModifier
+- Support for Flixel 5.1 and below (no color transform :/)

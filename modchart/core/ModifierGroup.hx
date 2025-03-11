@@ -23,41 +23,62 @@ class ModifierOutput {
 
 @:allow(modchart.Modifier)
 final class ModifierGroup {
+	/**
+	 * A `List` containing all compiled `Modifier` classes.
+	 * 
+	 * This list is generated at compile time using `ModifiersMacro.get()`.
+	 * It provides a collection of all available modifiers for use in the system.
+	 */
 	public static final COMPILED_MODIFIERS = ModifiersMacro.get();
 
-	private var MODIFIER_REGISTRY:Map<String, Class<Modifier>> = new Map<String, Class<Modifier>>();
-
 	/**
-	 * ok so, here's a big change i made:
+	 * A 2D array storing percentage values, indexed by hashed string keys.
 	 * 
-	 * - replaced `StringMap<IntMap<Float>>` with (custom) `Vector<Vector<Float>>`, 
-	 *   preallocated to the max size of a 16-bit integer (65536).
-	 * - now, when we set a value, we hash the key to a 16-bit integer and 
-	 *   store it in the corresponding position of the vector.
-	 * - this makes the system way more optimized, 
-	 *   cause we're using a more efficient data structure and faster access.
+	 * **Usage Notes:**
+	 * - Do not access `percents` directly, as all keys are hashed into 16-bit integers.
+	 * - Use `getPercent(name, player)` to retrieve a value.
+	 * - Use `setPercent(name, value, player)` to modify values safely.
+	 * 
+	 * **Hashing Mechanism:**
+	 * - Keys are automatically converted to lowercase and hashed into a 16-bit integer.
+	 * - This ensures efficient storage and retrieval while avoiding direct string key lookups.
 	 */
-	private var percents:PercentArray = new PercentArray();
+	public var percents(default, never):PercentArray = new PercentArray();
 
 	/**
-	 * we don't use it to iterate, so it doens't matter if stringmap isn't to fast
+	 * A `StringMap` that maps modifier names/identifiers to their corresponding `Modifier` class.
+	 * **Note**: This is not actually used internally-
 	 */
-	private var modifiers:StringMap<Modifier> = new StringMap();
+	public var modifiers(default, never):StringMap<Modifier> = new StringMap();
+
+	/**
+	 * The current `PlayField` instance.
+	 * 
+	 * When set, all stored modifiers are updated to reference the new `PlayField` instance.
+	 */
+	public var playfield(default, set):PlayField;
+
+	public function set_playfield(newPlayfield:PlayField) {
+		for (i in 0...__modifierCount) {
+			@:privateAccess __sortedModifiers[i].pf = newPlayfield;
+		}
+		return playfield = newPlayfield;
+	}
+
+	@:noCompletion private var __modifierRegistrery:StringMap<Class<Modifier>> = new StringMap();
 
 	@:noCompletion private var __sortedModifiers:Vector<Modifier> = new Vector<Modifier>(32);
+	@:noCompletion private var __modifierCount:Int = 0;
 	@:noCompletion private var __sortedIDs:Vector<String> = new Vector<String>(32);
 	@:noCompletion private var __idCount:Int = 0;
-	@:noCompletion private var __modCount:Int = 0;
 
-	private var cache:ModifierCache = new ModifierCache();
-
-	private var playfield:PlayField;
+	// @:noCompletion private var cache:ModifierCache = new ModifierCache();
 
 	inline private function __loadModifiers() {
 		for (cls in COMPILED_MODIFIERS) {
 			var name = Type.getClassName(cls);
 			name = name.substring(name.lastIndexOf('.') + 1, name.length);
-			MODIFIER_REGISTRY.set(name.toLowerCase(), cast cls);
+			__modifierRegistrery.set(name.toLowerCase(), cast cls);
 		}
 	}
 
@@ -67,16 +88,30 @@ final class ModifierGroup {
 		__loadModifiers();
 	}
 
-	public function postRender() {
-		@:privateAccess cache.clear();
+	public inline function postRender() {
+		// @:privateAccess cache.clear();
 	}
 
-	// just render mods with the perspective stuff included
+	/**
+	 * Computes the transformed position and visual properties of an arrow based on active modifiers.
+	 * 
+	 * @param pos The initial `Vector3D` position of the arrow.
+	 * @param data The `ArrowData` containing arrow properties such as lane, player, and timing.
+	 * @param posDiff (Optional) A positional offset applied to the arrow.
+	 * @param allowVis (Optional) If `true`, visual modifications will be applied.
+	 * @param allowPos (Optional) If `true`, positional transformations will be applied.
+	 * @return A `ModifierOutput` structure containing the modified position and visuals.
+	 * 
+	 * **Processing Steps:**
+	 * - Retrieves the current song position and beat.
+	 * - Iterates through all active modifiers, applying transformations if conditions are met.
+	 * - Adjusts the `z` position based on `Config.Z_SCALE` and projects the final position.
+	 * - (Caching is currently disabled but could be re-enabled for optimization.)
+	 */
 	public inline function getPath(pos:Vector3D, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
 		var visuals:Visuals = {};
 
-		/*
-			var cacheParams:CacheInstance = {
+		/*var cacheParams:CacheInstance = {
 				lane: data.lane,
 				player: data.player,
 				pos: data.distance + posDiff,
@@ -104,7 +139,7 @@ final class ModifierGroup {
 			isTapArrow: data.isTapArrow
 		}
 
-		for (i in 0...__modCount) {
+		for (i in 0...__modifierCount) {
 			final mod = __sortedModifiers[i];
 
 			if (!mod.shouldRun(args))
@@ -126,24 +161,13 @@ final class ModifierGroup {
 		return output;
 	}
 
-	/*
-		// TODO: add `activeMods` var (for optimization) and percentBackup for editor (can also be helpful for activeMods handling or idk)
-		var activeMods:Vector<String>;
-		var percentsBackup:StringMap<Vector<Float>>;
-
-		public function refreshActiveMods() {}
-
-		public function refreshPercentBackup() {}
-
-		// discarted until i finish the new modifier system 
-	 */
 	public inline function registerModifier(name:String, modifier:Class<Modifier>) {
 		var lowerName = name.toLowerCase();
-		if (MODIFIER_REGISTRY.get(lowerName) != null) {
+		if (__modifierRegistrery.get(lowerName) != null) {
 			trace('There\'s already a modifier with name "$name" registered !');
 			return;
 		}
-		MODIFIER_REGISTRY.set(lowerName, modifier);
+		__modifierRegistrery.set(lowerName, modifier);
 	}
 
 	public inline function addScriptedModifier(name:String, instance:Modifier)
@@ -154,7 +178,7 @@ final class ModifierGroup {
 		if (modifiers.exists(lowerName))
 			return;
 
-		var modifierClass:Null<Class<Modifier>> = MODIFIER_REGISTRY.get(lowerName);
+		var modifierClass:Null<Class<Modifier>> = __modifierRegistrery.get(lowerName);
 		if (modifierClass == null) {
 			trace('$name modifier was not found !');
 
@@ -193,6 +217,7 @@ final class ModifierGroup {
 	@:noCompletion
 	inline private function __addModifier(name:String, modifier:Modifier) {
 		modifiers.set(name, modifier);
+		@:privateAccess modifier.pf = playfield;
 
 		// update modifier identificators
 		if (__idCount > (__sortedIDs.length - 1)) {
@@ -205,14 +230,14 @@ final class ModifierGroup {
 		__sortedIDs[__idCount++] = name;
 
 		// update modifier list
-		if (__modCount > (__sortedModifiers.length - 1)) {
+		if (__modifierCount > (__sortedModifiers.length - 1)) {
 			final oldMods = __sortedModifiers.copy();
 			__sortedModifiers = new Vector<Modifier>(oldMods.length + 8);
 
 			for (i in 0...oldMods.length)
 				__sortedModifiers[i] = oldMods[i];
 		}
-		__sortedModifiers[__modCount++] = modifier;
+		__sortedModifiers[__modifierCount++] = modifier;
 	}
 
 	@:noCompletion
@@ -300,11 +325,9 @@ final class PercentArray {
 	}
 
 	// hash handlers
-	@inline public function set(key:String, value:Vector<Float>):Void {
+	inline public function set(key:String, value:Vector<Float>):Void
 		vector.set(__hashKey(key), value);
-	}
 
-	inline public function get(key:String):Vector<Float> {
+	inline public function get(key:String):Vector<Float>
 		return vector.get(__hashKey(key));
-	}
 }

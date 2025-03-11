@@ -105,7 +105,7 @@ class Macro {
 					case FFun(fun):
 						// we're just removing a if statement cuz causes some color issues
 						fun.expr = macro {
-							return getNewDrawTrianglesItem(graphic, smoothing, isColored, blend, hasColorOffsets, shader);
+							return getNewDrawTrianglesItem(graphic, smoothing, isColored, blend #if (flixel >= "5.2.0"), hasColorOffsets, shader #end);
 						};
 					default:
 						// do nothing
@@ -220,6 +220,7 @@ class Macro {
 					position.putWeak();
 					cameraBounds.putWeak();
 
+					#if (flixel >= "5.2.0")
 					final indDiv = (1 / indicesLength);
 
 					var curAlphas = [];
@@ -286,6 +287,7 @@ class Macro {
 						colorMultipliers = colorMultipliers.concat(curMultipliers);
 						colorOffsets = colorOffsets.concat(curOffsets);
 					}
+					#end
 				}
 			}),
 		};
