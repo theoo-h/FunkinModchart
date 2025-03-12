@@ -127,4 +127,5 @@
 # 10/03/25 (#2)
 - WIP Documentation
 - ScriptedModifier -> DynamicModifier
-- Support for Flixel 5.1 and below (no color transform :/)
+- Support for Flixel 5.1 and below (no color transform :/)'
+- Fixes for Psych 0.6 support

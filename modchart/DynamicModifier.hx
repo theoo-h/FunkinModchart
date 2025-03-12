@@ -76,7 +76,7 @@ class DynamicModifier extends Modifier {
 		final modifiedVisuals:Null<Visuals> = visualsFunc(safeData, safeParams);
 
 		if (nullSafety && modifiedVisuals == null) {
-			trace('[FunkinModchart:DynamicModifier] Failed to run "visuals" function!');
+			trace('[FunkinModchart::DynamicModifier] Failed to run "visuals" function!');
 			__skipVisuals = true;
 		}
 

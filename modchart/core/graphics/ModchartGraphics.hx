@@ -642,7 +642,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 		if (alpha <= 0 || thickness <= 0)
 			return;
 
-		final divisions = Std.int(60 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
+		final divisions = Std.int(40 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
 		final limit = 1500 * (1 + instance.getPercent('arrowPathLength', fn));
 		final interval = limit / divisions;
 
@@ -667,7 +667,7 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 				lane: lane,
 				player: fn,
 				isTapArrow: true
-			}, 0, false);
+			}, 0, true);
 			final position = output.pos;
 
 			/*
@@ -680,14 +680,19 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 				|| (position.y >= __display.pixels.rect.height + ARROW_PATH_BOUNDARY_OFFSET))
 				continue;
 
-			pointData[pID++] = [!moved, position.x, position.y, position.z];
+			final vis:PathVisuals = {
+				alpha: alpha * output.visuals.alpha,
+				scale: thickness * output.visuals.scaleX,
+				color: 0xFFFFFF
+			};
+			pointData[pID++] = [!moved, position.x, position.y, position.z, vis];
 
 			moved = true;
 		}
 
 		var newInstruction:FMDrawInstruction = {};
-		newInstruction.mappedExtra = ['s' => [thickness, 0xFFFFFFFF, alpha], 'pd' => pointData, 'l' => lane, 'p' => fn];
-
+		// newInstruction.mappedExtra = ['s' => [thickness, 0xFFFFFFFF, alpha], 'pd' => pointData, 'l' => lane, 'p' => fn];
+		newInstruction.extra = [pointData];
 		queue[count] = newInstruction;
 		count++;
 	}
@@ -705,14 +710,8 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 
 		for (i in 0...queue.length) {
 			final instruction = queue[i];
-			final thisLane = instruction.mappedExtra.get('lane');
-
-			if (lastLane != thisLane) {
-				final style = instruction.mappedExtra.get('style');
-				__shape.graphics.lineStyle(style[0], style[1], style[2], false, NORMAL, ROUND, ROUND);
-			}
-
-			final steps = instruction.mappedExtra.get('position').iterator();
+			final data:Array<Array<Dynamic>> = cast instruction.extra[0];
+			final steps = data.iterator();
 
 			var stepsHasNext = steps.hasNext;
 			var stepsNext = steps.next;
@@ -727,13 +726,13 @@ class ModchartArrowPath extends ModchartRenderer<FlxSprite> {
 				final needsToMove:Bool = cast thisStep[0];
 				final posX:Float = cast thisStep[1];
 				final posY:Float = cast thisStep[2];
+				final visuals:PathVisuals = cast thisStep[4];
 
+				__shape.graphics.lineStyle(visuals.scale, visuals.color, visuals.alpha, false, NORMAL);
 				__pathCommands.push(needsToMove ? GraphicsPathCommand.MOVE_TO : GraphicsPathCommand.LINE_TO);
 				__pathPoints.push(posX);
 				__pathPoints.push(posY);
 			}
-
-			lastLane = thisLane;
 		}
 
 		__shape.graphics.drawPath(__pathCommands, __pathPoints);
@@ -807,4 +806,12 @@ class FMDrawInstruction {
 	var mappedExtra:Map<String, Dynamic>;
 
 	public function new() {}
+}
+
+@:publicFields
+@:structInit
+class PathVisuals {
+	var alpha:Float = 1;
+	var scale:Float = 1;
+	var color:Int = 0xFFFFFFF;
 }

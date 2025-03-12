@@ -4,6 +4,7 @@ package modchart.standalone.adapters.psych;
 import backend.ClientPrefs;
 import backend.Conductor;
 import objects.Note;
+import objects.NoteSplash;
 import objects.StrumNote as Strum;
 import states.PlayState;
 #else
@@ -82,6 +83,10 @@ class Psych implements IAdapter {
 			return cast(arrow, Note).noteData;
 		else if (arrow is Strum) @:privateAccess
 			return cast(arrow, Strum).noteData;
+		#if (FM_ENGINE_VERSION >= "1.0")
+		if (arrow is NoteSplash) @:privateAccess
+			return cast(arrow, NoteSplash).babyArrow.noteData;
+		#end
 
 		return 0;
 	}
@@ -89,9 +94,12 @@ class Psych implements IAdapter {
 	public function getPlayerFromArrow(arrow:FlxSprite) {
 		if (arrow is Note)
 			return cast(arrow, Note).mustPress ? 1 : 0;
-		else if (arrow is Strum) @:privateAccess
+		if (arrow is Strum) @:privateAccess
 			return cast(arrow, Strum).player;
-
+		#if (FM_ENGINE_VERSION >= "1.0")
+		if (arrow is NoteSplash) @:privateAccess
+			return cast(arrow, NoteSplash).babyArrow.player;
+		#end
 		return 0;
 	}
 
@@ -120,7 +128,7 @@ class Psych implements IAdapter {
 	}
 
 	public function getDownscroll():Bool {
-		#if (PSYCH >= "0.7")
+		#if (FM_ENGINE_VERSION >= "0.7")
 		return ClientPrefs.data.downScroll;
 		#else
 		return ClientPrefs.downScroll;
@@ -131,6 +139,7 @@ class Psych implements IAdapter {
 		var group = player == 0 ? PlayState.instance.opponentStrums : PlayState.instance.playerStrums;
 		var strum = null;
 		group.forEach(str -> {
+			@:privateAccess
 			if (str.noteData == lane)
 				strum = str;
 		});
@@ -156,7 +165,7 @@ class Psych implements IAdapter {
 	// 1 tap arrows
 	// 2 hold arrows
 	public function getArrowItems() {
-		var pspr:Array<Array<Array<FlxSprite>>> = [[[], [], []], [[], [], []]];
+		var pspr:Array<Array<Array<FlxSprite>>> = [[[], [], [], []], [[], [], [], []]];
 
 		@:privateAccess
 		PlayState.instance.strumLineNotes.forEachAlive(strumNote -> {
@@ -172,6 +181,18 @@ class Psych implements IAdapter {
 
 			pspr[player][strumNote.isSustainNote ? 2 : 1].push(strumNote);
 		});
+		#if (FM_ENGINE_VERSION >= "1.0")
+		PlayState.instance.grpNoteSplashes.forEachAlive(splash -> {
+			@:privateAccess
+			if (splash.babyArrow != null && splash.active) {
+				final player = splash.babyArrow.player;
+				if (pspr[player] == null)
+					pspr[player] = [];
+
+				pspr[player][3].push(splash);
+			}
+		});
+		#end
 
 		return pspr;
 	}
