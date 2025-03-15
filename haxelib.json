@@ -6,8 +6,5 @@
     "releasenote": "FPS Plus Support, Optimizations and Improvements",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
-    "dependencies": {
-      "flixel": ""
-    },
     "url": "https://github.com/TheoDevelops/FunkinModchart"
   }
