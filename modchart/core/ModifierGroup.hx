@@ -318,7 +318,7 @@ final class PercentArray {
 		var hash:Int = 0;
 		for (i in 0...key.length) {
 			// hash computation
-			hash = ((hash << 5) - hash) + Std.int(key.charCodeAt(i));
+			hash = ((hash << 5) - hash) + StringTools.unsafeCodeAt(key, i);
 		}
 		__lastKey = key;
 		return __lastHashedKey = (hash & 0xFFFF); // 16-bit hash
