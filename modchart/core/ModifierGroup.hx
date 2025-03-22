@@ -25,7 +25,7 @@ class ModifierOutput {
 final class ModifierGroup {
 	/**
 	 * A `List` containing all compiled `Modifier` classes.
-	 * 
+	 *
 	 * This list is generated at compile time using `ModifiersMacro.get()`.
 	 * It provides a collection of all available modifiers for use in the system.
 	 */
@@ -33,12 +33,12 @@ final class ModifierGroup {
 
 	/**
 	 * A 2D array storing percentage values, indexed by hashed string keys.
-	 * 
+	 *
 	 * **Usage Notes:**
 	 * - Do not access `percents` directly, as all keys are hashed into 16-bit integers.
 	 * - Use `getPercent(name, player)` to retrieve a value.
 	 * - Use `setPercent(name, value, player)` to modify values safely.
-	 * 
+	 *
 	 * **Hashing Mechanism:**
 	 * - Keys are automatically converted to lowercase and hashed into a 16-bit integer.
 	 * - This ensures efficient storage and retrieval while avoiding direct string key lookups.
@@ -53,7 +53,7 @@ final class ModifierGroup {
 
 	/**
 	 * The current `PlayField` instance.
-	 * 
+	 *
 	 * When set, all stored modifiers are updated to reference the new `PlayField` instance.
 	 */
 	public var playfield(default, set):PlayField;
@@ -94,14 +94,14 @@ final class ModifierGroup {
 
 	/**
 	 * Computes the transformed position and visual properties of an arrow based on active modifiers.
-	 * 
+	 *
 	 * @param pos The initial `Vector3D` position of the arrow.
 	 * @param data The `ArrowData` containing arrow properties such as lane, player, and timing.
 	 * @param posDiff (Optional) A positional offset applied to the arrow.
 	 * @param allowVis (Optional) If `true`, visual modifications will be applied.
 	 * @param allowPos (Optional) If `true`, positional transformations will be applied.
 	 * @return A `ModifierOutput` structure containing the modified position and visuals.
-	 * 
+	 *
 	 * **Processing Steps:**
 	 * - Retrieves the current song position and beat.
 	 * - Iterates through all active modifiers, applying transformations if conditions are met.

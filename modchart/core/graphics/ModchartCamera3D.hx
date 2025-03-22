@@ -14,7 +14,7 @@ import openfl.geom.Vector3D;
  * - View matrix transformation for rendering.
  * - Support for pitch, yaw, and roll rotations.
  * - Camera movement functions (`moveForward`, `moveRight`, `moveUp`).
- * 
+ *
  * `NOTE`: All of those features only work on `FlxSprite3D` instances.
  */
 class ModchartCamera3D {
@@ -25,7 +25,7 @@ class ModchartCamera3D {
 
 	/**
 	 * The position of the camera (viewpoint) in world coordinates.
-	 * 
+	 *
 	 * This represents the location of the viewer in 3D space.
 	 * The camera will be positioned at this point and will look toward `lookAt`.
 	 * Default: (0, 0, -10), meaning the camera starts 10 units back along the Z-axis.
@@ -34,7 +34,7 @@ class ModchartCamera3D {
 
 	/**
 	 * The target position that the camera is looking at.
-	 * 
+	 *
 	 * This point determines the direction the camera is facing.
 	 * The view matrix is calculated based on the vector from `eyePos` to `lookAt`.
 	 * Default: (0, 0, 0), meaning the camera looks toward the origin.
@@ -43,7 +43,7 @@ class ModchartCamera3D {
 
 	/**
 	 * The up direction vector, defining the camera's vertical orientation.
-	 * 
+	 *
 	 * This vector determines which direction is considered "up" for the camera.
 	 * It is typically set to (0, 1, 0) to align with the Y-axis, but can be modified
 	 * for custom orientations (e.g., to simulate a tilted horizon).
@@ -52,7 +52,7 @@ class ModchartCamera3D {
 
 	/**
 	 * Rotation around the X-axis, controlling the tilt up/down.
-	 * 
+	 *
 	 * - Positive values tilt the camera downward.
 	 * - Negative values tilt the camera upward.
 	 * - Expressed in degrees.
@@ -61,7 +61,7 @@ class ModchartCamera3D {
 
 	/**
 	 * Rotation around the Y-axis, controlling the left/right turn.
-	 * 
+	 *
 	 * - Positive values turn the camera to the right.
 	 * - Negative values turn the camera to the left.
 	 * - Expressed in degrees.
@@ -70,7 +70,7 @@ class ModchartCamera3D {
 
 	/**
 	 * Rotation around the Z-axis, controlling the tilt sideways (roll).
-	 * 
+	 *
 	 * - Positive values tilt the camera clockwise.
 	 * - Negative values tilt the camera counterclockwise.
 	 * - Expressed in degrees.
@@ -84,11 +84,11 @@ class ModchartCamera3D {
 
 	/**
 	 * Updates the camera's view matrix based on its position and rotation.
-	 * 
+	 *
 	 * This function recalculates the `__viewMatrix`, which is used to transform
-	 * world coordinates into the camera's local space. It applies rotation transformations 
+	 * world coordinates into the camera's local space. It applies rotation transformations
 	 * using the pitch, yaw, and roll angles and computes the final view matrix.
-	 * 
+	 *
 	 * Steps:
 	 * 1. Resets the `__viewMatrix` and `__rotationMatrix` to identity.
 	 * 2. Applies rotation transformations to align the camera's orientation.
@@ -96,7 +96,7 @@ class ModchartCamera3D {
 	 * 4. Transforms these axes using the rotation matrix.
 	 * 5. Computes the camera position in view space.
 	 * 6. Constructs the view matrix using the transformed axes and camera position.
-	 * 
+	 *
 	 * This matrix is essential for rendering objects correctly from the camera's perspective.
 	 */
 	inline private function updateCameraView() {
@@ -131,13 +131,13 @@ class ModchartCamera3D {
 
 	/**
 	 * Transforms a given 3D vector from world space to the camera's view space.
-	 * 
+	 *
 	 * This function applies the current `__viewMatrix` to the input vector,
 	 * converting it from world coordinates to the camera's local coordinate system.
-	 * 
+	 *
 	 * @param vector The `Vector3D` representing a point or direction in world space.
 	 * @return A new `Vector3D` transformed into the camera's view space.
-	 * 
+	 *
 	 * Example usage:
 	 * ```haxe
 	 * var worldPos = new Vector3D(10, 5, -20);

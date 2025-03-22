@@ -53,7 +53,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Internal helper function to apply a function to each playfield.
-	 * 
+	 *
 	 * @param func The function to apply to each playfield.
 	 * @param player Optionally, the specific player to target (-1 for all).
 	 */
@@ -70,7 +70,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Registers a modifier for all playfields or a specific one.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param mod The class type of the modifier.
 	 * @param player Optionally, the specific player to target.
@@ -80,7 +80,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds a modifier for all playfields or a specific one.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param field Optionally, the specific playfield to target.
 	 */
@@ -89,7 +89,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds a scripted modifier for all playfields or a specific one.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param instance The instance of the modifier.
 	 * @param field Optionally, the specific playfield to target.
@@ -99,7 +99,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Sets the percent for a specific modifier for all playfields or a specific one.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param value The percent value to set.
 	 * @param player Optionally, the player to target.
@@ -110,7 +110,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Gets the percent for a specific modifier.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param player The player to target.
 	 * @param field Optionally, the specific playfield to target.
@@ -127,7 +127,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds an event to all playfields or a specific one.
-	 * 
+	 *
 	 * @param event The event to add.
 	 * @param field Optionally, the specific playfield to target.
 	 */
@@ -136,7 +136,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Sets a specific value at a certain beat for all playfields or a specific one.
-	 * 
+	 *
 	 * @param name The name of the value.
 	 * @param beat The beat at which the value should be set.
 	 * @param value The value to set.
@@ -148,7 +148,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Applies easing to a modifier.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param beat The beat at which to start easing.
 	 * @param length The length of the easing.
@@ -162,7 +162,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds easing to a modifier.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param beat The beat at which to start easing.
 	 * @param length The length of the easing.
@@ -176,7 +176,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Sets and adds a value to a modifier.
-	 * 
+	 *
 	 * @param name The name of the modifier.
 	 * @param beat The beat at which the value should be set.
 	 * @param value The value to set.
@@ -188,7 +188,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds a repeater event for all playfields or a specific one.
-	 * 
+	 *
 	 * @param beat The beat at which the repeater starts.
 	 * @param length The length of the repeat action.
 	 * @param callback The callback function to execute.
@@ -199,7 +199,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Adds a callback event for all playfields or a specific one.
-	 * 
+	 *
 	 * @param beat The beat at which the callback will be triggered.
 	 * @param callback The callback function to execute.
 	 * @param field Optionally, the specific playfield to target.
@@ -209,7 +209,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Creates a node linking inputs and outputs to a function.
-	 * 
+	 *
 	 * @param input The list of input names.
 	 * @param output The list of output names.
 	 * @param func The function to execute for the node.
@@ -220,7 +220,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Creates an alias for a given modifier.
-	 * 
+	 *
 	 * @param name The original modifier name.
 	 * @param alias The alias name.
 	 * @param field The specific playfield to apply the alias to.
@@ -236,7 +236,7 @@ final class Manager extends FlxBasic {
 
 	/**
 	 * Updates all playfields in the game loop.
-	 * 
+	 *
 	 * @param elapsed The time elapsed since the last update.
 	 */
 	override function update(elapsed:Float):Void {

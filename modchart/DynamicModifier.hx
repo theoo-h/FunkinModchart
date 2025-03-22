@@ -3,7 +3,7 @@ package modchart;
 /**
  * `DynamicModifier` is a subclass of `Modifier` that applies dynamic transformations
  * to the position and visuals of an arrow during the modchart rendering process.
- * 
+ *
  * This type of modifier can be used for scripting, allowing you to define
  * custom functions to modify both the position and visuals of arrows
  * without the need to modify the source code.
@@ -11,7 +11,7 @@ package modchart;
 class DynamicModifier extends Modifier {
 	/**
 	 * A function that applies a transformation to the arrow's position.
-	 * 
+	 *
 	 * @param position The current position of the arrow.
 	 * @param params The parameters used for rendering, such as song position, beat, etc.
 	 * @return The transformed position of the arrow.
@@ -20,7 +20,7 @@ class DynamicModifier extends Modifier {
 
 	/**
 	 * A function that applies transformations to the arrow's visuals.
-	 * 
+	 *
 	 * @param data The current visuals of the arrow.
 	 * @param params The parameters used for rendering, such as song position, beat, etc.
 	 * @return The transformed visuals of the arrow.
@@ -40,7 +40,7 @@ class DynamicModifier extends Modifier {
 	/**
 	 * Applies the position transformation defined by `renderFunc`.
 	 * If `renderFunc` is `null`, the function simply returns the current position.
-	 * 
+	 *
 	 * @return The transformed position, or the original if no transformation is applied.
 	 */
 	override public function render(position:Vector3D, params:RenderParams) {
@@ -63,7 +63,7 @@ class DynamicModifier extends Modifier {
 	/**
 	 * Applies the visual transformation defined by `visualsFunc`.
 	 * If `visualsFunc` is `null`, the function simply returns the original visuals.
-	 * 
+	 *
 	 * @return The transformed visuals, or the original if no transformation is applied.
 	 */
 	override public function visuals(data:Visuals, params:RenderParams) {

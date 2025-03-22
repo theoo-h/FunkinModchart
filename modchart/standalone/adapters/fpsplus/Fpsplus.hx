@@ -60,14 +60,14 @@ class Fpsplus implements IAdapter {
 		return arrow.ID;
 	}
 
-    public function getPlayerFromArrow(arrow:FlxSprite) {
-        if (arrow is Note) {
-            final castedNote:Note = cast arrow;
-            return castedNote.mustPress ? 1 : 0;
-        }
+	public function getPlayerFromArrow(arrow:FlxSprite) {
+		if (arrow is Note) {
+			final castedNote:Note = cast arrow;
+			return castedNote.mustPress ? 1 : 0;
+		}
 
-        return PlayState.instance.playerStrums.members.contains(arrow) ? 1 : 0;
-    }
+		return PlayState.instance.playerStrums.members.contains(arrow) ? 1 : 0;
+	}
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
@@ -101,11 +101,11 @@ class Fpsplus implements IAdapter {
 	}
 
 	public function getDefaultReceptorX(lane:Int, player:Int):Float {
-        return __getStrumGroupFromPlayer(player).members[lane].x;
+		return __getStrumGroupFromPlayer(player).members[lane].x;
 	}
 
 	public function getDefaultReceptorY(lane:Int, player:Int):Float {
-        return __getStrumGroupFromPlayer(player).members[lane].y;
+		return __getStrumGroupFromPlayer(player).members[lane].y;
 	}
 
 	public function getArrowCamera():Array<FlxCamera>
@@ -124,11 +124,11 @@ class Fpsplus implements IAdapter {
 
 		@:privateAccess
 		final strums = [PlayState.instance.enemyStrums, PlayState.instance.playerStrums];
-		for (i in 0...strums.length){
+		for (i in 0...strums.length) {
 			strums[i].forEachAlive(strumNote -> {
 				if (pspr[i] == null)
 					pspr[i] = [];
-	
+
 				pspr[i][0].push(strumNote);
 			});
 		}
@@ -143,8 +143,7 @@ class Fpsplus implements IAdapter {
 		return pspr;
 	}
 
-    private function __getStrumGroupFromPlayer(player:Int):flixel.group.FlxGroup.FlxTypedGroup<FlxSprite>
-    {
-        return player == 1 ? PlayState.instance.playerStrums : PlayState.instance.enemyStrums;
-    }
+	private function __getStrumGroupFromPlayer(player:Int):flixel.group.FlxGroup.FlxTypedGroup<FlxSprite> {
+		return player == 1 ? PlayState.instance.playerStrums : PlayState.instance.enemyStrums;
+	}
 }

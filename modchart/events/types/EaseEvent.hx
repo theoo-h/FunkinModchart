@@ -45,17 +45,14 @@ class EaseEvent extends Event {
 				// based on schmovin timeline
 				final possibleLastEvent = parent.getLastEventBefore(this);
 
-				if (possibleLastEvent != null)
-				{
-					if (possibleLastEvent is EaseEvent)
-					{
+				if (possibleLastEvent != null) {
+					if (possibleLastEvent is EaseEvent) {
 						var castedEvent:EaseEvent = cast possibleLastEvent;
 						// the ease function may not return 1
 						entryPerc = castedEvent.data.ease(1) * possibleLastEvent.target;
 					} else
 						entryPerc = possibleLastEvent.target;
-				}
-				else
+				} else
 					entryPerc = getModPercent(name, player);
 			}
 
