@@ -14,6 +14,7 @@ using StringTools;
 
 @:keep class ModchartUtil {
 	// pain (we need this if we want support for sprite sheet packer)
+	@:pure
 	inline public static function getFrameAngle(spr:FlxSprite):Float {
 		return switch (spr.frame.angle) {
 			case ANGLE_90: 90;
@@ -24,6 +25,8 @@ using StringTools;
 	}
 
 	// NO MORE GIMBAL LOCK
+
+	@:pure
 	inline public static function rotate3DVector(vec:Vector3D, angleX:Float, angleY:Float, angleZ:Float):Vector3D {
 		if (angleX == 0 && angleY == 0 && angleZ == 0)
 			return vec;
@@ -33,35 +36,61 @@ using StringTools;
 		final quatY = Quaternion.fromAxisAngle(Vector3D.Y_AXIS, angleY * RAD);
 		final quatZ = Quaternion.fromAxisAngle(Vector3D.Z_AXIS, angleZ * RAD);
 
-		var finalQuat:Quaternion;
-		// pain
+		// this is confusing, X_Y_Z is done like this:
+		// OUT = Z;
+		// OUT *= Y
+		// OUT *= X
+		// But it feels wrong, so investigate this
 		switch (Config.ROTATION_ORDER) {
 			case X_Y_Z:
-				finalQuat = quatX.multiply(quatY.multiply(quatZ));
+				quatZ.multiplyInPlace(quatY);
+				quatZ.multiplyInPlace(quatX);
+				return quatZ.rotateVector(vec);
 			case X_Z_Y:
-				finalQuat = quatX.multiply(quatZ.multiply(quatY));
+				quatY.multiplyInPlace(quatZ);
+				quatY.multiplyInPlace(quatX);
+				return quatY.rotateVector(vec);
 			case Y_X_Z:
-				finalQuat = quatY.multiply(quatX.multiply(quatZ));
+				quatZ.multiplyInPlace(quatX);
+				quatZ.multiplyInPlace(quatY);
+				return quatZ.rotateVector(vec);
 			case Y_Z_X:
-				finalQuat = quatY.multiply(quatZ.multiply(quatX));
+				quatX.multiplyInPlace(quatZ);
+				quatX.multiplyInPlace(quatY);
+				return quatX.rotateVector(vec);
 			case Z_X_Y:
-				finalQuat = quatZ.multiply(quatX.multiply(quatY));
+				quatY.multiplyInPlace(quatX);
+				quatY.multiplyInPlace(quatZ);
+				return quatY.rotateVector(vec);
 			case Z_Y_X:
-				finalQuat = quatZ.multiply(quatY.multiply(quatX));
+				quatX.multiplyInPlace(quatY);
+				quatX.multiplyInPlace(quatZ);
+				return quatX.rotateVector(vec);
 			case X_Y_X:
-				finalQuat = quatX.multiply(quatY.multiply(quatX));
+				quatX.multiplyInPlace(quatY);
+				quatX.multiplyInPlace(quatX);
+				return quatX.rotateVector(vec);
 			case X_Z_X:
-				finalQuat = quatX.multiply(quatZ.multiply(quatX));
+				quatX.multiplyInPlace(quatZ);
+				quatX.multiplyInPlace(quatX);
+				return quatX.rotateVector(vec);
 			case Y_X_Y:
-				finalQuat = quatY.multiply(quatX.multiply(quatY));
+				quatY.multiplyInPlace(quatX);
+				quatY.multiplyInPlace(quatY);
+				return quatY.rotateVector(vec);
 			case Y_Z_Y:
-				finalQuat = quatY.multiply(quatZ.multiply(quatY));
+				quatY.multiplyInPlace(quatZ);
+				quatY.multiplyInPlace(quatY);
+				return quatY.rotateVector(vec);
 			case Z_X_Z:
-				finalQuat = quatZ.multiply(quatX.multiply(quatZ));
+				quatZ.multiplyInPlace(quatX);
+				quatZ.multiplyInPlace(quatZ);
+				return quatZ.rotateVector(vec);
 			case Z_Y_Z:
-				finalQuat = quatZ.multiply(quatY.multiply(quatZ));
+				quatZ.multiplyInPlace(quatY);
+				quatZ.multiplyInPlace(quatZ);
+				return quatZ.rotateVector(vec);
 		}
-		return finalQuat.rotateVector(vec);
 	}
 
 	// 90 degrees as default
@@ -97,6 +126,7 @@ using StringTools;
 		return projectedPos;
 	}
 
+	// unused
 	inline static public function buildHoldVertices(upper:Array<Vector3D>, lower:Array<Vector3D>) {
 		return [
 			upper[0].x, upper[0].y,
@@ -131,7 +161,7 @@ using StringTools;
 			return uv;
 		}
 
-		var angleRad = frameAngle * (Math.PI / 180);
+		var angleRad = frameAngle * FlxAngle.TO_RAD;
 		var cosA = ModchartUtil.cos(angleRad);
 		var sinA = ModchartUtil.sin(angleRad);
 
@@ -173,10 +203,12 @@ using StringTools;
 		return new Vector3D(Manager.ARROW_SIZEDIV2, Manager.ARROW_SIZEDIV2, 0, 0);
 	}
 
-	public inline static function sign(x:Int)
+	@:pure
+	public static inline function sign(x:Int)
 		return x == 0 ? 0 : x > 0 ? 1 : -1;
 
-	public inline static function clamp(n:Float, l:Float, h:Float) {
+	@:pure
+	public static inline function clamp(n:Float, l:Float, h:Float) {
 		if (n < l)
 			return l;
 		if (n > h)
@@ -184,15 +216,19 @@ using StringTools;
 		return n;
 	}
 
+	@:pure
 	public static inline function sin(num:Float)
 		return FlxMath.fastSin(num);
 
+	@:pure
 	public static inline function cos(num:Float)
 		return FlxMath.fastCos(num);
 
+	@:pure
 	public static inline function tan(num:Float)
 		return sin(num) / cos(num);
 
+	@:pure
 	inline public static function lerpVector3D(start:Vector3D, end:Vector3D, ratio:Float) {
 		if (ratio == 0)
 			return start;

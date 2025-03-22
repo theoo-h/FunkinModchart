@@ -10,6 +10,7 @@ final class Quaternion {
 	var z:Float;
 	var w:Float;
 
+	// This could be inline, to make local quaternions abstracted away
 	function new(x:Float, y:Float, z:Float, w:Float) {
 		this.x = x;
 		this.y = y;
@@ -17,6 +18,7 @@ final class Quaternion {
 		this.w = w;
 	}
 
+	@:pure
 	function multiply(q:Quaternion):Quaternion {
 		return new Quaternion(w * q.x
 			+ x * q.w
@@ -34,13 +36,41 @@ final class Quaternion {
 			- z * q.z);
 	}
 
-	function rotateVector(v:Vector3D):Vector3D {
-		var qVec = new Quaternion(v.x, v.y, v.z, 0);
-		var qConj = new Quaternion(-x, -y, -z, w);
-		var result = this.multiply(qVec).multiply(qConj);
-		return new Vector3D(result.x, result.y, result.z);
+	@:noDebug
+	inline function multiplyInPlace(q:Quaternion):Void {
+		var x = this.x;
+		var y = this.y;
+		var z = this.z;
+		var w = this.w;
+
+		this.x = w * q.x + x * q.w + y * q.z - z * q.y;
+		this.y = w * q.y - x * q.z + y * q.w + z * q.x;
+		this.z = w * q.z + x * q.y - y * q.x + z * q.w;
+		this.w = w * q.w - x * q.x - y * q.y - z * q.z;
 	}
 
+	@:noDebug
+	inline function multiplyInPlaceInverted(q:Quaternion):Void {
+		var x = -this.x;
+		var y = -this.y;
+		var z = -this.z;
+		var w = this.w;
+
+		this.x = w * q.x + x * q.w + y * q.z - z * q.y;
+		this.y = w * q.y - x * q.z + y * q.w + z * q.x;
+		this.z = w * q.z + x * q.y - y * q.x + z * q.w;
+		this.w = w * q.w - x * q.x - y * q.y - z * q.z;
+	}
+
+	@:pure
+	inline function rotateVector(v:Vector3D):Vector3D {
+		var qVec = new Quaternion(v.x, v.y, v.z, 0);
+		qVec.multiplyInPlace(this);
+		qVec.multiplyInPlaceInverted(this);
+		return new Vector3D(qVec.x, qVec.y, qVec.z, 0);
+	}
+
+	@:pure
 	static function fromAxisAngle(axis:Vector3D, angleRad:Float):Quaternion {
 		var sinHalfAngle = ModchartUtil.sin(angleRad * .5);
 		var cosHalfAngle = ModchartUtil.cos(angleRad * .5);

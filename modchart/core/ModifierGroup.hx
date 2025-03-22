@@ -311,23 +311,27 @@ final class PercentArray {
 	private var __lastKey:String = '';
 
 	// hash the key to a 16-bit integer
+
+	@:noDebug
 	@:noCompletion inline private function __hashKey(key:String):Int {
 		if (key == __lastKey)
 			return __lastHashedKey;
 
 		var hash:Int = 0;
 		for (i in 0...key.length) {
-			// hash computation
-			hash = ((hash << 5) - hash) + StringTools.unsafeCodeAt(key, i);
+			hash = hash * 31 + StringTools.unsafeCodeAt(key, i);
 		}
 		__lastKey = key;
 		return __lastHashedKey = (hash & 0xFFFF); // 16-bit hash
 	}
 
 	// hash handlers
+
+	@:noDebug
 	inline public function set(key:String, value:Vector<Float>):Void
 		vector.set(__hashKey(key), value);
 
+	@:noDebug
 	inline public function get(key:String):Vector<Float>
 		return vector.get(__hashKey(key));
 }

@@ -18,16 +18,17 @@ enum abstract RotationOrder(String) from String to String {
 	final Z_Y_Z = "z_y_z";
 }
 
+@:publicFields
 @:structInit
 class RenderParams {
-	public var songTime:Float;
-	public var hitTime:Float;
-	public var distance:Float;
-	public var curBeat:Float;
+	var songTime:Float;
+	var hitTime:Float;
+	var distance:Float;
+	var curBeat:Float;
 
-	public var lane:Int = 0;
-	public var player:Int = 0;
-	public var isTapArrow:Bool = false;
+	var lane:Int = 0;
+	var player:Int = 0;
+	var isTapArrow:Bool = false;
 }
 
 @:structInit
@@ -44,20 +45,21 @@ class ArrowData {
 	private var __holdSubdivisionOffset:Float = .0;
 }
 
+@:publicFields
 @:structInit
 class Visuals {
-	public var scaleX:Float = 1;
-	public var scaleY:Float = 1;
-	public var alpha:Float = 1;
-	public var glow:Float = 0;
-	public var glowR:Float = 1;
-	public var glowG:Float = 1;
-	public var glowB:Float = 1;
-	public var angleX:Float = 0;
-	public var angleY:Float = 0;
-	public var angleZ:Float = 0;
-	public var skewX:Float = 0;
-	public var skewY:Float = 0;
+	var scaleX:Float = 1;
+	var scaleY:Float = 1;
+	var alpha:Float = 1;
+	var glow:Float = 0;
+	var glowR:Float = 1;
+	var glowG:Float = 1;
+	var glowB:Float = 1;
+	var angleX:Float = 0;
+	var angleY:Float = 0;
+	var angleZ:Float = 0;
+	var skewX:Float = 0;
+	var skewY:Float = 0;
 }
 
 @:publicFields
