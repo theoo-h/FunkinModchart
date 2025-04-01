@@ -3,28 +3,24 @@ package modchart;
 import flixel.FlxBasic;
 import flixel.tweens.FlxEase.EaseFunction;
 import flixel.util.FlxSort;
-import haxe.ds.ArraySort;
 import haxe.ds.Vector;
-import modchart.core.ModifierGroup;
-import modchart.core.PlayField;
-import modchart.core.graphics.ModchartGraphics.ModchartArrowPath;
-import modchart.core.graphics.ModchartGraphics.ModchartArrowRenderer;
-import modchart.core.graphics.ModchartGraphics.ModchartHoldRenderer;
-import modchart.core.graphics.ModchartGraphics.ModchartRenderer;
-import modchart.core.util.Constants.ArrowData;
-import modchart.core.util.Constants.RenderParams;
-import modchart.core.util.Constants.Visuals;
-import modchart.core.util.ModchartUtil;
+import modchart.backend.graphics.renderers.*;
+import modchart.backend.util.Constants.ArrowData;
+import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.util.Constants.Visuals;
+import modchart.backend.util.ModchartUtil;
+import modchart.engine.modifiers.list.*;
 import modchart.events.*;
 import modchart.events.types.*;
-import modchart.modifiers.*;
 
-@:allow(modchart.core.ModifierGroup)
-@:allow(modchart.core.graphics.ModchartGraphics)
-@:access(modchart.core.PlayField)
+@:allow(modchart.backend.ModifierGroup)
+@:access(modchart.engine.PlayField)
+#if !openfl_debug
+@:fileXml('tags="haxe,release"') @:noDebug
+#end
 final class Manager extends FlxBasic {
 	/**
-	 * Singleton instance of the Manager.
+	 * Instance of the Manager.
 	 */
 	public static var instance:Manager;
 
@@ -61,22 +57,12 @@ final class Manager extends FlxBasic {
 	private inline function __forEachPlayfield(func:PlayField->Void, player:Int = -1) {
 		// If there's only one playfield or a specific player is provided, apply the function directly
 		if (playfieldCount <= 1 || player != -1)
-			return func(playfields[player != -1 ? player : 0]);
+			return func(playfields[player]);
 
 		// Otherwise, apply the function to all playfields
 		for (i in 0...playfields.length)
 			func(playfields[i]);
 	}
-
-	/**
-	 * Registers a modifier for all playfields or a specific one.
-	 *
-	 * @param name The name of the modifier.
-	 * @param mod The class type of the modifier.
-	 * @param player Optionally, the specific player to target.
-	 */
-	public inline function registerModifier(name:String, mod:Class<Modifier>, player:Int = -1)
-		__forEachPlayfield((pf) -> pf.registerModifier(name, mod), player);
 
 	/**
 	 * Adds a modifier for all playfields or a specific one.
@@ -255,7 +241,7 @@ final class Manager extends FlxBasic {
 			total += pf.drawCB.length;
 		});
 
-		var drawQueue:haxe.ds.Vector<Funny> = new haxe.ds.Vector<Funny>(total);
+		var drawQueue:Vector<Funny> = new Vector<Funny>(total);
 
 		var j = 0;
 		__forEachPlayfield(pf -> {

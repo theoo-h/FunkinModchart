@@ -58,16 +58,14 @@ class Config {
 	public static var RENDER_ARROW_PATHS:Bool = false;
 
 	/**
-	 * Applies the `visuals` function from modifiers to
-	 * give the arrow path more style by changing its color,
-	 * scale, and alpha.
-	 * NOTE: Arrow paths also have thickness and color properties,
-	 * but they are not affected by the arrow's alpha and color.
-	 */
-	public static var STYLED_ARROW_PATHS:Bool = false;
-
-	/**
 	 * Scales the hold end size.
 	 */
 	public static var HOLD_END_SCALE:Float = 1;
+
+	/**
+	 * Prevents scaling the hold ends. (Some people doens't like that lol)
+	 * 
+	 * **WARNING**: Performance maybe affected if this is enabled;
+	 */
+	public static var PREVENT_SCALED_HOLD_END:Bool = false;
 }
