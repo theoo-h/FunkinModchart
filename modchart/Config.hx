@@ -68,4 +68,9 @@ class Config {
 	 * **WARNING**: Performance maybe affected if this is enabled;
 	 */
 	public static var PREVENT_SCALED_HOLD_END:Bool = false;
+
+	/**
+	 * The name says it, isn't it?
+	 */
+	public static var ACTOR_FRAME_SYSTEM:Bool = false;
 }

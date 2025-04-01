@@ -14,7 +14,7 @@ import modchart.engine.events.types.*;
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-final class PlayField extends FlxBasic {
+final class PlayField extends FlxSprite {
 	public var events:EventManager;
 	public var modifiers:ModifierGroup;
 	public var camera3D:ModchartCamera3D;
@@ -25,10 +25,22 @@ final class PlayField extends FlxBasic {
 	private var holdRenderer:ModchartHoldRenderer;
 	private var pathRenderer:ModchartPathRenderer;
 
+	private var graphics(get, never):openfl.display.Graphics;
+
+	// private var __shape:openfl.display.Shape = new openfl.display.Shape();
+
+	function get_graphics()
+		return null;
+
 	public var projection:ModchartPerspective;
 
 	public function new() {
 		super();
+
+		moves = false;
+
+		makeGraphic(FlxG.width, FlxG.height, 0x00FFFFFF);
+		updateHitbox();
 
 		this.events = new EventManager(this);
 		this.modifiers = new ModifierGroup(this);
@@ -189,12 +201,15 @@ final class PlayField extends FlxBasic {
 		events.update(Adapter.instance.getCurrentBeat());
 
 		updateNodes();
+
+		super.update(elapsed);
 	}
 
 	override public function draw() {
-		super.draw();
 		__drawPlayField();
 		modifiers.postRender();
+
+		super.draw();
 	}
 
 	override public function destroy() {
