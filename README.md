@@ -48,7 +48,7 @@ Make sure that at the time you create the instance, the notes and strums were al
 This now all the stuff should be working, do your stuff now.
 
 #### Making a Modchart
-First, you should know all the modcharting functions, check they [here](DOC.md).
+First, you should know all the modcharting functions, check them [here](DOC.md).
 To make a modchart you don't necessarily have to follow instructions, it's a matter of experimenting with the modifiers and all the functions that FunkinModchart offers, although previous experience with The Mirin Template and NotITG would help you design a good modchart more easily.
 
 </details>
