@@ -32,6 +32,7 @@ class ModchartRenderer<T:FlxBasic> extends FlxBasic {
 	function get_projection()
 		return instance.projection;
 
+	@:privateAccess
 	function get_graphics()
 		return instance.graphics;
 

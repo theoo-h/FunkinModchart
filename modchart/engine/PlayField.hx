@@ -25,7 +25,7 @@ final class PlayField extends FlxSprite {
 	private var holdRenderer:ModchartHoldRenderer;
 	private var pathRenderer:ModchartPathRenderer;
 
-	public var graphics(get, never):openfl.display.Graphics;
+	private var graphics(get, never):openfl.display.Graphics;
 
 	// private var __shape:openfl.display.Shape = new openfl.display.Shape();
 
