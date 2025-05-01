@@ -22,7 +22,7 @@ interface IAdapter {
 	public function isTapNote(sprite:FlxSprite):Bool; // If the sprite is an arrow, return true, if it is an lane/strum, return false
 	public function isHoldEnd(sprite:FlxSprite):Bool; // If its the hold end
 	public function arrowHit(sprite:FlxSprite):Bool; // If the arrow was hitted
-	//public function getHoldParentTime(sprite:FlxSprite):Float;
+	public function getHoldParentTime(sprite:FlxSprite):Float;
 
 	public function getLaneFromArrow(sprite:FlxSprite):Int; // Get lane/note data from arrow
 	public function getPlayerFromArrow(sprite:FlxSprite):Int; // Get player from arrow
