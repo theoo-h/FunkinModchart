@@ -10,7 +10,7 @@ This framework also provides **extra features** that can help you to make even m
 <details>
 <summary><h2>Importing the library</h2></summary>
 
-This library currently has support for multiple Friday Night Funkin' engines, such as [Codename Engine](https://codename-engine.com), [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine.com) and [FPS Plus](https://github.com/ThatRozebudDude/FPS-Plus-Public) click [here](SUPPORT.md) for more information, and only takes a couple of lines of code to import it:
+This library currently has support for multiple Friday Night Funkin' engines, such as [Codename Engine](https://codename-engine.com), [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine) and [FPS Plus](https://github.com/ThatRozebudDude/FPS-Plus-Public) click [here](SUPPORT.md) for more information, and only takes a couple of lines of code to import it:
 
 #### Go to your project and open `Project.xml`
 At the bottom of where the haxelib section is, paste this code.
