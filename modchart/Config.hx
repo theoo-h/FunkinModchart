@@ -63,7 +63,6 @@ class Config {
 	 * Extra configurations for the Arrow Paths.
 	 */
 	public static var ARROW_PATHS_CONFIG:ArrowPathConfig = {
-		COLORED: false,
 		APPLY_DEPTH: true,
 		APPLY_SCALE: false,
 		RESOLUTION: 1,
@@ -104,11 +103,6 @@ class Config {
 }
 
 typedef ArrowPathConfig = {
-	/**
-	 * Follows the arrow color and transparency.
-	 */
-	COLORED:Bool,
-
 	/**
 	 * Thickness gets affected by Z.
 	 */

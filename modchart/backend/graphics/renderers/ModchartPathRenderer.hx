@@ -103,9 +103,6 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 				color: 0xFFFFFF
 			};
 
-			if (Config.ARROW_PATHS_CONFIG.COLORED)
-				segment.alpha *= output.visuals.alpha;
-
 			if (Config.ARROW_PATHS_CONFIG.APPLY_SCALE)
 				segment.scale *= output.visuals.scaleX;
 
