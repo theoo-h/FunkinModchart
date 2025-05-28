@@ -1,6 +1,7 @@
 package modchart.backend.graphics.renderers;
 
-final __matrix:Matrix = new Matrix();
+final matrix:Matrix = new Matrix();
+final fMatrix:FlxMatrix = new FlxMatrix();
 final rotationVector = new Vector3();
 final helperVector = new Vector3();
 
@@ -8,7 +9,7 @@ final helperVector = new Vector3();
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
+final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 	inline private function getGraphicVertices(planeWidth:Float, planeHeight:Float, flipX:Bool, flipY:Bool) {
 		var x1 = flipX ? planeWidth : -planeWidth;
 		var x2 = flipX ? -planeWidth : planeWidth;
@@ -98,17 +99,17 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 
 			// The result of the vert rotation
 			var rotation = ModchartUtil.rotate3DVector(rotationVector, output.visuals.angleX, output.visuals.angleY,
-				ModchartUtil.getFrameAngle(arrow) + output.visuals.angleZ);
+				ModchartUtil.getFrameAngle(arrow) + output.visuals.angleZ + arrow.angle);
 
 			// apply skewness
 			if (output.visuals.skewX != 0 || output.visuals.skewY != 0) {
-				__matrix.identity();
+				matrix.identity();
 
-				__matrix.b = ModchartUtil.tan(output.visuals.skewY * FlxAngle.TO_RAD);
-				__matrix.c = ModchartUtil.tan(output.visuals.skewX * FlxAngle.TO_RAD);
+				matrix.b = ModchartUtil.tan(output.visuals.skewY * FlxAngle.TO_RAD);
+				matrix.c = ModchartUtil.tan(output.visuals.skewX * FlxAngle.TO_RAD);
 
-				rotation.x = __matrix.__transformX(rotation.x, rotation.y);
-				rotation.y = __matrix.__transformY(rotation.x, rotation.y);
+				rotation.x = matrix.__transformX(rotation.x, rotation.y);
+				rotation.y = matrix.__transformY(rotation.x, rotation.y);
 			}
 			rotation.x = rotation.x * depthScale * output.visuals.scaleX;
 			rotation.y = rotation.y * depthScale * output.visuals.scaleY;
@@ -187,8 +188,37 @@ class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			final cTransform = instruction.colorData[0];
 			cTransform.alphaMultiplier *= camera.alpha;
 
+			// this in heavy wip
+			/*
+				if (Config.ACTOR_FRAME_SYSTEM) {
+					var vertices = instruction.vertices;
+
+					// prepare matrix
+					fMatrix.identity();
+
+					// this try to replicate camera transformations
+					fMatrix.translate(-(0.5 * camera.width * (camera.scaleX - camera.initialZoom) / camera.scaleX),
+						-(0.5 * camera.height * (camera.scaleY - camera.initialZoom) / camera.scaleY));
+					fMatrix.scale(camera.scaleX, camera.scaleY);
+
+					var row = 0;
+
+					do {
+						var vX = vertices[row];
+						var vY = vertices[row + 1];
+
+						vertices[row] = fMatrix.__transformX(vX, vY);
+						vertices[row + 1] = fMatrix.__transformY(vX, vY);
+
+						row = row + 2;
+					} while (row < vertices.length);
+
+					display.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
+						item.antialiasing, cTransform, item.shader);
+			} else {*/
 			camera.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
 				item.antialiasing, cTransform, item.shader);
+			/*}*/
 		}
 	}
 }

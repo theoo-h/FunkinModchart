@@ -1,12 +1,12 @@
 package modchart.engine.modifiers.list;
 
 import flixel.math.FlxMath;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 class Infinite extends Modifier {
-	override function render(pos:Vector3, params:RenderParams) {
+	override function render(pos:Vector3, params:ModifierParameters) {
 		var perc = getPercent('infinite', params.player);
 
 		if (perc == 0)
@@ -16,7 +16,7 @@ class Infinite extends Modifier {
 
 		// alternate the angles
 		var rat = params.lane % 2 == 0 ? 1 : -1;
-		// adding 45° so the arrows ends at the end
+		// adding 45° so arrow hit position is at center
 		var fTime = (-params.distance * Math.PI * 0.001) + rat * Math.PI / 2;
 		// used for make the curve
 		final invTransf = (2 / (3 - cos(fTime * 2)));
@@ -27,6 +27,6 @@ class Infinite extends Modifier {
 		return ModchartUtil.lerpVector3D(pos, infinite, perc);
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

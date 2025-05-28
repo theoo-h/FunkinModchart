@@ -127,7 +127,7 @@
 # 10/03/25 (#2)
 - WIP Documentation
 - ScriptedModifier -> DynamicModifier
-- Support for Flixel 5.1 and below (no color transform :/)'
+- Support for Flixel 5.1 and below (with no color transform)'
 - Fixes for Psych 0.6 support
 
 # 31/03/25
@@ -135,4 +135,4 @@
 - Source organization.
 - A lot of optimizations.
 
-**NOTE**: Since we changed the source organization, the new adapter path is `modchart.backend.standalone` instead of `modchart.backend.standalone`
+**NOTE**: Since we changed the source organization, the new adapter path is `modchart.backend.standalone` instead of `modchart.core.standalone`

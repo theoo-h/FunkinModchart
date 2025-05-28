@@ -1,8 +1,8 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 import modchart.backend.util.ModchartUtil;
 
 // Circular motion based on the lane.
@@ -10,7 +10,7 @@ import modchart.backend.util.ModchartUtil;
 // Inspired by `The Poenix NotITG Modchart` at 0:35
 // Warning!: This should be AFTER regular modifiers (drunk, beat, transform, etc) and BEFORE rotation modifiers.
 class Radionic extends Modifier {
-	override public function render(pos:Vector3, params:RenderParams) {
+	override public function render(pos:Vector3, params:ModifierParameters) {
 		final perc = getPercent('radionic', params.player);
 
 		if (perc == 0)
@@ -18,7 +18,7 @@ class Radionic extends Modifier {
 
 		final reverse = pf.modifiers.modifiers.get('reverse');
 
-		final angle = ((1 / Adapter.instance.getStaticCrochet()) * ((params.songTime + params.distance) * Math.PI * .25) + (Math.PI * params.player));
+		final angle = ((1 / Adapter.instance.getCurrentCrochet()) * ((params.songTime + params.distance) * Math.PI * .25) + (Math.PI * params.player));
 		final offsetX = pos.x - getReceptorX(params.lane, params.player);
 		final offsetY = reverse != null ? (pos.y - reverse.render(pos, params).y) : 0;
 
@@ -33,23 +33,19 @@ class Radionic extends Modifier {
 		radionicVec.y = HEIGHT * 0.5 + ((cosAng * offsetY + sinAng * (circf + offsetX)) * 0.7) * 0.875;
 		radionicVec.z = pos.z;
 
-		return ModchartUtil.lerpVector3D(pos, radionicVec, perc);
+		return pos.interpolate(radionicVec, perc, pos);
 	}
 
-	// should i include this?
-	// nah i will do this manually
+	override public function visuals(data:VisualParameters, params:ModifierParameters):VisualParameters {
+		final perc = getPercent('radionic', params.player);
+		final amount = 0.6;
 
-	/*
-		override public function visuals(data:Visuals, params:RenderParams):Visuals
-		{
-			final perc = getPercent('radionic', params.player);
-			final amount = 0.6;
+		data.scaleX = perc * (data.scaleY = 1 + amount - FlxEase.cubeOut((params.curBeat - Math.floor(params.curBeat))) * amount);
+		data.glow = perc * (-(amount - FlxEase.cubeOut((params.curBeat - Math.floor(params.curBeat))) * amount) * 2);
 
-			vis.scaleX = perc * (vis.scaleY = 1 + amount - FlxEase.cubeOut((params.curBeat - Math.floor(params.curBeat))) * amount);
-			vis.glow = perc * (-(amount - FlxEase.cubeOut((params.curBeat - Math.floor(params.curBeat))) * amount) * 2);
+		return data;
+	}
 
-			return vis;
-	}*/
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

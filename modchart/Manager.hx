@@ -4,10 +4,11 @@ import flixel.FlxBasic;
 import flixel.tweens.FlxEase.EaseFunction;
 import flixel.util.FlxSort;
 import haxe.ds.Vector;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.Node.NodeFunction;
+import modchart.backend.core.VisualParameters;
 import modchart.backend.graphics.renderers.*;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
 import modchart.backend.util.ModchartUtil;
 import modchart.engine.modifiers.list.*;
 import modchart.events.*;
@@ -27,6 +28,7 @@ final class Manager extends FlxBasic {
 	/**
 	 * Flag to enable or disable rendering of arrow paths.
 	 */
+	@:deprecated("Use `Config.RENDER_ARROW_PATHS` instead.")
 	public var renderArrowPaths:Bool = false;
 
 	/**
@@ -57,7 +59,7 @@ final class Manager extends FlxBasic {
 	private inline function __forEachPlayfield(func:PlayField->Void, player:Int = -1) {
 		// If there's only one playfield or a specific player is provided, apply the function directly
 		if (playfieldCount <= 1 || player != -1)
-			return func(playfields[player]);
+			return func(playfields[player != -1 ? player : 0]);
 
 		// Otherwise, apply the function to all playfields
 		for (i in 0...playfields.length)

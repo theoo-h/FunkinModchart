@@ -2,8 +2,8 @@ package modchart.engine.modifiers.list;
 
 import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 class Boost extends Modifier {
@@ -15,7 +15,7 @@ class Boost extends Modifier {
 
 	static final DIV38 = 1 / 38;
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		var player = params.player;
 		var lane = Std.string(params.lane);
 
@@ -34,6 +34,6 @@ class Boost extends Modifier {
 		return curPos;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

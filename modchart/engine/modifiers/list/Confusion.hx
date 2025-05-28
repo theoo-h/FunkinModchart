@@ -1,11 +1,11 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 
 class Confusion extends Modifier {
-	private inline function applyConfusion(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
+	private inline function applyConfusion(vis:VisualParameters, params:ModifierParameters, axis:String, realAxis:String) {
 		final receptorName = Std.string(params.lane);
 		final player = params.player;
 
@@ -32,7 +32,7 @@ class Confusion extends Modifier {
 		}
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams) {
+	override public function visuals(data:VisualParameters, params:ModifierParameters) {
 		applyConfusion(data, params, '', 'z');
 		applyConfusion(data, params, 'x', 'x');
 		applyConfusion(data, params, 'y', 'y');
@@ -41,6 +41,6 @@ class Confusion extends Modifier {
 		return data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

@@ -1,26 +1,63 @@
 package modchart.backend.graphics.renderers;
 
-@:publicFields
+import flixel.FlxG;
+import flixel.graphics.FlxGraphic;
+import flixel.util.FlxDestroyUtil;
+
 @:structInit
-class PathVisuals {
-	var alpha:Float = 1;
-	var scale:Float = 1;
-	var color:Int = 0xFFFFFFF;
+@:publicFields
+private final class PathSegment {
+	var alpha:Float;
+	var scale:Float;
+	var color:Int;
+	var pos:Vector3;
 }
 
 var pathVector = new Vector3();
 
-class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
-	var __shape:Shape = new Shape();
-	var __display:FlxSprite = new FlxSprite();
-	var __queuedPoints:Array<Array<Float>> = [];
-	var __pathPoints:Vector<Float> = new Vector<Float>();
-	var __pathCommands:Vector<Int> = new Vector<Int>();
+#if !openfl_debug
+@:fileXml('tags="haxe,release"')
+@:noDebug
+#end
+final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
+	var __lineGraphic:FlxGraphic;
+	var __lastDivisions:Int = -1;
+
+	var uvt:DrawData<Float>;
+	var indices:DrawData<Int>;
+
+	public function updateTris(divisions:Int) {
+		final segs = divisions - 1;
+		if (divisions != __lastDivisions) {
+			uvt = new DrawData<Float>(segs * 12, true);
+			indices = new DrawData<Int>(segs * 6, true);
+			var ui = 0, ii = 0, vertCount = 0;
+			for (div in 0...divisions) {
+				for (_ in 0...4) {
+					uvt.set(ui++, 0);
+					uvt.set(ui++, 0);
+					uvt.set(ui++, 1);
+				}
+
+				// indices
+				indices.set(ii++, vertCount);
+				indices.set(ii++, vertCount + 1);
+				indices.set(ii++, vertCount + 2);
+				indices.set(ii++, vertCount + 1);
+				indices.set(ii++, vertCount + 3);
+				indices.set(ii++, vertCount + 2);
+
+				vertCount += 4;
+			}
+		}
+
+		__lastDivisions = divisions;
+	}
 
 	public function new(instance:PlayField) {
 		super(instance);
 
-		__display.makeGraphic(FlxG.width, FlxG.height, 0x00FFFFFF);
+		__lineGraphic = FlxG.bitmap.create(10, 10, 0xFFFFFFFF);
 	}
 
 	// the entry sprite should be A RECEPTOR / STRUM !!
@@ -29,29 +66,27 @@ class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 		final fn = Adapter.instance.getPlayerFromArrow(item);
 
 		final alpha = instance.getPercent('arrowPathAlpha', fn);
-		final thickness = 1 + Std.int(instance.getPercent('arrowPathThickness', fn));
+		final thickness = instance.getPercent('arrowPathThickness', fn);
 
 		if (alpha <= 0 || thickness <= 0)
 			return;
 
-		final divisions = Std.int(40 / Math.max(1, instance.getPercent('arrowPathDivisions', fn)));
-		final limit = 1500 * (1 + instance.getPercent('arrowPathLength', fn));
+		final divisions = Std.int(20 * Config.ARROW_PATHS_CONFIG.RESOLUTION);
+		final limit = 1500 + Config.ARROW_PATHS_CONFIG.LENGTH;
 		final interval = limit / divisions;
+		final songPos = Adapter.instance.getSongPosition();
 
-		var moved = false;
+		final segs = divisions - 1;
+		final vertices = new DrawData<Float>(segs * 8, true);
 
+		var vi = 0, vertCount = 0;
+
+		var lastSegment:PathSegment = null;
 		pathVector.setTo(Adapter.instance.getDefaultReceptorX(lane, fn), Adapter.instance.getDefaultReceptorY(lane, fn), 0);
 		pathVector.incrementBy(ModchartUtil.getHalfPos());
 
-		var pointData:Array<Array<Dynamic>> = [];
-		pointData.resize(divisions);
-
-		var pID = 0;
-
-		var songPos = Adapter.instance.getSongPosition();
-
-		for (sub in 0...divisions) {
-			var hitTime = -500 + interval * sub;
+		for (index in 0...divisions) {
+			var hitTime = -500 + interval * index;
 
 			var output = instance.modifiers.getPath(pathVector.clone(), {
 				hitTime: songPos + hitTime,
@@ -59,88 +94,91 @@ class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 				lane: lane,
 				player: fn,
 				isTapArrow: true
-			}, 0, true);
-			final position = output.pos;
+			});
 
-			/*
-			 * So it seems that if the lines are too far from the screen
-			 * causes HORRIBLE memory leaks (from 60mb to 3gb-5gb in 2 seconds WHAT THE FUCK)
-			 */
-			if ((position.x <= 0 - thickness - ARROW_PATH_BOUNDARY_OFFSET)
-				|| (position.x >= __display.pixels.rect.width + ARROW_PATH_BOUNDARY_OFFSET)
-				|| (position.y <= 0 - thickness - ARROW_PATH_BOUNDARY_OFFSET)
-				|| (position.y >= __display.pixels.rect.height + ARROW_PATH_BOUNDARY_OFFSET))
-				continue;
-
-			final vis:PathVisuals = {
-				alpha: alpha * output.visuals.alpha,
-				scale: thickness * output.visuals.scaleX,
+			final segment:PathSegment = {
+				pos: output.pos,
+				alpha: alpha,
+				scale: thickness,
 				color: 0xFFFFFF
 			};
-			pointData[pID++] = [!moved, position.x, position.y, position.z, vis];
 
-			moved = true;
+			if (Config.ARROW_PATHS_CONFIG.COLORED)
+				segment.alpha *= output.visuals.alpha;
+
+			if (Config.ARROW_PATHS_CONFIG.APPLY_SCALE)
+				segment.scale *= output.visuals.scaleX;
+
+			if (Config.ARROW_PATHS_CONFIG.APPLY_DEPTH)
+				segment.scale *= 1 / (output.pos.z * 2);
+
+			if (lastSegment != null) {
+				final p0 = lastSegment;
+				final p1 = segment;
+
+				final pos0 = p0.pos;
+				final pos1 = p1.pos;
+
+				final dx = pos1.x - pos0.x;
+				final dy = pos1.y - pos0.y;
+				final len = Math.sqrt(dx * dx + dy * dy);
+				final nx = -dy / len;
+				final ny = dx / len;
+
+				final t0 = p0.scale * 0.5;
+				final t1 = p1.scale * 0.5;
+
+				final a1x = pos0.x + nx * t0;
+				final a1y = pos0.y + ny * t0;
+				final a2x = pos0.x - nx * t0;
+				final a2y = pos0.y - ny * t0;
+
+				final b1x = pos1.x + nx * t1;
+				final b1y = pos1.y + ny * t1;
+				final b2x = pos1.x - nx * t1;
+				final b2y = pos1.y - ny * t1;
+
+				// vertices
+				vertices.set(vi++, a1x);
+				vertices.set(vi++, a1y);
+				vertices.set(vi++, a2x);
+				vertices.set(vi++, a2y);
+				vertices.set(vi++, b1x);
+				vertices.set(vi++, b1y);
+				vertices.set(vi++, b2x);
+				vertices.set(vi++, b2y);
+
+				vertCount += 4;
+			}
+
+			lastSegment = segment;
 		}
 
+		updateTris(divisions);
+
 		var newInstruction:FMDrawInstruction = {};
-		// newInstruction.mappedExtra = ['s' => [thickness, 0xFFFFFFFF, alpha], 'pd' => pointData, 'l' => lane, 'p' => fn];
-		newInstruction.extra = [pointData];
-		queue[count] = newInstruction;
-		count++;
+		newInstruction.extra = [vertices, indices, uvt];
+		queue[count++] = newInstruction;
 	}
 
 	override public function shift() {
 		if (queue.length <= 0)
 			return;
 
-		__pathPoints.splice(0, __pathPoints.length);
-		__pathCommands.splice(0, __pathCommands.length);
-		__shape.graphics.clear();
-		__display.cameras = Adapter.instance.getArrowCamera();
+		final cameras = Adapter.instance.getArrowCamera();
+		for (instruction in queue) {
+			final vertices:DrawData<Float> = cast instruction.extra[0];
+			final indices:DrawData<Int> = cast instruction.extra[1];
+			final uvt:DrawData<Float> = cast instruction.extra[2];
 
-		var lastLane = -1;
-
-		for (i in 0...queue.length) {
-			final instruction = queue[i];
-			final data:Array<Array<Dynamic>> = cast instruction.extra[0];
-			final steps = data.iterator();
-
-			var stepsHasNext = steps.hasNext;
-			var stepsNext = steps.next;
-
-			while (stepsHasNext()) {
-				final thisStep = stepsNext();
-
-				// in case the instruction is null (if the point is not visible in screen, we skip it)
-				if (thisStep == null)
-					continue;
-
-				final needsToMove:Bool = cast thisStep[0];
-				final posX:Float = cast thisStep[1];
-				final posY:Float = cast thisStep[2];
-				final visuals:PathVisuals = cast thisStep[4];
-
-				__shape.graphics.lineStyle(visuals.scale, visuals.color, visuals.alpha, false, NORMAL);
-				__pathCommands.push(needsToMove ? GraphicsPathCommand.MOVE_TO : GraphicsPathCommand.LINE_TO);
-				__pathPoints.push(posX);
-				__pathPoints.push(posY);
+			for (camera in cameras) {
+				camera.drawTriangles(__lineGraphic, vertices, indices, uvt, new DrawData<Int>(), null, null, false, true, null, null);
 			}
 		}
-
-		__shape.graphics.drawPath(__pathCommands, __pathPoints);
-
-		// then drawing the path pixels into the sprite pixels
-		__display.pixels.fillRect(__display.pixels.rect, 0x00FFFFFF);
-		__display.pixels.draw(__shape);
-		// draw the sprite to the cam
-		__display.draw();
 	}
 
 	override function dispose() {
-		__display.destroy();
-		__shape.graphics.clear();
-		__pathPoints.splice(0, __pathPoints.length);
-		__pathCommands.splice(0, __pathCommands.length);
+		__lineGraphic = FlxDestroyUtil.destroy(__lineGraphic);
 	}
 
 	inline static final ARROW_PATH_BOUNDARY_OFFSET:Float = 300;

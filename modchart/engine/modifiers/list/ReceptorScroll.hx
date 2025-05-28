@@ -2,19 +2,19 @@ package modchart.engine.modifiers.list;
 
 import flixel.FlxG;
 import flixel.math.FlxMath;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 import modchart.backend.util.ModchartUtil;
 
 class ReceptorScroll extends Modifier {
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		final perc = getPercent('receptorScroll', params.player);
 
 		if (perc == 0)
 			return curPos;
 
-		final moveSpeed = Adapter.instance.getStaticCrochet() * 4;
+		final moveSpeed = Adapter.instance.getCurrentCrochet() * 4;
 
 		var diff = -params.distance;
 		var songTime = Adapter.instance.getSongPosition();
@@ -33,21 +33,21 @@ class ReceptorScroll extends Modifier {
 		return curPos;
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams):Visuals {
+	override public function visuals(data:VisualParameters, params:ModifierParameters):VisualParameters {
 		final perc = getPercent('receptorScroll', params.player);
 		if (perc == 0)
 			return data;
 
-		var bar = params.songTime / (Adapter.instance.getStaticCrochet() * .25);
+		var bar = params.songTime / (Adapter.instance.getCurrentCrochet() * .25);
 		var hitTime = params.distance;
 
 		data.alpha = FlxMath.bound((1400 - hitTime) / 200, 0, 0.3) * perc;
-		if ((params.distance + params.songTime) < Math.floor(bar + 1) * Adapter.instance.getStaticCrochet() * 4)
+		if ((params.distance + params.songTime) < Math.floor(bar + 1) * Adapter.instance.getCurrentCrochet() * 4)
 			data.alpha = 1;
 
 		return data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

@@ -60,7 +60,7 @@ abstract Vector3(Vector3D) from Vector3D to Vector3D {
 	 * Adds another vector to this vector component-wise.
 	 * @return This modified vector.
 	 */
-	@:op(A + B)
+	@:op(A += B)
 	inline public function __add(addition:Vector3):Vector3 {
 		this.x += addition.x;
 		this.y += addition.y;
@@ -72,7 +72,7 @@ abstract Vector3(Vector3D) from Vector3D to Vector3D {
 	 * Subtracts another vector from this vector component-wise.
 	 * @return This modified vector.
 	 */
-	@:op(A - B)
+	@:op(A -= B)
 	inline public function __subtract(subtraction:Vector3):Vector3 {
 		this.x -= subtraction.x;
 		this.y -= subtraction.y;
@@ -84,7 +84,7 @@ abstract Vector3(Vector3D) from Vector3D to Vector3D {
 	 * Multiplies this vector by another vector component-wise.
 	 * @return This modified vector.
 	 */
-	@:op(A * B)
+	@:op(A *= B)
 	inline public function __multiply(mult:Vector3):Vector3 {
 		this.x *= mult.x;
 		this.y *= mult.y;
@@ -96,7 +96,7 @@ abstract Vector3(Vector3D) from Vector3D to Vector3D {
 	 * Divides this vector by another vector component-wise.
 	 * @return This modified vector.
 	 */
-	@:op(A / B)
+	@:op(A /= B)
 	inline public function __divide(div:Vector3):Vector3 {
 		this.x /= div.x;
 		this.y /= div.y;
@@ -112,7 +112,7 @@ abstract Vector3(Vector3D) from Vector3D to Vector3D {
 	 */
 	public function interpolate(target:Vector3, alpha:Float, ?vector:Vector3):Vector3 {
 		if (vector == null)
-			vector = new Vector3D();
+			vector = new Vector3();
 
         // @formatter:off
         vector.setTo(

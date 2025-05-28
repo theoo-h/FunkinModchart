@@ -4,8 +4,16 @@ typedef HoldSegmentOutput = {
 	origin:Vector3,
 	left:Vector3,
 	right:Vector3,
-	visuals:Visuals,
+	visuals:VisualParameters,
 	depth:Float
+}
+
+@:publicFields
+@:structInit
+private final class HoldSegment {
+	var origin:Vector3;
+	var left:Vector3;
+	var right:Vector3;
 }
 
 final __matrix:Matrix = new Matrix();
@@ -14,7 +22,7 @@ final __matrix:Matrix = new Matrix();
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
+final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	private var __lastHoldSubs:Int = -1;
 
 	var _indices:Null<Vector<Int>> = new Vector<Int>();
@@ -84,11 +92,7 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		final visuals = origin.visuals;
 		@:privateAccess
 		for (i in 0...2) {
-			var quad = switch (i) {
-				case 0: quad0;
-				case 1: quad1;
-				default: null;
-			}
+			var quad = i == 0 ? quad0 : quad1;
 			var rotation = quad;
 			var rotate = __dizzy != 0;
 
@@ -143,81 +147,39 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	private var __centered2:Float = 0;
 	private var basePos:Vector3;
 
-	/*
-		private function getStraightHoldSegment(hold:FlxSprite, basePos:Vector3, params:ArrowData):Array<Dynamic> {
-			var perc = __straightAmount;
-
-			var oldHitTime = params.hitTime;
-			params.hitTime = Adapter.instance.getHoldParentTime(hold);
-
-			var distance = params.hitTime - Adapter.instance.getSongPosition();
-			params.distance = oldHitTime == 0 ? 0 : distance;
-
-			var holdProgress = oldHitTime - params.hitTime;
-			final origin = instance.modifiers.getPath(basePos.clone(), params);
-			final next = instance.modifiers.getPath(basePos.clone(), params, 1);
-			final originPos = origin.pos;
-			final nextPos = next.pos;
-
-			originPos.z = nextPos.z = 0;
-
-			// actual unit
-			var unit = nextPos.subtract(originPos);
-			unit.normalize();
-
-			// the center position of the hold
-			var holdOrigin = unit.clone();
-			holdOrigin.scaleBy(holdProgress * __long);
-			holdOrigin.incrementBy(originPos);
-
-			var zScale:Float = holdOrigin.z != 0 ? (1 / holdOrigin.z) : 1;
-			holdOrigin.z = 0;
-
-			var size = hold.frame.frame.width * hold.scale.x * .5;
-
-			var quad0 = new Vector3(-unit.y * size, unit.x * size);
-			var quad1 = new Vector3(unit.y * size, -unit.x * size);
-
-			return [
-				[
-					holdOrigin.add(quad0),
-					holdOrigin.add(quad1),
-					holdOrigin.add(new Vector3(0, 0, 1 + (1 - zScale) * 0.001))
-				],
-				origin.visuals
-			];
-	}*/
 	@:noCompletion
-	inline private function updateIndices() {
-		final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions();
+	inline private function updateIndices(subdivisionCount:Int) {
+		_indices.length = (subdivisionCount * 6);
 
-		_indices.length = (HOLD_SUBDIVISIONS * 6);
-		for (sub in 0...HOLD_SUBDIVISIONS) {
-			var vert = sub * 4;
-			var count = sub * 6;
+		for (subdivision in 0...subdivisionCount) {
+			var vertexPosition = subdivision * 4;
+			var indexCount = subdivision * 6;
 
-			_indices[count] = _indices[count + 3] = vert;
-			_indices[count + 2] = _indices[count + 5] = vert + 3;
-			_indices[count + 1] = vert + 1;
-			_indices[count + 4] = vert + 2;
+			_indices[indexCount] = vertexPosition;
+			_indices[indexCount + 1] = vertexPosition + 1;
+			_indices[indexCount + 2] = vertexPosition + 3;
+			_indices[indexCount + 3] = vertexPosition;
+			_indices[indexCount + 4] = vertexPosition + 2;
+			_indices[indexCount + 5] = vertexPosition + 3;
 		}
 	}
 
 	override public function prepare(item:FlxSprite):Void {
 		if (item.alpha <= 0)
 			return;
-		final arrow:FlxSprite = item;
-		final newInstruction:FMDrawInstruction = {};
-		final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions();
+
+		Manager.HOLD_SIZE = item.width;
+		Manager.HOLD_SIZEDIV2 = item.width * .5;
+
+		final HOLD_SUBDIVISIONS = Adapter.instance.getHoldSubdivisions(item);
 
 		if (__lastHoldSubs != HOLD_SUBDIVISIONS)
-			updateIndices();
+			updateIndices(HOLD_SUBDIVISIONS);
 
 		if (__lastHoldSubs == -1)
-			__lastHoldSubs = Adapter.instance.getHoldSubdivisions();
+			__lastHoldSubs = HOLD_SUBDIVISIONS;
 
-		Manager.HOLD_SIZE = arrow.width;
-		Manager.HOLD_SIZEDIV2 = arrow.width * .5;
+		final newInstruction:FMDrawInstruction = {};
 
 		final player = Adapter.instance.getPlayerFromArrow(item);
 		final lane = Adapter.instance.getLaneFromArrow(item);
@@ -234,7 +196,6 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		var lastData:ArrowData = null;
 		var lastSegment:Null<HoldSegmentOutput> = null;
 
-		var depthApplied = false;
 		var alphaTotal:Float = 0.;
 
 		// refresh global mods percents
@@ -261,44 +222,33 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			__parentOutput.pos.z = (__parentOutput.pos.z - 1) * 1000;
 		}
 
-		var getSegmentFunc = getHoldSegment;
-
 		var vertPointer = 0;
 
-		final end = Adapter.instance.isHoldEnd(item);
-		final scale = (end ? (Config.PREVENT_SCALED_HOLD_END ? 1 : 0.6) * Config.HOLD_END_SCALE : 1);
-		final height = item.frame.frame.height * item.scale.y * Config.HOLD_END_SCALE;
+		final isHoldEnd:Bool = Adapter.instance.isHoldEnd(item);
+		final holdHeight:Float = item.frame.frame.height * item.scale.y * Config.HOLD_END_SCALE;
+		final holdTimeInterval:Float = (Adapter.instance.getHoldLength(item) * ((isHoldEnd ? (Config.PREVENT_SCALED_HOLD_END ? 1 : 0.5) * Config.HOLD_END_SCALE : 1))) / HOLD_SUBDIVISIONS;
+		var timeScale:Float = 1;
+		var firstIteration:Bool = true;
 
-		var endScale = 1.;
-		var scaled = false;
+		for (subIndex in 0...HOLD_SUBDIVISIONS) {
+			var holdTimeProgress = holdTimeInterval * subIndex * timeScale;
 
-		var subCr = ((Adapter.instance.getStaticCrochet() * .25) * scale) / HOLD_SUBDIVISIONS;
-		for (sub in 0...HOLD_SUBDIVISIONS) {
-			var subOff = subCr * sub * endScale;
+			var out1:HoldSegmentOutput;
+			var out2:HoldSegmentOutput;
 
-			var out1 = lastSegment;
+			out1 = firstIteration ? getHoldSegment(item, basePos, lastData != null ? lastData : getArrowParams(item, holdTimeProgress)) : lastSegment;
+			out2 = getHoldSegment(item, basePos, (lastData = getArrowParams(item, holdTimeProgress + (holdTimeInterval * timeScale))));
 
-			if (out1 == null)
-				out1 = getSegmentFunc(item, basePos, lastData != null ? lastData : getArrowParams(arrow, subOff));
+			if (firstIteration) {
+				item._z = out1.depth;
 
-			var out2 = getSegmentFunc(item, basePos, (lastData = getArrowParams(arrow, subOff + (subCr * endScale))));
-
-			if (!scaled && end && Config.PREVENT_SCALED_HOLD_END) {
-				var diff = out2.origin.subtract(out1.origin);
-				var actualHeight = diff.length;
-
-				endScale = (subCr * 0.5) / actualHeight;
-				out2 = getSegmentFunc(item, basePos, (lastData = getArrowParams(arrow, subCr * endScale)));
-
-				scaled = true;
+				if (isHoldEnd && Config.PREVENT_SCALED_HOLD_END) {
+					timeScale = (holdHeight / HOLD_SUBDIVISIONS) / Math.max(0, (out2.origin - out1.origin).length);
+					out2 = getHoldSegment(item, basePos, (lastData = getArrowParams(item, holdTimeInterval * timeScale)));
+				}
 			}
 
 			lastSegment = out2;
-
-			if (!depthApplied) {
-				arrow._z = out1.depth;
-				depthApplied = true;
-			}
 
 			alphaTotal = alphaTotal + out1.visuals.alpha;
 
@@ -314,21 +264,22 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 			final negGlow = 1 - out1.visuals.glow;
 			final absGlow = out1.visuals.glow * 255;
-			transfTotal[tID++] = new ColorTransform(negGlow, negGlow, negGlow, out1.visuals.alpha * arrow.alpha, Math.round(out1.visuals.glowR * absGlow),
+			transfTotal[tID++] = new ColorTransform(negGlow, negGlow, negGlow, out1.visuals.alpha * item.alpha, Math.round(out1.visuals.glowR * absGlow),
 				Math.round(out1.visuals.glowG * absGlow), Math.round(out1.visuals.glowB * absGlow));
+
+			firstIteration = false;
 		}
 
 		newInstruction.item = item;
 		newInstruction.vertices = vertices;
-		newInstruction.indices = _indices.copy();
-		newInstruction.uvt = ModchartUtil.getHoldUVT(arrow, HOLD_SUBDIVISIONS);
+		newInstruction.indices = _indices;
+		newInstruction.uvt = ModchartUtil.getHoldUVT(item, HOLD_SUBDIVISIONS);
 		newInstruction.colorData = transfTotal;
 		newInstruction.extra = [alphaTotal];
 
-		queue[count] = newInstruction;
-		count++;
+		queue[count++] = newInstruction;
 
-		__lastHoldSubs = Adapter.instance.getHoldSubdivisions();
+		__lastHoldSubs = HOLD_SUBDIVISIONS;
 	}
 
 	inline static final drawMargin = 50;
@@ -354,17 +305,13 @@ class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		@:privateAccess for (camera in cameras) {
 			var cTransforms = instruction.colorData.copy();
 
-			for (t in cTransforms)
-				t.alphaMultiplier *= camera.alpha;
+			if (camera.alpha != 1)
+				for (t in cTransforms)
+					t.alphaMultiplier *= camera.alpha;
 
 			var item = camera.startTrianglesBatch(item.graphic, item.antialiasing, true, item.blend, true, item.shader);
 			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, cTransforms);
 		}
-	}
-
-	inline private function computeCentered2Height() {
-		var center = FlxG.height * .5;
-		var cury = basePos.y;
 	}
 
 	inline private function getArrowParams(arrow:FlxSprite, posOff:Float = 0):ArrowData {

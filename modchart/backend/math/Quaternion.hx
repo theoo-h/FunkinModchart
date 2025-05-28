@@ -7,7 +7,7 @@ import modchart.backend.util.ModchartUtil;
 @:noDebug
 #end
 @:publicFields
-class Quaternion {
+final class Quaternion {
 	var x:Float;
 	var y:Float;
 	var z:Float;

@@ -2,8 +2,8 @@ package modchart.engine.modifiers.list.false_paradise;
 
 import flixel.math.FlxMath;
 import haxe.ds.Vector;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 private class TimeVector extends Vector3D {
@@ -66,7 +66,7 @@ class EyeShape extends Modifier {
 		return pathIterable;
 	}
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		if (_path == null)
 			_path = loadPath();
 
@@ -80,6 +80,6 @@ class EyeShape extends Modifier {
 		return ModchartUtil.lerpVector3D(curPos, path.add(new Vector3(WIDTH * .5 - 264 - 272, HEIGHT * .5 + 280 - 260)), perc);
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

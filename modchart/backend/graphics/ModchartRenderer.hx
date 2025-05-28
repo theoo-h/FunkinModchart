@@ -1,6 +1,7 @@
 package modchart.backend.graphics;
 
 import flixel.FlxBasic;
+import flixel.FlxCamera;
 import flixel.util.FlxSort;
 
 @:publicFields
@@ -24,16 +25,10 @@ class ModchartRenderer<T:FlxBasic> extends FlxBasic {
 	private var count:Int = 0;
 	private var postCount:Int = 0;
 
-	private var camMatrix:openfl.geom.Matrix = new openfl.geom.Matrix();
-	private var graphics(get, never):openfl.display.Graphics;
-
 	private var projection(get, never):ModchartPerspective;
 
 	function get_projection()
 		return instance.projection;
-
-	function get_graphics()
-		return instance.graphics;
 
 	public function new(instance:PlayField) {
 		super();

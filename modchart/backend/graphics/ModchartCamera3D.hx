@@ -16,7 +16,11 @@ import openfl.geom.Matrix3D;
  *
  * `NOTE`: All of those features only work on `FlxSprite3D` instances.
  */
-class ModchartCamera3D {
+#if !openfl_debug
+@:fileXml('tags="haxe,release"')
+@:noDebug
+#end
+final class ModchartCamera3D {
 	/**
 	 * Represents the depth (Z-axis position) of the camera position.
 	 */

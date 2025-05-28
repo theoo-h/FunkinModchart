@@ -2,8 +2,8 @@ package modchart.engine.modifiers.list;
 
 import flixel.math.FlxMath;
 import haxe.ds.Vector;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 import modchart.engine.PlayField;
 
@@ -39,7 +39,7 @@ class PathModifier extends Modifier {
 		__path = Vector.fromArrayCopy(newPath);
 	}
 
-	public function computePath(pos:Vector3, params:RenderParams, percent:Float) {
+	public function computePath(pos:Vector3, params:ModifierParameters, percent:Float) {
 		final __path_length = __path.length;
 		if (__path_length <= 0)
 			return pos;
@@ -61,7 +61,7 @@ class PathModifier extends Modifier {
 			percent, pos);
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }
 

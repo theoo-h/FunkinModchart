@@ -20,9 +20,8 @@ using StringTools;
 	inline public static function getFrameAngle(spr:FlxSprite):Float {
 		return switch (spr.frame.angle) {
 			case ANGLE_90: 90;
-			case ANGLE_NEG_90: -90;
-			case ANGLE_270: 270;
-			default: 0; // ANGLE_0
+			case ANGLE_270 | ANGLE_NEG_90: 270;
+			default: 0; // ANGLE_0d
 		}
 	}
 
@@ -93,10 +92,15 @@ using StringTools;
 		}
 	}
 
-	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int) {
+	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int, ?vector:DrawData<Float>) {
 		var frameAngle = -ModchartUtil.getFrameAngle(arrow);
 
-		var uv = new DrawData<Float>(8 * subs, true, []);
+		var uv:DrawData<Float> = null;
+
+		if (vector != null && vector.length >= 8 * subs)
+			uv = vector;
+		else
+			uv = new DrawData<Float>(8 * subs, true, []);
 
 		var frameUV = arrow.frame.uv;
 		var frameWidth = frameUV.width - frameUV.x;
@@ -118,7 +122,7 @@ using StringTools;
 			return uv;
 		}
 
-		var angleRad = frameAngle * FlxAngle.TO_RAD;
+		var angleRad = frameAngle * (Math.PI / 180);
 		var cosA = ModchartUtil.cos(angleRad);
 		var sinA = ModchartUtil.sin(angleRad);
 
@@ -155,7 +159,20 @@ using StringTools;
 		return uv;
 	}
 
+	/**
+		map should be. [
+			top left x,  top left y,
+			top right x, top right y,
+			bot left x,  bot left y
+			bot right x, bot right y
+		]
+	 */
+	inline static public function appendUVRotation(map:Array<Float>, angle:Float) {
+		return map;
+	}
+
 	// gonna keep this shits inline cus are basic functions
+
 	public static inline function getHalfPos():Vector3 {
 		return new Vector3(Manager.ARROW_SIZEDIV2, Manager.ARROW_SIZEDIV2, 0, 0);
 	}
@@ -186,7 +203,7 @@ using StringTools;
 		return sin(num) / cos(num);
 
 	@:pure
-	@:deprecated('Use Vector3.interpolate instead.')
+	@:deprecated("Use Vector3.interpolate instead.")
 	inline public static function lerpVector3D(start:Vector3, end:Vector3, ratio:Float) {
 		if (ratio == 0)
 			return start;

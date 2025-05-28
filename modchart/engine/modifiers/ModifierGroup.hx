@@ -4,10 +4,11 @@ import haxe.ds.IntMap;
 import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.ds.Vector;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.PercentArray;
+import modchart.backend.core.VisualParameters;
 import modchart.backend.macros.ModifiersMacro;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
 import modchart.backend.util.ModchartUtil;
 import modchart.engine.modifiers.Modifier;
 import modchart.engine.modifiers.list.*;
@@ -17,7 +18,7 @@ import modchart.engine.modifiers.list.false_paradise.*;
 @:publicFields
 class ModifierOutput {
 	var pos:Vector3;
-	var visuals:Visuals;
+	var visuals:VisualParameters;
 }
 
 #if !openfl_debug
@@ -75,8 +76,6 @@ final class ModifierGroup {
 	@:noCompletion private var __sortedIDs:Vector<String> = new Vector<String>(32);
 	@:noCompletion private var __idCount:Int = 0;
 
-	// @:noCompletion private var cache:ModifierCache = new ModifierCache();
-
 	inline private function __loadModifiers() {
 		for (cls in COMPILED_MODIFIERS) {
 			var name = Type.getClassName(cls);
@@ -91,9 +90,7 @@ final class ModifierGroup {
 		__loadModifiers();
 	}
 
-	public inline function postRender() {
-		// @:privateAccess cache.clear();
-	}
+	public inline function postRender() {}
 
 	/**
 	 * Computes the transformed position and visual properties of an arrow based on active modifiers.
@@ -112,19 +109,7 @@ final class ModifierGroup {
 	 * - (Caching is currently disabled but could be re-enabled for optimization.)
 	 */
 	public inline function getPath(pos:Vector3, data:ArrowData, ?posDiff:Float = 0, ?allowVis:Bool = true, ?allowPos:Bool = true):ModifierOutput {
-		var visuals:Visuals = {};
-
-		/*var cacheParams:CacheInstance = {
-				lane: data.lane,
-				player: data.player,
-				pos: data.distance + posDiff,
-				isArrow: data.isTapArrow,
-				hitten: data.hitten
-			};
-			var possibleCache = @:privateAccess cache.load(cacheParams);
-			if (possibleCache != null) {
-				return possibleCache;
-		}*/
+		var visuals:VisualParameters = {};
 
 		if (!allowVis && !allowPos)
 			return {pos: pos, visuals: visuals};
@@ -132,7 +117,7 @@ final class ModifierGroup {
 		final songPos = Adapter.instance.getSongPosition();
 		final beat = Adapter.instance.getCurrentBeat();
 
-		final args:RenderParams = {
+		final args:ModifierParameters = {
 			songTime: songPos,
 			curBeat: beat,
 			hitTime: data.hitTime + posDiff,
@@ -142,8 +127,12 @@ final class ModifierGroup {
 			isTapArrow: data.isTapArrow
 		}
 
-		for (i in 0...__modifierCount) {
-			final mod = __sortedModifiers[i];
+		// sorta optimizations
+		final mods = __sortedModifiers;
+		final len = __modifierCount;
+
+		for (i in 0...len) {
+			final mod = mods[i];
 
 			if (!mod.shouldRun(args))
 				continue;
@@ -160,7 +149,6 @@ final class ModifierGroup {
 			visuals: visuals
 		};
 
-		// cache.save(cacheParams, output);
 		return output;
 	}
 
@@ -268,99 +256,4 @@ final class ModifierGroup {
 	inline private function __findID(str:String) {
 		@:privateAccess percents.__hashKey(str.toLowerCase());
 	}
-}
-
-// for some reason, is laggier than generating new parths every frame
-/*
-	final class ModifierCache {
-	public var outputs:ObjectMap<CacheInstance, ModifierOutput> = new ObjectMap();
-
-		private inline function unpackA(packed:Int):Int {
-			return packed & 0xFFFF;
-		}
-
-		private inline function unpackB(packed:Int):Int {
-			return packed >>> 16;
-	}
-	public function new() {}
-
-	private inline function save(params:CacheInstance, output:ModifierOutput) {
-		outputs.set(params, output);
-	}
-
-	private inline function load(params:CacheInstance):Null<ModifierOutput> {
-		return outputs.get(params);
-	}
-
-	private inline function clear() {
-		outputs.clear();
-	}
-	}
-
-	@:structInit
-	final class CacheInstance {
-	public var lane:Int;
-	public var player:Int;
-
-	public var pos:Float;
-	public var isA:Bool;
-	public var hit:Bool;
-
-	public function new(lane:Int, player:Int, pos:Float, isArrow:Bool, hitten:Bool) {
-		this.lane = lane;
-		this.player = player;
-		this.pos = pos;
-		this.isA = isArrow;
-		this.hit = hitten;
-	}
-
-	inline public function compare(shit:CacheInstance):Bool {
-		return (shit.lane == lane && shit.player == player && shit.pos == pos && isA == shit.isA && hit == shit.hit);
-	}
-	}
- */
-// basicly 2d vector with string hashing
-// used to store modifier values
-final class PercentArray {
-	private var vector:Vector<Vector<Float>>;
-
-	public function new() {
-		vector = new Vector<Vector<Float>>(Std.int(Math.pow(2, 16))); // preallocate by max 16-bit integer
-	}
-
-	private var __lastHashedKey:Int = -1;
-	private var __lastKey:String = '';
-
-	// hash the key to a 16-bit integer
-
-	@:noDebug
-	@:noCompletion inline private function __hashKey(key:String):Int {
-		if (key == __lastKey)
-			return __lastHashedKey;
-
-		var hash:Int = 0;
-		for (i in 0...key.length) {
-			hash = hash * 31 + StringTools.unsafeCodeAt(key, i);
-		}
-		__lastKey = key;
-		return __lastHashedKey = (hash & 0xFFFF); // 16-bit hash
-	}
-
-	// hash handlers
-
-	@:noDebug
-	inline public function set(key:String, value:Vector<Float>):Void
-		setUnsafe(__hashKey(key), value);
-
-	@:noDebug
-	public function get(key:String):Vector<Float>
-		return getUnsafe(__hashKey(key));
-
-	@:noDebug
-	inline public function getUnsafe(id:Int):Vector<Float>
-		return vector.get(id);
-
-	@:noDebug
-	inline public function setUnsafe(id:Int, value:Vector<Float>):Void
-		vector.set(id, value);
 }

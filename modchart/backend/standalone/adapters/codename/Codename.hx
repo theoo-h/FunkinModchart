@@ -22,7 +22,7 @@ class Codename implements IAdapter {
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		__fCrochet = Conductor.crochet;
+		__fCrochet = Conductor.crochet / Conductor.stepsPerBeat;
 
 		for (strumLine in PlayState.instance.strumLines.members) {
 			strumLine.forEach(strum -> {
@@ -44,8 +44,8 @@ class Codename implements IAdapter {
 		return Conductor.curBeatFloat;
 	}
 
-	public function getStaticCrochet():Float {
-		return __fCrochet;
+	public function getCurrentCrochet():Float {
+		return Conductor.crochet;
 	}
 
 	public function getBeatFromStep(step:Float):Float {
@@ -91,6 +91,9 @@ class Codename implements IAdapter {
 		return 0;
 	}
 
+	public function getHoldLength(item:FlxSprite):Float
+		return __fCrochet;
+
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
 		return note.strumTime;
@@ -118,7 +121,7 @@ class Codename implements IAdapter {
 		return 0;
 	}
 
-	public function getHoldSubdivisions():Int
+	public function getHoldSubdivisions(hold:FlxSprite):Int
 		return 4;
 
 	public function getDownscroll():Bool {
@@ -139,7 +142,7 @@ class Codename implements IAdapter {
 		return [PlayState.instance.camHUD];
 
 	public function getCurrentScrollSpeed():Float
-		return PlayState.instance.scrollSpeed;
+		return PlayState.instance.scrollSpeed * .45;
 
 	// 0 receptors
 	// 1 tap arrows

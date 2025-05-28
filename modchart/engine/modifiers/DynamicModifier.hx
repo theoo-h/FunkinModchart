@@ -20,7 +20,7 @@ class DynamicModifier extends Modifier {
 	 * @param params The parameters used for rendering, such as song position, beat, etc.
 	 * @return The transformed position of the arrow.
 	 */
-	public var renderFunc:(Vector3, RenderParams) -> Vector3;
+	public var renderFunc:(Vector3, ModifierParameters) -> Vector3;
 
 	/**
 	 * A function that applies transformations to the arrow's visuals.
@@ -29,7 +29,7 @@ class DynamicModifier extends Modifier {
 	 * @param params The parameters used for rendering, such as song position, beat, etc.
 	 * @return The transformed visuals of the arrow.
 	 */
-	public var visualsFunc:(Visuals, RenderParams) -> Visuals;
+	public var visualsFunc:(VisualParameters, ModifierParameters) -> VisualParameters;
 
 	/**
 	 * Flag that enables or disables null safety. When enabled, the parameters are copied
@@ -47,7 +47,7 @@ class DynamicModifier extends Modifier {
 	 *
 	 * @return The transformed position, or the original if no transformation is applied.
 	 */
-	override public function render(position:Vector3, params:RenderParams) {
+	override public function render(position:Vector3, params:ModifierParameters) {
 		if (__skipRender || renderFunc == null)
 			return position;
 
@@ -70,14 +70,14 @@ class DynamicModifier extends Modifier {
 	 *
 	 * @return The transformed visuals, or the original if no transformation is applied.
 	 */
-	override public function visuals(data:Visuals, params:RenderParams) {
+	override public function visuals(data:VisualParameters, params:ModifierParameters) {
 		if (__skipVisuals || visualsFunc == null)
 			return data;
 
 		final safeData = nullSafety ? Reflect.copy(data) : data;
 		final safeParams = nullSafety ? Reflect.copy(params) : params;
 
-		final modifiedVisuals:Null<Visuals> = visualsFunc(safeData, safeParams);
+		final modifiedVisuals:Null<VisualParameters> = visualsFunc(safeData, safeParams);
 
 		if (nullSafety && modifiedVisuals == null) {
 			trace('[FunkinModchart::DynamicModifier] Failed to run "visuals" function!');
@@ -87,7 +87,7 @@ class DynamicModifier extends Modifier {
 		return modifiedVisuals != null ? modifiedVisuals : data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool {
+	override public function shouldRun(params:ModifierParameters):Bool {
 		return true;
 	}
 }

@@ -1,14 +1,14 @@
 package modchart.engine.modifiers.list;
 
 import flixel.math.FlxMath;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 class Tornado extends Modifier {
 	// math from open itg
 	// hmm, looks familiar.... isnt this invert sine?
-	override public function render(pos:Vector3, params:RenderParams) {
+	override public function render(pos:Vector3, params:ModifierParameters) {
 		var tornado = getPercent('tornado', params.player);
 
 		if (tornado == 0)
@@ -46,6 +46,6 @@ class Tornado extends Modifier {
 		return (x - l1) * (h2 - l2) / (h1 - l1) + l2;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

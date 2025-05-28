@@ -1,11 +1,11 @@
 package modchart.engine.modifiers.list.false_paradise;
 
 import flixel.math.FlxAngle;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 
 class Wiggle extends Modifier {
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		var wiggle = getPercent('wiggle', params.player);
 		curPos.x += sin(params.curBeat) * wiggle * 20;
 		curPos.y += sin(params.curBeat + 1) * wiggle * 20;
@@ -15,6 +15,6 @@ class Wiggle extends Modifier {
 		return curPos;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return getPercent('wiggle', params.player) != 0;
 }

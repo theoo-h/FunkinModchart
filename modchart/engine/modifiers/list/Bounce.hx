@@ -1,10 +1,10 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 
 class Bounce extends Modifier {
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		var player = params.player;
 		var speed = getPercent('bounceSpeed', player);
 		var offset = getPercent('bounceOffset', player);
@@ -18,6 +18,6 @@ class Bounce extends Modifier {
 		return curPos;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

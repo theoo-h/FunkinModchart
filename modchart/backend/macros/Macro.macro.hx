@@ -296,31 +296,4 @@ class Macro {
 
 		return fields;
 	}
-	/*
-		public static function generateModList()
-		{
-			Context.onAfterInitMacros(() -> {
-				final modifierList:Array<Class<Modifier>> = Type.resolveClass('CompileTime').getClassList('modchart.engine.modifiers.list', true, modchart.engine.Modifier);
-				final mappedModifiers:Map<String, Class<Modifier>> = [];
-
-				for (i in 0...modifierList.length)
-				{
-					final modifierClass = modifierList[i];
-
-					final meta = Meta.getType(modifierClass);
-					if (meta != null)
-					{
-						Context.info('$meta', Context.currentPos());
-					}
-
-					var modifierName = Type.getClassName(modifierClass);
-					modifierName = modifierName.substring(modifierName.lastIndexOf('.') + 1);
-					mappedModifiers[modifierName.toLowerCase()] = modifierClass;
-				}
-
-				Constants.MODIFIER_LIST = mappedModifiers;
-
-				Context.info('---- Modifiers Founded ----\n$mappedModifiers');
-			});
-	}*/
 }

@@ -1,7 +1,7 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 
 class Bumpy extends Modifier {
 	public function new(pf) {
@@ -16,7 +16,7 @@ class Bumpy extends Modifier {
 		}
 	}
 
-	function applyBumpy(curPos:Vector3, params:RenderParams, axis:String, realAxis:String) {
+	function applyBumpy(curPos:Vector3, params:ModifierParameters, axis:String, realAxis:String) {
 		final receptorName = Std.string(params.lane);
 		final player = params.player;
 		var distance = params.distance;
@@ -46,7 +46,7 @@ class Bumpy extends Modifier {
 		}
 	}
 
-	public function applyAngle(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
+	public function applyAngle(vis:VisualParameters, params:ModifierParameters, axis:String, realAxis:String) {
 		final receptorName = Std.string(params.lane);
 		final player = params.player;
 		var distance = params.distance;
@@ -74,7 +74,7 @@ class Bumpy extends Modifier {
 		}
 	}
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		// var player = params.player;
 		// var distance = params.distance;
 		// var bumpyX = (40 * sin((distance + (100.0 * getPercent('bumpyXOffset', player))) / ((getPercent('bumpyXPeriod', player) * 24.0) + 24.0)));
@@ -93,7 +93,7 @@ class Bumpy extends Modifier {
 		return curPos;
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams) {
+	override public function visuals(data:VisualParameters, params:ModifierParameters) {
 		applyAngle(data, params, '', 'z');
 		applyAngle(data, params, 'x', 'x');
 		applyAngle(data, params, 'y', 'y');
@@ -102,6 +102,6 @@ class Bumpy extends Modifier {
 		return data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

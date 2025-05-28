@@ -3,8 +3,8 @@ package modchart.engine.modifiers.list;
 import flixel.FlxG;
 import flixel.math.FlxMath;
 import modchart.Manager;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 // Default modifier
@@ -45,7 +45,7 @@ class Reverse extends Modifier {
 		return val;
 	}
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		var player = params.player;
 		var initialY = Adapter.instance.getDefaultReceptorY(params.lane, player) + ARROW_SIZEDIV2;
 		var reversePerc = getReverseValue(params.lane, player);
@@ -56,7 +56,7 @@ class Reverse extends Modifier {
 
 		var distance = params.distance;
 
-		distance *= 0.45 * Adapter.instance.getCurrentScrollSpeed();
+		distance *= Adapter.instance.getCurrentScrollSpeed();
 
 		var scroll = new Vector3(0, FlxMath.lerp(distance, -distance, reversePerc));
 		scroll = applyScrollMods(scroll, params);
@@ -68,7 +68,7 @@ class Reverse extends Modifier {
 		return curPos;
 	}
 
-	function applyScrollMods(scroll:Vector3, params:RenderParams) {
+	function applyScrollMods(scroll:Vector3, params:ModifierParameters) {
 		var player = params.player;
 		var angleX = 0.;
 		var angleY = 0.;
@@ -98,6 +98,6 @@ class Reverse extends Modifier {
 		return scroll;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

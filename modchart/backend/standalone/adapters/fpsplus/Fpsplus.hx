@@ -11,7 +11,7 @@ class Fpsplus implements IAdapter {
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		__fCrochet = Conductor.crochet;
+		__fCrochet = Conductor.crochet / 4;
 	}
 
 	public function isTapNote(sprite:FlxSprite) {
@@ -27,8 +27,8 @@ class Fpsplus implements IAdapter {
 		return Conductor.songPosition / Conductor.crochet;
 	}
 
-	public function getStaticCrochet():Float {
-		return __fCrochet;
+	@:privateAccess public function getCurrentCrochet():Float {
+		return Conductor.crochet;
 	}
 
 	public function getBeatFromStep(step:Float):Float {
@@ -69,6 +69,9 @@ class Fpsplus implements IAdapter {
 		return PlayState.instance.playerStrums.members.contains(arrow) ? 1 : 0;
 	}
 
+	public function getHoldLength(item:FlxSprite):Float
+		return __fCrochet;
+
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
 		return note.strumTime;
@@ -92,7 +95,7 @@ class Fpsplus implements IAdapter {
 		return 0;
 	}
 
-	public function getHoldSubdivisions():Int {
+	public function getHoldSubdivisions(hold:FlxSprite):Int {
 		return 3;
 	}
 
@@ -112,7 +115,7 @@ class Fpsplus implements IAdapter {
 		return [PlayState.instance.camHUD];
 
 	public function getCurrentScrollSpeed():Float {
-		return PlayState.SONG.speed * PlayState.instance.scrollSpeedMultiplier;
+		return PlayState.SONG.speed * PlayState.instance.scrollSpeedMultiplier * .45;
 	}
 
 	// 0 receptors

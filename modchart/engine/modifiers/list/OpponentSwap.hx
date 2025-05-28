@@ -1,11 +1,11 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 class OpponentSwap extends Modifier {
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		final player = params.player;
 		final perc = getPercent('opponentSwap', player);
 
@@ -17,6 +17,6 @@ class OpponentSwap extends Modifier {
 		return curPos;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

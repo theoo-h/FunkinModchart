@@ -56,7 +56,7 @@ class SchmovinArrowShape extends Modifier {
 		return path;
 	}
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		if (_path == null)
 			_path = LoadPath();
 
@@ -71,6 +71,6 @@ class SchmovinArrowShape extends Modifier {
 			path.add(new Vector3(WIDTH * .5, HEIGHT * .5 + 280, params.lane * getPercent('schmovinArrowShapeOffset', params.player) + curPos.z)), perc);
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

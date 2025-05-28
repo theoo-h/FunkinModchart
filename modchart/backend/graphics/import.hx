@@ -7,6 +7,7 @@ import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
+import flixel.math.FlxMatrix;
 import haxe.ds.Vector as NativeVector;
 import modchart.backend.graphics.ModchartRenderer.FMDrawInstruction;
 import modchart.backend.graphics.ModchartRenderer;

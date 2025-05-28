@@ -10,8 +10,8 @@ interface IAdapter {
 	// Song-related stuff
 	public function getSongPosition():Float; // Current song position
 	// public function getCrochet():Float           // Current beat crochet
-	public function getStaticCrochet():Float; // Beat crochet without bpm changes
 	public function getCurrentBeat():Float; // Current beat
+	public function getCurrentCrochet():Float; // Current beat
 	public function getCurrentScrollSpeed():Float; // Current arrow scroll speed
 	public function getBeatFromStep(step:Float):Float;
 
@@ -24,6 +24,21 @@ interface IAdapter {
 	public function arrowHit(sprite:FlxSprite):Bool; // If the arrow was hitted
 	public function getHoldParentTime(sprite:FlxSprite):Float;
 
+	/**
+	 * Get the individual hold fragment length.
+	 * 
+	 * On most FNF engines, holds divided into fragments/tiles,
+	 * each of them has a length of a step, so in this case, this
+	 * function should return the length of a step.
+	 * 
+	 * Also on other FNF engines, the holds uses one single fragment
+	 * (two actually, ond for the body and other for the end),
+	 * so in that case, this should return the full hold length in ms.
+	 * @param sprite : The hold arrow
+	 * @return Float
+	 */
+	public function getHoldLength(sprite:FlxSprite):Float;
+
 	public function getLaneFromArrow(sprite:FlxSprite):Int; // Get lane/note data from arrow
 	public function getPlayerFromArrow(sprite:FlxSprite):Int; // Get player from arrow
 
@@ -34,7 +49,7 @@ interface IAdapter {
 	public function getArrowCamera():Array<FlxCamera>;
 
 	// Options section
-	public function getHoldSubdivisions():Int; // Hold resolution
+	public function getHoldSubdivisions(item:FlxSprite):Int; // Hold resolution
 	public function getDownscroll():Bool; // Get if it is downscroll
 
 	/**

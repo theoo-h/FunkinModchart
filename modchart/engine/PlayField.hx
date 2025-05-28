@@ -1,13 +1,17 @@
 package modchart.engine;
 
 import flixel.FlxBasic;
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxEase.EaseFunction;
+import modchart.backend.core.Node.NodeFunction;
 import modchart.backend.graphics.*;
 import modchart.backend.graphics.renderers.*;
 import modchart.backend.util.ModchartUtil;
 import modchart.engine.events.types.*;
+import openfl.display.BitmapData;
+import openfl.geom.Rectangle;
 
 // TODO: make this extend to flxsprite and use parented transformation matrix
 #if !openfl_debug
@@ -25,22 +29,12 @@ final class PlayField extends FlxSprite {
 	private var holdRenderer:ModchartHoldRenderer;
 	private var pathRenderer:ModchartPathRenderer;
 
-	private var graphics(get, never):openfl.display.Graphics;
-
-	// private var __shape:openfl.display.Shape = new openfl.display.Shape();
-
-	function get_graphics()
-		return null;
-
 	public var projection:ModchartPerspective;
 
 	public function new() {
 		super();
 
 		moves = false;
-
-		makeGraphic(FlxG.width, FlxG.height, 0x00FFFFFF);
-		updateHitbox();
 
 		this.events = new EventManager(this);
 		this.modifiers = new ModifierGroup(this);
@@ -62,8 +56,7 @@ final class PlayField extends FlxSprite {
 		addModifier('zoom');
 
 		setPercent('arrowPathAlpha', 1, -1);
-		setPercent('arrowPathThickness', 1, -1);
-		setPercent('arrowPathDivisions', 1, -1);
+		setPercent('arrowPathThickness', 2, -1);
 		setPercent('rotateHoldY', 1, -1);
 	}
 
@@ -208,8 +201,6 @@ final class PlayField extends FlxSprite {
 	override public function draw() {
 		__drawPlayField();
 		modifiers.postRender();
-
-		super.draw();
 	}
 
 	override public function destroy() {
@@ -264,7 +255,7 @@ final class PlayField extends FlxSprite {
 		if (attachmentLength != 0)
 			attachmentRenderer.preallocate(attachmentLength);
 
-		if (Manager.instance.renderArrowPaths)
+		if (Config.RENDER_ARROW_PATHS)
 			pathRenderer.preallocate(receptorLength);
 
 		drawCB.resize(receptorLength + arrowLength + holdLength + attachmentLength);
@@ -286,7 +277,7 @@ final class PlayField extends FlxSprite {
 						continue;
 
 					receptorRenderer.prepare(receptor);
-					if (Manager.instance.renderArrowPaths)
+					if (Config.RENDER_ARROW_PATHS)
 						pathRenderer.prepare(receptor);
 					queue({
 						callback: receptorRenderer.shift,
@@ -341,7 +332,7 @@ final class PlayField extends FlxSprite {
 		for (r in [receptorRenderer, arrowRenderer, holdRenderer, attachmentRenderer])
 			r.sort();
 
-		if (Manager.instance.renderArrowPaths)
+		if (Config.RENDER_ARROW_PATHS)
 			pathRenderer.shift();
 	}
 }

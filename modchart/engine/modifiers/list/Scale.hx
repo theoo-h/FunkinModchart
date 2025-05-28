@@ -1,8 +1,8 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 
 class Scale extends Modifier {
 	public function new(pf) {
@@ -13,7 +13,7 @@ class Scale extends Modifier {
 		setPercent('scaleY', 1, -1);
 	}
 
-	private inline function applyScale(vis:Visuals, params:RenderParams, axis:String, realAxis:String) {
+	private inline function applyScale(vis:VisualParameters, params:ModifierParameters, axis:String, realAxis:String) {
 		var receptorName = Std.string(params.lane);
 		var player = params.player;
 
@@ -32,7 +32,7 @@ class Scale extends Modifier {
 		}
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams) {
+	override public function visuals(data:VisualParameters, params:ModifierParameters) {
 		var player = params.player;
 		var receptorName = Std.string(params.lane);
 
@@ -52,6 +52,6 @@ class Scale extends Modifier {
 		return data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

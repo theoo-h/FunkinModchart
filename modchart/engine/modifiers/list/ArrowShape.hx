@@ -1,7 +1,7 @@
 package modchart.engine.modifiers.list;
 
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.engine.PlayField;
 import modchart.engine.modifiers.list.PathModifier.PathNode;
 
@@ -23,7 +23,7 @@ class ArrowShape extends PathModifier {
 		pathOffset.setTo(WIDTH * 0.5, HEIGHT * 0.5 + 280, 0);
 	}
 
-	override function render(pos:Vector3, params:RenderParams) {
+	override function render(pos:Vector3, params:ModifierParameters) {
 		var perc = getPercent('arrowshape', params.player);
 
 		if (perc == 0)

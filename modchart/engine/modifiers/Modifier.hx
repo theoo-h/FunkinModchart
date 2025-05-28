@@ -3,9 +3,9 @@ package modchart.engine.modifiers;
 import flixel.FlxG;
 import flixel.math.FlxMath;
 import modchart.Manager;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 import modchart.engine.PlayField;
 
 using StringTools;
@@ -21,28 +21,25 @@ class Modifier {
 		this.pf = pf;
 	}
 
-	// @:overridable
-	public function render(curPos:Vector3, params:RenderParams) {
+	public function render(curPos:Vector3, params:ModifierParameters) {
 		return curPos;
 	}
 
-	// @:overridable
-	public function visuals(data:Visuals, params:RenderParams):Visuals {
+	public function visuals(data:VisualParameters, params:ModifierParameters):VisualParameters {
 		return data;
 	}
 
-	// @:settable
-	public function shouldRun(params:RenderParams):Bool
+	public function shouldRun(params:ModifierParameters):Bool
 		return false;
 
 	public inline function findID(name:String):Int {
 		@:privateAccess return pf.modifiers.percents.__hashKey(name.toLowerCase());
 	}
 
-	public inline function idGet(id:Int, player:Int)
+	public inline function getUnsafe(id:Int, player:Int)
 		return @:privateAccess pf.modifiers.__getUnsafe(id, player);
 
-	public inline function idSet(id:Int, value:Float, player:Int = -1)
+	public inline function setUnsafe(id:Int, value:Float, player:Int = -1)
 		return @:privateAccess pf.modifiers.__setUnsafe(id, value, player);
 
 	public inline function setPercent(name:String, value:Float, player:Int = -1) {

@@ -1,12 +1,12 @@
 package modchart.engine.modifiers.list;
 
 import flixel.FlxG;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
 import modchart.backend.util.ModchartUtil;
 
 class Rotate extends Modifier {
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		var rotateName = getRotateName();
 		var player = params.player;
 
@@ -19,13 +19,12 @@ class Rotate extends Modifier {
 			return curPos;
 
 		final origin:Vector3 = getOrigin(curPos, params);
-		final diff = curPos.subtract(origin);
-		final out = ModchartUtil.rotate3DVector(diff, angleX, angleY, angleZ);
-		curPos.copyFrom(origin.add(out));
+		curPos = ModchartUtil.rotate3DVector(curPos -= origin, angleX, angleY, angleZ);
+		curPos += origin;
 		return curPos;
 	}
 
-	public function getOrigin(curPos:Vector3, params:RenderParams):Vector3 {
+	public function getOrigin(curPos:Vector3, params:ModifierParameters):Vector3 {
 		var fixedLane = Math.round(getKeyCount(params.player) * .5);
 		return new Vector3(getReceptorX(fixedLane, params.player), FlxG.height / 2);
 	}
@@ -33,6 +32,6 @@ class Rotate extends Modifier {
 	public function getRotateName():String
 		return 'rotate';
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

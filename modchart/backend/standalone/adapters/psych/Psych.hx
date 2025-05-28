@@ -32,7 +32,7 @@ class Psych implements IAdapter {
 	}
 
 	public function onModchartingInitialization() {
-		__fCrochet = Conductor.crochet;
+		__fCrochet = (Conductor.crochet + 8) / 4;
 	}
 
 	private function setupLuaFunctions() {
@@ -55,8 +55,8 @@ class Psych implements IAdapter {
 		return PlayState.instance.curDecBeat;
 	}
 
-	public function getStaticCrochet():Float {
-		return __fCrochet + 8;
+	public function getCurrentCrochet():Float {
+		return Conductor.crochet;
 	}
 
 	public function getBeatFromStep(step:Float)
@@ -118,9 +118,12 @@ class Psych implements IAdapter {
 		return 0;
 	}
 
-	public function getHoldSubdivisions():Int {
+	public function getHoldSubdivisions(hold:FlxSprite):Int {
 		return 4;
 	}
+
+	public function getHoldLength(item:FlxSprite):Float
+		return __fCrochet;
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
@@ -158,7 +161,7 @@ class Psych implements IAdapter {
 		return [PlayState.instance.camHUD];
 
 	public function getCurrentScrollSpeed():Float {
-		return PlayState.instance.songSpeed;
+		return PlayState.instance.songSpeed * .45;
 	}
 
 	// 0 receptors

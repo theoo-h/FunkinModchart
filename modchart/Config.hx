@@ -32,10 +32,10 @@ class Config {
 	 * Optimizes the rendering of hold arrows.
 	 *
 	 * Theoretically, this makes calculations twice as fast by reducing redundant computations.
-	 * However, it is not recommended for complex modcharts, as it may cause holds to look incorrect,
-	 * especially when rotation or complex paths are applied.
+	 * However, it is not recommended for complex modcharts, as it may cause holds to look waggy,
+	 * especially when using modifiers that use rotation or complex path operations>
 	 *
-	 * Default: `false` (Regular hold rendering using the unit circle).
+	 * Default: `false` (Regular hold rendering).
 	 */
 	public static var OPTIMIZE_HOLDS:Bool = false;
 
@@ -53,24 +53,81 @@ class Config {
 	 * Ignores or renders the arrow path lines.
 	 *
 	 * When enabled, performance will be affected
-	 * due to path computation. (and Cairo graphics :sob::sob::sob:)
+	 * due to path computation.
+	 * 
+	 * Default: `false` (Disabled for performance).
 	 */
 	public static var RENDER_ARROW_PATHS:Bool = false;
 
 	/**
+	 * Extra configurations for the Arrow Paths.
+	 */
+	public static var ARROW_PATHS_CONFIG:ArrowPathConfig = {
+		COLORED: false,
+		APPLY_DEPTH: true,
+		APPLY_SCALE: false,
+		RESOLUTION: 1,
+		LENGTH: 0
+	};
+
+	/**
 	 * Scales the hold end size.
+	 * 
+	 * Default: `1` (no scaling applied).
 	 */
 	public static var HOLD_END_SCALE:Float = 1;
 
 	/**
 	 * Prevents scaling the hold ends. (Some people doens't like that lol)
 	 * 
-	 * **WARNING**: Performance maybe affected if this is enabled;
+	 * **WARNING**: Performance may be affected if there's too much
+	 * hold arrows at screen. (it basicly uses one extra `getPath()` call)
+	 * 
+	 * Default: `false`
 	 */
 	public static var PREVENT_SCALED_HOLD_END:Bool = false;
 
 	/**
-	 * The name says it, isn't it?
+	 * Enables or disables column-specific modifiers.
+	 *
+	 * Disabling this may improve performance by
+	 * reducing the number of `getPercent()` calls.
+	 *
+	 * **WARNING**: This does **not** directly affect any modifier.
+	 * It only applies to *built-in modifiers*.
+	 * Custom modifiers must manually check
+	 * this config value for compatibility.
+	 *
+	 * Default: `true`
 	 */
-	public static var ACTOR_FRAME_SYSTEM:Bool = false;
+	public static var COLUMN_SPECIFIC_MODIFIERS:Bool = true;
+}
+
+typedef ArrowPathConfig = {
+	/**
+	 * Follows the arrow color and transparency.
+	 */
+	COLORED:Bool,
+
+	/**
+	 * Thickness gets affected by Z.
+	 */
+	APPLY_DEPTH:Bool,
+
+	/**
+	 * Thickness gets affected by arrow scale.
+	 */
+	APPLY_SCALE:Bool,
+
+	/**
+	 * "Resulution" multiplier of arrow paths.
+	 * Higher value = More divisions = Smoother path.
+	 * **WARNING**: Can't be zero or it will CRASH.
+	 */
+	RESOLUTION:Int,
+
+	/**
+	 * Path lines length addition.
+	 */
+	LENGTH:Int
 }

@@ -5,6 +5,10 @@ import modchart.backend.util.ModchartUtil;
 import modchart.engine.PlayField;
 import modchart.events.types.*;
 
+#if !openfl_debug
+@:fileXml('tags="haxe,release"')
+@:noDebug
+#end
 @:allow(modchart.engine.events.Event)
 class EventManager {
 	private var table:StringMap<Array<Array<Event>>> = new StringMap();
@@ -49,14 +53,12 @@ class EventManager {
 
 	public function getLastEventBefore(event:Event):Event {
 		final playerEvents = table.get(event.name.toLowerCase());
-		if (playerEvents == null) {
+		if (playerEvents == null)
 			return null;
-		}
 
 		final eventList = playerEvents[event.player];
-		if (eventList == null) {
+		if (eventList == null)
 			return null;
-		}
 
 		final lastIndex = eventList.indexOf(event);
 		if (lastIndex > 0) {

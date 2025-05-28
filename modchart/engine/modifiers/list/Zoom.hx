@@ -6,7 +6,7 @@ class Zoom extends Modifier {
 	var __curPercent:Null<Float> = -1;
 	var __localPercent:Null<Float> = -1;
 
-	override public function render(curPos:Vector3, params:RenderParams) {
+	override public function render(curPos:Vector3, params:ModifierParameters) {
 		updatePercent(params);
 
 		// center zoom
@@ -24,7 +24,7 @@ class Zoom extends Modifier {
 		return diff.add(origin);
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams):Visuals {
+	override public function visuals(data:VisualParameters, params:ModifierParameters):VisualParameters {
 		if (__curPercent == null)
 			updatePercent(params);
 
@@ -36,11 +36,11 @@ class Zoom extends Modifier {
 		return data;
 	}
 
-	inline function updatePercent(params:RenderParams) {
+	inline function updatePercent(params:ModifierParameters) {
 		__curPercent = 1 + ((-getPercent('zoom', params.player) + getPercent('mini', params.player)) * 0.5);
 		__localPercent = 1 + ((-getPercent('localZoom', params.player) + getPercent('localMini', params.player)) * 0.5);
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

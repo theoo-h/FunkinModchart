@@ -2,9 +2,9 @@ package modchart.engine.modifiers.list;
 
 import flixel.FlxG;
 import flixel.math.FlxMath;
-import modchart.backend.util.Constants.ArrowData;
-import modchart.backend.util.Constants.RenderParams;
-import modchart.backend.util.Constants.Visuals;
+import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierParameters;
+import modchart.backend.core.VisualParameters;
 import modchart.backend.util.ModchartUtil;
 
 class Stealth extends Modifier {
@@ -22,7 +22,7 @@ class Stealth extends Modifier {
 		setPercent('hiddenGlow', 1, -1);
 	}
 
-	private inline function computeSudden(data:Visuals, params:RenderParams) {
+	private inline function computeSudden(data:VisualParameters, params:ModifierParameters) {
 		final player = params.player;
 
 		final sudden = getPercent('sudden', player);
@@ -41,7 +41,7 @@ class Stealth extends Modifier {
 		data.alpha *= alpha * sudden;
 	}
 
-	private inline function computeHidden(data:Visuals, params:RenderParams) {
+	private inline function computeHidden(data:VisualParameters, params:ModifierParameters) {
 		final player = params.player;
 
 		final hidden = getPercent('hidden', player);
@@ -60,7 +60,7 @@ class Stealth extends Modifier {
 		data.alpha *= alpha * hidden;
 	}
 
-	override public function visuals(data:Visuals, params:RenderParams) {
+	override public function visuals(data:VisualParameters, params:ModifierParameters) {
 		final player = params.player;
 		final lane = params.lane;
 
@@ -79,6 +79,6 @@ class Stealth extends Modifier {
 		return data;
 	}
 
-	override public function shouldRun(params:RenderParams):Bool
+	override public function shouldRun(params:ModifierParameters):Bool
 		return true;
 }

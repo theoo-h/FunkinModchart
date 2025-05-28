@@ -16,7 +16,7 @@ import flixel.FlxG;
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-class ModchartPerspective {
+final class ModchartPerspective {
 	/**
 	 * Distance to the near clipping plane.
 	 * Objects closer than this distance will not be rendered.
@@ -98,11 +98,12 @@ class ModchartPerspective {
 			origin = new Vector3(FlxG.width * 0.5, FlxG.height * 0.5);
 		}
 
-		final translation = vector.subtract(origin);
+		final translation = vector - origin;
+
 		final projectedZ = __depthScale * Math.min(translation.z - 1, 0) + __depthOffset;
 		final projectedFov = (__tanHalfFov / projectedZ);
 
 		translation.setTo(translation.x * projectedFov, translation.y * projectedFov, projectedZ);
-		return translation.add(origin);
+		return translation += origin;
 	}
 }

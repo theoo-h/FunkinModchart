@@ -10,7 +10,7 @@ This framework also provides **extra features** that can help you to make even m
 <details>
 <summary><h2>Importing the library</h2></summary>
 
-This library currently has support for multiple engines such as [Codename Engine](https://codename-engine.com), [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine.com) and [FPS Plus](https://github.com/ThatRozebudDude/FPS-Plus-Public) click [here](SUPPORT.md) for more information, and only takes a couple of lines of code to import it:
+This library currently has support for multiple Friday Night Funkin' engines, such as [Codename Engine](https://codename-engine.com), [Psych Engine](https://github.com/ShadowMario/FNF-PsychEngine.com) and [FPS Plus](https://github.com/ThatRozebudDude/FPS-Plus-Public) click [here](SUPPORT.md) for more information, and only takes a couple of lines of code to import it:
 
 #### Go to your project and open `Project.xml`
 At the bottom of where the haxelib section is, paste this code.
@@ -48,7 +48,7 @@ Make sure that at the time you create the instance, the notes and strums were al
 This now all the stuff should be working, do your stuff now.
 
 #### Making a Modchart
-First, you should know all the modcharting functions, check they [here](DOC.md).
+First, you should know all the modcharting functions, check them [here](DOC.md).
 To make a modchart you don't necessarily have to follow instructions, it's a matter of experimenting with the modifiers and all the functions that FunkinModchart offers, although previous experience with The Mirin Template and NotITG would help you design a good modchart more easily.
 
 </details>
