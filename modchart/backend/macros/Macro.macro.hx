@@ -15,16 +15,16 @@ class Macro {
 	public static function addModchartStorage():Array<Field> {
 		final fields = Context.getBuildFields();
 		final pos = Context.currentPos();
-
+		
 		for (f in fields) {
 			if (f.name == 'set_visible') {
 				switch (f.kind) {
 					case FFun(fun):
 						fun.expr = macro {
-							visible = value;
-							_fmVisible = value;
+							visible = Value;
+							_fmVisible = Value;
 
-							return value;
+							return Value;
 						};
 					default:
 						// do nothing

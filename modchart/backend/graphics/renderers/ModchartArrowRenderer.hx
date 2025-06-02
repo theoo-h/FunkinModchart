@@ -145,14 +145,25 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		]);
 		final uvRectangle = arrow.frame.uv;
 		var uvData = new DrawData<Float>(18, true, [
+			#if (flixel >= "6.1.0")
 			// uv for triangle 1
-			uvRectangle.x,      uvRectangle.y,      1 / projectionZ[0], // top left
-			uvRectangle.width,  uvRectangle.y,      1 / projectionZ[1], // top right
-			uvRectangle.width,  uvRectangle.height, 1 / projectionZ[3], // bottom left
+			uvRectangle.left, uvRectangle.right,  1 / projectionZ[0], // top left
+			uvRectangle.top,  uvRectangle.right,  1 / projectionZ[1], // top right
+			uvRectangle.top,  uvRectangle.bottom, 1 / projectionZ[3], // bottom left
+			// uv for triangle 2
+			uvRectangle.left, uvRectangle.right,  1 / projectionZ[0], // top right
+			uvRectangle.left, uvRectangle.bottom, 1 / projectionZ[2], // top left
+			uvRectangle.top,  uvRectangle.bottom, 1 / projectionZ[3]  // bottom right
+			#else
+			// uv for triangle 1
+			uvRectangle.x,     uvRectangle.y,      1 / projectionZ[0], // top left
+			uvRectangle.width, uvRectangle.y,      1 / projectionZ[1], // top right
+			uvRectangle.width, uvRectangle.height, 1 / projectionZ[3], // bottom left
 			// uv for triangle 2
 			uvRectangle.x,      uvRectangle.y,      1 / projectionZ[0], // top right
 			uvRectangle.x,      uvRectangle.height, 1 / projectionZ[2], // top left
 			uvRectangle.width,  uvRectangle.height, 1 / projectionZ[3]  // bottom right
+			#end
 		]);
         // @formatter:on
 		final absGlow = output.visuals.glow * 255;
