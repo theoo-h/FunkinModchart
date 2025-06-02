@@ -4,7 +4,7 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": "always"
         }
-    }
+    },
     "haxe.configurations": [
 		{
 			"label": "windows",
