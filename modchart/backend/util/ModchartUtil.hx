@@ -24,7 +24,7 @@ using StringTools;
 		// 	case ANGLE_270 | ANGLE_NEG_90: 270;
 		// 	default: 0; // ANGLE_0d
 		// }
-		return cast spr.frame.angle; // We can just do this, prevents a deprecation warning too!
+		return cast spr.frame.angle; // We can just do this, prevents an unused case warning too!
 	}
 
 	@:pure @:noDebug
