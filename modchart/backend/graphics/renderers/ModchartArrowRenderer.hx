@@ -9,9 +9,6 @@ final helperVector = new Vector3();
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-#if (flixel < "6.1.0")
-import modchart.backend.util.ModchartUtil.FlxUVRect;
-#end
 final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 	inline private function getGraphicVertices(planeWidth:Float, planeHeight:Float, flipX:Bool, flipY:Bool) {
 		var x1 = flipX ? planeWidth : -planeWidth;
@@ -146,12 +143,9 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			planeVertices[4], planeVertices[5], // top left
 			planeVertices[6], planeVertices[7] // bottom right
 		]);
-		#if (flixel < "6.1.0")
-		final uvRectangle:FlxUVRect = cast arrow.frame.uv;
-		#else
 		final uvRectangle = arrow.frame.uv;
-		#end
 		var uvData = new DrawData<Float>(18, true, [
+			#if (flixel >= "6.1.0")
 			// uv for triangle 1
 			uvRectangle.left, uvRectangle.right,  1 / projectionZ[0], // top left
 			uvRectangle.top,  uvRectangle.right,  1 / projectionZ[1], // top right
@@ -160,6 +154,16 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			uvRectangle.left, uvRectangle.right,  1 / projectionZ[0], // top right
 			uvRectangle.left, uvRectangle.bottom, 1 / projectionZ[2], // top left
 			uvRectangle.top,  uvRectangle.bottom, 1 / projectionZ[3]  // bottom right
+			#else
+			// uv for triangle 1
+			uvRectangle.x,     uvRectangle.y,      1 / projectionZ[0], // top left
+			uvRectangle.width, uvRectangle.y,      1 / projectionZ[1], // top right
+			uvRectangle.width, uvRectangle.height, 1 / projectionZ[3], // bottom left
+			// uv for triangle 2
+			uvRectangle.x,      uvRectangle.y,      1 / projectionZ[0], // top right
+			uvRectangle.x,      uvRectangle.height, 1 / projectionZ[2], // top left
+			uvRectangle.width,  uvRectangle.height, 1 / projectionZ[3]  // bottom right
+			#end
 		]);
         // @formatter:on
 		final absGlow = output.visuals.glow * 255;

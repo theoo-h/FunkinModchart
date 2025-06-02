@@ -104,13 +104,17 @@ using StringTools;
 		else
 			uv = new DrawData<Float>(8 * subs, true, []);
 
-		#if (flixel < "6.1.0")
-		var frameUV:FlxUVRect = cast arrow.frame.uv;
-		#else
 		var frameUV = arrow.frame.uv;
-		#end
-		var frameWidth = frameUV.top - frameUV.left;
-		var frameHeight = frameUV.bottom - frameUV.right;
+
+		// i do not like this
+		// but i was suggested to do this instead by theo -swordcube
+		var left = #if (flixel >= "6.1.0") frameUV.left #else frameUV.x #end;
+		var right = #if (flixel >= "6.1.0") frameUV.right #else frameUV.y #end;
+		var top = #if (flixel >= "6.1.0") frameUV.top #else frameUV.width #end;
+		var bottom = #if (flixel >= "6.1.0") frameUV.bottom #else frameUV.height #end;
+
+		var frameWidth = top - left;
+		var frameHeight = bottom - right;
 
 		var subDivided = 1.0 / subs;
 
@@ -120,10 +124,10 @@ using StringTools;
 				var uvOffset = subDivided * curSub;
 				var subIndex = curSub * 8;
 
-				uv[subIndex] = uv[subIndex + 4] = frameUV.left;
-				uv[subIndex + 2] = uv[subIndex + 6] = frameUV.top;
-				uv[subIndex + 1] = uv[subIndex + 3] = frameUV.right + uvOffset * frameHeight;
-				uv[subIndex + 5] = uv[subIndex + 7] = frameUV.right + (uvOffset + subDivided) * frameHeight;
+				uv[subIndex] = uv[subIndex + 4] = left;
+				uv[subIndex + 2] = uv[subIndex + 6] = top;
+				uv[subIndex + 1] = uv[subIndex + 3] = right + uvOffset * frameHeight;
+				uv[subIndex + 5] = uv[subIndex + 7] = right + (uvOffset + subDivided) * frameHeight;
 			}
 			return uv;
 		}
@@ -132,8 +136,8 @@ using StringTools;
 		var cosA = ModchartUtil.cos(angleRad);
 		var sinA = ModchartUtil.sin(angleRad);
 
-		var uCenter = frameUV.left + frameWidth * .5;
-		var vCenter = frameUV.right + frameHeight * .5;
+		var uCenter = left + frameWidth * .5;
+		var vCenter = right + frameHeight * .5;
 
 		// my brain is not braining anymore
 		// i give up
@@ -143,10 +147,10 @@ using StringTools;
 
 			// uv coords before rotation
 			var uvCoords = [
-				[frameUV.left, frameUV.right + uvOffset * frameHeight], // tl
-				[frameUV.top, frameUV.right + uvOffset * frameHeight], // tr
-				[frameUV.left, frameUV.right + (uvOffset + subDivided) * frameHeight], // bl
-				[frameUV.top, frameUV.right + (uvOffset + subDivided) * frameHeight] // br
+				[left, right + uvOffset * frameHeight], // tl
+				[top, right + uvOffset * frameHeight], // tr
+				[left, right + (uvOffset + subDivided) * frameHeight], // bl
+				[top, right + (uvOffset + subDivided) * frameHeight] // br
 			];
 
 			// apply rotation
@@ -230,52 +234,3 @@ using StringTools;
 		];
 	}
 }
-
-#if (flixel < "6.1.0")
-/**
- * FlxRect, but instead of `x`, `y`, `width` and `height`, it takes a `left`, `right`, `top` and
- * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices
- */
-@:forward(put)
-abstract FlxUVRect(FlxRect) from FlxRect to flixel.util.FlxPool.IFlxPooled
-{
-	public var left(get, set):Float;
-	inline function get_left():Float { return this.x; }
-	inline function set_left(value):Float { return this.x = value; }
-	
-	/** Top */
-	public var right(get, set):Float;
-	inline function get_right():Float { return this.y; }
-	inline function set_right(value):Float { return this.y = value; }
-	
-	/** Right */
-	public var top(get, set):Float;
-	inline function get_top():Float { return this.width; }
-	inline function set_top(value):Float { return this.width = value; }
-	
-	/** Bottom */
-	public var bottom(get, set):Float;
-	inline function get_bottom():Float { return this.height; }
-	inline function set_bottom(value):Float { return this.height = value; }
-	
-	public inline function set(l, t, r, b)
-	{
-		this.set(l, t, r, b);
-	}
-	
-	public inline function copyTo(uv:FlxUVRect)
-	{
-		uv.set(left, top, right, bottom);
-	}
-	
-	public inline function copyFrom(uv:FlxUVRect)
-	{
-		set(uv.left, uv.top, uv.right, uv.bottom);
-	}
-	
-	public static function get(l = 0.0, t = 0.0, r = 0.0, b = 0.0)
-	{
-		return FlxRect.get(l, t, r, b);
-	}
-}
-#end
