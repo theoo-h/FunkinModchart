@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
+import flixel.math.FlxRect;
 import haxe.ds.Vector;
 import openfl.geom.Matrix3D;
 
