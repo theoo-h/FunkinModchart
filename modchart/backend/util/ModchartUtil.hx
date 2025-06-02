@@ -104,7 +104,7 @@ using StringTools;
 		else
 			uv = new DrawData<Float>(8 * subs, true, []);
 
-		#if (flixel < "6.0.0")
+		#if (flixel < "6.1.0")
 		var frameUV:FlxUVRect = cast arrow.frame.uv;
 		#else
 		var frameUV = arrow.frame.uv;
@@ -233,7 +233,7 @@ using StringTools;
 	}
 }
 
-#if (flixel < "6.0.0")
+#if (flixel < "6.1.0")
 /**
  * FlxRect, but instead of `x`, `y`, `width` and `height`, it takes a `left`, `right`, `top` and
  * `bottom`. This is for optimization reasons, to reduce arithmetic when drawing vertices

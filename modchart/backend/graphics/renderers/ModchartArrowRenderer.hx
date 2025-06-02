@@ -9,7 +9,7 @@ final helperVector = new Vector3();
 @:fileXml('tags="haxe,release"')
 @:noDebug
 #end
-#if (flixel < "6.0.0")
+#if (flixel < "6.1.0")
 import modchart.backend.util.ModchartUtil.FlxUVRect;
 #end
 final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
@@ -146,7 +146,7 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			planeVertices[4], planeVertices[5], // top left
 			planeVertices[6], planeVertices[7] // bottom right
 		]);
-		#if (flixel < "6.0.0")
+		#if (flixel < "6.1.0")
 		final uvRectangle:FlxUVRect = cast arrow.frame.uv;
 		#else
 		final uvRectangle = arrow.frame.uv;
