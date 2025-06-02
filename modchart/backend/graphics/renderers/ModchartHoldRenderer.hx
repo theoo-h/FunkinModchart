@@ -273,7 +273,7 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		newInstruction.item = item;
 		newInstruction.vertices = vertices;
 		newInstruction.indices = _indices;
-		newInstruction.uvt = ModchartUtil.getHoldUVT(item, HOLD_SUBDIVISIONS, isHoldEnd);
+		newInstruction.uvt = ModchartUtil.getHoldUVT(item, HOLD_SUBDIVISIONS);
 		newInstruction.colorData = transfTotal;
 		newInstruction.extra = [alphaTotal];
 
