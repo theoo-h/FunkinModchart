@@ -252,11 +252,14 @@ final class Manager extends FlxBasic {
 		});
 
 		drawQueue.sort((a, b) -> {
+			if (a == null || b == null)
+				return 0;
 			return FlxSort.byValues(FlxSort.DESCENDING, a.z, b.z);
 		});
 
 		for (item in drawQueue) {
-			item.callback();
+			if (item != null)
+				item.callback();
 		}
 	}
 
