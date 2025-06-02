@@ -94,7 +94,7 @@ using StringTools;
 		}
 	}
 
-	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int, isHoldEnd:Bool, ?vector:DrawData<Float>) {
+	inline static public function getHoldUVT(arrow:FlxSprite, subs:Int, ?vector:DrawData<Float>) {
 		var frameAngle = -ModchartUtil.getFrameAngle(arrow);
 
 		var uv:DrawData<Float> = null;
@@ -109,10 +109,8 @@ using StringTools;
 		#else
 		var frameUV = arrow.frame.uv;
 		#end
-		var bleedingFix = (!isHoldEnd) ? 0.001 : 0;
-
 		var frameWidth = frameUV.top - frameUV.left;
-		var frameHeight = Math.max((frameUV.bottom - frameUV.right) - (bleedingFix * 2), 0); // fix texture bleeding??
+		var frameHeight = frameUV.bottom - frameUV.right;
 
 		var subDivided = 1.0 / subs;
 
@@ -123,9 +121,9 @@ using StringTools;
 				var subIndex = curSub * 8;
 
 				uv[subIndex] = uv[subIndex + 4] = frameUV.left;
-				uv[subIndex + 2] = uv[subIndex + 6] = frameUV.top; // fix texture bleeding??
-				uv[subIndex + 1] = uv[subIndex + 3] = (frameUV.right + bleedingFix) + uvOffset * frameHeight;
-				uv[subIndex + 5] = uv[subIndex + 7] = (frameUV.right + bleedingFix) + (uvOffset + subDivided) * frameHeight;
+				uv[subIndex + 2] = uv[subIndex + 6] = frameUV.top;
+				uv[subIndex + 1] = uv[subIndex + 3] = frameUV.right + uvOffset * frameHeight;
+				uv[subIndex + 5] = uv[subIndex + 7] = frameUV.right + (uvOffset + subDivided) * frameHeight;
 			}
 			return uv;
 		}
@@ -159,8 +157,8 @@ using StringTools;
 				var uRot = u * cosA - v * sinA;
 				var vRot = u * sinA + v * cosA;
 
-				uv[subIndex + i * 2] = (uRot + uCenter) + bleedingFix; // fix texture bleeding??
-				uv[subIndex + i * 2 + 1] = (vRot + vCenter) + bleedingFix; // fix texture bleeding??
+				uv[subIndex + i * 2] = uRot + uCenter;
+				uv[subIndex + i * 2 + 1] = vRot + vCenter;
 			}
 		}
 
