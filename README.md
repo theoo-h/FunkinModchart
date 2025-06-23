@@ -74,6 +74,8 @@ also OBVIOUSLY has to be an flixel-based fnf engine
 
 ## Special Thanks
 
+**LJeno:** Fixes missing field.
+
 **lunarcleint:** Support, such a nice guy!
 
 **Tsaku:** Support, bug finder. (thanks !!!)
