@@ -19,7 +19,7 @@ At the bottom of where the haxelib section is, paste this code.
 <haxedef name="FM_ENGINE_VERSION" value="ENGINE_VERSION"/>
 
 <haxelib name="funkin-modchart" />
-<haxeflag name="--macro" value="modchart.core.macros.Macro.includeFiles()"/>
+<haxeflag name="--macro" value="modchart.backend.macros.Macro.includeFiles()"/>
 ```
 
 Fill in the definitions with your engine name and version using the [format](SUPPORT.md) mentioned.
@@ -85,6 +85,8 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 **4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impressive)
 
 ## Special Thanks
+
+**LJeno:** Fixes missing fields, readme.
 
 **lunarcleint:** Support, such a nice guy!
 
