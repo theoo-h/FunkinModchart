@@ -98,7 +98,7 @@ final class ModchartPerspective {
 			origin = new Vector3(FlxG.width * 0.5, FlxG.height * 0.5);
 		}
 
-		final translation = vector - origin;
+		var translation = vector - origin;
 
 		final projectedZ = __depthScale * Math.min(translation.z - 1, 0) + __depthOffset;
 		final projectedFov = (__tanHalfFov / projectedZ);
