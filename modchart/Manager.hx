@@ -3,6 +3,7 @@ package modchart;
 import flixel.FlxBasic;
 import flixel.tweens.FlxEase.EaseFunction;
 import flixel.util.FlxSort;
+import haxe.ds.StringMap;
 import haxe.ds.Vector;
 import modchart.backend.core.ArrowData;
 import modchart.backend.core.ModifierParameters;
@@ -13,6 +14,7 @@ import modchart.backend.util.ModchartUtil;
 import modchart.engine.modifiers.list.*;
 import modchart.events.*;
 import modchart.events.types.*;
+using StringTools;
 
 @:allow(modchart.backend.ModifierGroup)
 @:access(modchart.engine.PlayField)
@@ -48,6 +50,38 @@ final class Manager extends FlxBasic {
 
 		addPlayfield();
 	}
+
+	public function queueSet(step:Float, modName:String, percent:Float, player:Null<Int>) {
+		set(parseMod(modName), bfs(step), percent * 0.001, parsePlayer(player));
+	}
+
+	public function queueEase(step:Float, endStep:Float, modName:String, percent:Float, easingStyle:String, player:Null<Int>) {
+		ease(parseMod(modName), bfs(step), bfs(endStep - step), percent * 0.01, cast Reflect.field(flixel.tweens.FlxEase, easingStyle),
+			parsePlayer(player));
+	}
+
+	public function queueEaseL(step:Float, length:Float, modName:String, percent:Float, easingStyle:String, player:Null<Int>) {
+		ease(parseMod(modName), bfs(step), bfs(length), percent * 0.01, cast Reflect.field(flixel.tweens.FlxEase, easingStyle), parsePlayer(player));
+	}
+
+	private function parsePlayer(player:Null<Int>):Int {
+		if (player == null)
+			return -1;
+
+		return 1 - player;
+	}
+
+	private final parseKeys:StringMap<String> = ['localrotate' => 'fieldrotate', 'boost' => 'accelerate'];
+
+	private function parseMod(name:String) {
+		var vname = name.toLowerCase();
+		for (k => v in parseKeys) {
+			vname.replace(k, v);
+		}
+		return vname;
+	}
+
+	private final bfs:Float->Float = (s) -> Adapter.instance.getBeatFromStep(s);
 
 	/**
 	 * Internal helper function to apply a function to each playfield.

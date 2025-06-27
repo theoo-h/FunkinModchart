@@ -8,7 +8,6 @@ import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import haxe.ds.Vector;
 import openfl.geom.Matrix3D;
-
 using StringTools;
 
 #if !openfl_debug
