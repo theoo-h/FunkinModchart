@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import funkin.backend.system.Conductor;
 import funkin.game.Note;
 import funkin.game.PlayState;
+import funkin.game.Splash;
 import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.backend.standalone.IAdapter;
@@ -75,6 +76,9 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.ID;
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strumID;
 		}
 		return 0;
 	}
@@ -86,8 +90,10 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('player');
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strum.extra.get('player');
 		}
-
 		return 0;
 	}
 
@@ -159,12 +165,12 @@ class Codename implements IAdapter {
 			if (!sl.visible)
 				continue;
 
-			// this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
+			// this is somehow more optimized than how i used to do it
 			pspr[i] = [];
 			pspr[i][0] = cast sl.members.copy();
 			pspr[i][1] = [];
 			pspr[i][2] = [];
-
+			pspr[i][3] = [];
 			var st = 0;
 			var nt = 0;
 			sl.notes.forEachAlive((spr) -> {
@@ -178,6 +184,8 @@ class Codename implements IAdapter {
 			var ni = 0;
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
+
+		for (grp in PlayState.instance.splashHandler.grpMap) grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
 
 		return pspr;
 	}
