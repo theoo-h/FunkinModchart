@@ -185,7 +185,7 @@ class Codename implements IAdapter {
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
 
-		for (grp in PlayState.instance.splashHandler.grpMap) grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
+		for (grp in PlayState.instance.splashHandler.grpMap) grp.forEachAlive((spr) -> if (spr.strum != null) pspr[spr.strum.extra.get('player')][3].push(spr));
 
 		return pspr;
 	}
