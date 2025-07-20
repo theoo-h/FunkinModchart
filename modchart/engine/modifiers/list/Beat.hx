@@ -10,52 +10,33 @@ class Beat extends Modifier {
 		super(pf);
 	}
 
-	static var fAccelTime = 0.2;
-	static var fTotalTime = 0.5;
-
-	@:dox(hide)
-	@:noCompletion private inline function beatMath(params:ModifierParameters, offset:Float, speed:Float, mult:Float):Float {
-		var curBeat = speed * (params.curBeat + offset) + fAccelTime;
-
-		if (curBeat < 0)
-			return 0;
-
-		curBeat = (curBeat % 1 + 1) % 1;
-
-		if (curBeat >= fTotalTime)
-			return 0;
-
-		var fAmount = 0.0;
-		if (curBeat < fAccelTime) {
-			var v = curBeat / fAccelTime;
-			fAmount = v * v;
-		} else {
-			var v = (fTotalTime - curBeat) / (fTotalTime - fAccelTime);
-			fAmount = 1 - (1 - v) * (1 - v);
-		}
-
-		if (Math.floor(curBeat) % 2 != 0)
-			fAmount = -fAmount;
-
-		var fShift = 20 * fAmount * sin((params.distance * 0.01 * mult) + (Math.PI * .5));
-		return fShift;
-	}
-
 	@:dox(hide)
 	@:noCompletion private inline function computeBeat(curPos:Vector3, params:ModifierParameters, axis:String, realAxis:String) {
-		final receptorName = Std.string(params.lane);
-		final player = params.player;
+		final amount = getPercent('beat' + axis, player) + getPercent('beat' + axis + Std.string(params.lane), params.player);
+		if (amount == 0) return curPos;
 
-		final amount = getPercent('beat' + axis, player) + getPercent('beat' + axis + receptorName, player);
+		final mult = getPercent('beat' + axis + 'Mult', player),
+			offset = getPercent('beat' + axis + 'Offset', player),
+			period = getPercent('beat' + axis + 'Period', player);
 
-		if (amount == 0)
-			return curPos;
+		var beat = (params.curBeat + 0.2 + offset) * (mult + 1);
+		if (beat == 0) return curPos;
 
-		final offset = getPercent('beat' + axis + 'Offset', player);
-		final speed = getPercent('beat' + axis + 'Speed', player);
-		final mult = getPercent('beat' + axis + 'Mult', player);
+		var isEven = beat - 2 * Math.floor(beat / 2) != 0;
+		if ((beat -= Math.floor(beat)) > 0.5) return curPos;
 
-		var shift = beatMath(params, offset, 1 + speed, 1 + mult);
+		var shift:Float;
+		if (beat < 0.2) {
+			shift = beat / 5.0;
+			shift *= shift;
+		}
+		else {
+			shift = 3.33333333 * (b - 0.2);
+			shift = 1 - shift * shift;
+		}
+		if (isEven) shift *= -1;
+
+		shift *= 20 * sin((params.distance * 0.01 * (period + 1)) + (Math.PI * 0.5));
 
 		switch (realAxis) {
 			case 'x':
