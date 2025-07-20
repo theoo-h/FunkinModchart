@@ -10,33 +10,36 @@ class Beat extends Modifier {
 		super(pf);
 	}
 
+	static var accelTime = 0.2;
+	static var totalTime = 0.5;
+
 	@:dox(hide)
 	@:noCompletion private inline function computeBeat(curPos:Vector3, params:ModifierParameters, axis:String, realAxis:String) {
-		final amount = getPercent('beat' + axis, player) + getPercent('beat' + axis + Std.string(params.lane), params.player);
+		final amount = getPercent('beat' + axis, params.player) + getPercent('beat' + axis + params.lane, params.player);
 		if (amount == 0) return curPos;
 
-		final mult = getPercent('beat' + axis + 'Mult', player),
-			offset = getPercent('beat' + axis + 'Offset', player),
-			period = getPercent('beat' + axis + 'Period', player);
+		final mult = getPercent('beat' + axis + 'Mult', params.player),
+			offset = getPercent('beat' + axis + 'Offset', params.player),
+			period = getPercent('beat' + axis + 'Period', params.player);
 
-		var beat = (params.curBeat + 0.2 + offset) * (mult + 1);
-		if (beat == 0) return curPos;
+		var beat = (params.curBeat + accelTime + offset) * (mult + 1);
+		if (beat < 0) return curPos;
 
-		var isEven = beat - 2 * Math.floor(beat / 2) != 0;
-		if ((beat -= Math.floor(beat)) > 0.5) return curPos;
+		var isEven = beat - 2 * Math.floor(beat * 0.5) >= 1;
+		if ((beat -= Math.floor(beat)) > totalTime) return curPos;
 
 		var shift:Float;
-		if (beat < 0.2) {
-			shift = beat / 5.0;
+		if (beat < accelTime) {
+			shift = beat * (1 / accelTime);
 			shift *= shift;
 		}
 		else {
-			shift = 3.33333333 * (b - 0.2);
+			shift = 1 - (beat - totalTime) / (accelTime - totalTime);
 			shift = 1 - shift * shift;
 		}
 		if (isEven) shift *= -1;
 
-		shift *= 20 * sin((params.distance * 0.01 * (period + 1)) + (Math.PI * 0.5));
+		shift *= 20 * sin((params.distance * 0.01 * (period + 1)) + (Math.PI * 0.5)) * amount;
 
 		switch (realAxis) {
 			case 'x':
