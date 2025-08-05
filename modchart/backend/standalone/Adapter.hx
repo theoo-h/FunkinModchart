@@ -1,7 +1,5 @@
 package modchart.backend.standalone;
 
-package modchart.standalone;
-
 import haxe.macro.Compiler;
 
 class Adapter {
@@ -14,10 +12,9 @@ class Adapter {
 
 		final possibleClientName = ENGINE_NAME.substr(0, 1).toUpperCase() + ENGINE_NAME.substr(1).toLowerCase();
 		final adapter = Type.createInstance(Type.resolveClass('modchart.backend.standalone.adapters.${ENGINE_NAME.toLowerCase()}.' + possibleClientName), []);
-		final adapter = Type.createInstance(Type.resolveClass('modchart.standalone.adapters.${ENGINE_NAME.toLowerCase()}.${possibleClientName}'), []);
 
 		#if FM_VERBOSE
-		trace('[FunkinModchart Verbose] Finding possible adapter from "modchart.standalone.adapters.${ENGINE_NAME.toLowerCase()}.${possibleClientName}"');
+		trace('[FunkinModchart Verbose] Finding possible adapter from "modchart.backend.standalone.adapters.${ENGINE_NAME.toLowerCase()}.${possibleClientName}"');
 		#end
 
 		if (adapter == null)

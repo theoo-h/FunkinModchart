@@ -13,7 +13,6 @@ import modchart.backend.standalone.IAdapter;
 /**
  * Codename Adapter for codename version before FunkinModchart being added
  * This doesn't contain:
- * Splashes
  * Hold parent time (used to rotate the hold around the parent note, for long/short holds, etc), (should i add it using a work around??)
  * Hold subdivision option
  */
@@ -103,8 +102,7 @@ class Codename implements IAdapter {
 	public function getKeyCount(?player:Int = 0):Int {
 		return PlayState.instance != null
 			&& PlayState.instance.strumLines != null
-			&& PlayState.instance.strumLines.members[player] != null ?
-			PlayState.instance.strumLines.members[player].members.length : 4;
+			&& PlayState.instance.strumLines.members[player] != null ? PlayState.instance.strumLines.members[player].members.length : 4;
 	}
 
 	public function getPlayerCount():Int {
@@ -175,7 +173,8 @@ class Codename implements IAdapter {
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
 
-		for (grp in PlayState.instance.splashHandler.grpMap) grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
+		for (grp in PlayState.instance.splashHandler.grpMap)
+			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
 
 		return pspr;
 	}
