@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import funkin.backend.system.Conductor;
 import funkin.game.Note;
 import funkin.game.PlayState;
+import funkin.game.Splash;
 import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.backend.standalone.IAdapter;
@@ -17,13 +18,9 @@ import modchart.backend.standalone.IAdapter;
  * Hold subdivision option
  */
 class Codename implements IAdapter {
-	private var __fCrochet:Float = 0;
-
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		__fCrochet = Conductor.crochet / Conductor.stepsPerBeat;
-
 		for (strumLine in PlayState.instance.strumLines.members) {
 			strumLine.forEach(strum -> {
 				strum.extra.set('player', strumLine.ID);
@@ -31,26 +28,21 @@ class Codename implements IAdapter {
 		}
 	}
 
-	public function isTapNote(sprite:FlxSprite) {
+	public function isTapNote(sprite:FlxSprite)
 		return sprite is Note;
-	}
 
 	// Song related
-	public function getSongPosition():Float {
+	public function getSongPosition():Float
 		return Conductor.songPosition;
-	}
 
-	public function getCurrentBeat():Float {
+	public function getCurrentBeat():Float
 		return Conductor.curBeatFloat;
-	}
 
-	public function getCurrentCrochet():Float {
+	public function getCurrentCrochet():Float
 		return Conductor.crochet;
-	}
 
-	public function getBeatFromStep(step:Float):Float {
-		return step * Conductor.stepsPerBeat;
-	}
+	public function getBeatFromStep(step:Float):Float
+		return Conductor.getTimeInBeats(Conductor.getStepsInTime(step, Conductor.curChangeIndex), Conductor.curChangeIndex);
 
 	public function arrowHit(arrow:FlxSprite) {
 		if (arrow is Note) {
@@ -75,6 +67,9 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.ID;
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strumID;
 		}
 		return 0;
 	}
@@ -86,13 +81,18 @@ class Codename implements IAdapter {
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
 			return strum.extra.get('player');
+		} else if (arrow is Splash) {
+			final splash:Splash = cast arrow;
+			return splash.strum.extra.get('player');
 		}
 
 		return 0;
 	}
 
-	public function getHoldLength(item:FlxSprite):Float
-		return __fCrochet;
+	public function getHoldLength(item:FlxSprite):Float {
+		final note:Note = cast item;
+		return note.sustainLength;
+	}
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
@@ -103,9 +103,8 @@ class Codename implements IAdapter {
 	public function getKeyCount(?player:Int = 0):Int {
 		return PlayState.instance != null
 			&& PlayState.instance.strumLines != null
-			&& PlayState.instance.strumLines.members != null
-			&& PlayState.instance.strumLines.members[player] != null
-			&& PlayState.instance.strumLines.members[player].members != null ? PlayState.instance.strumLines.members[player].members.length : 4;
+			&& PlayState.instance.strumLines.members[player] != null ?
+			PlayState.instance.strumLines.members[player].members.length : 4;
 	}
 
 	public function getPlayerCount():Int {
@@ -121,22 +120,19 @@ class Codename implements IAdapter {
 		return 0;
 	}
 
-	public function getHoldSubdivisions(hold:FlxSprite):Int
-		return 4;
-
-	public function getDownscroll():Bool {
-		return Options.downscroll;
+	public function getHoldSubdivisions(hold:FlxSprite):Int {
+		final val = Options.modchartingHoldSubdivisions;
+		return val < 1 ? 1 : val;
 	}
 
-	public function getDefaultReceptorX(lane:Int, player:Int):Float {
-		@:privateAccess
+	public function getDownscroll():Bool
+		return PlayState.instance.downscroll;
+
+	public function getDefaultReceptorX(lane:Int, player:Int):Float
 		return PlayState.instance.strumLines.members[player].members[lane].x;
-	}
 
-	public function getDefaultReceptorY(lane:Int, player:Int):Float {
-		@:privateAccess
+	public function getDefaultReceptorY(lane:Int, player:Int):Float
 		return PlayState.instance.strumLines.members[player].members[lane].y;
-	}
 
 	public function getArrowCamera():Array<FlxCamera>
 		return [PlayState.instance.camHUD];
@@ -159,11 +155,11 @@ class Codename implements IAdapter {
 			if (!sl.visible)
 				continue;
 
-			// this is somehow more optimized than how i used to do it (thanks neeo for the code!!)
 			pspr[i] = [];
 			pspr[i][0] = cast sl.members.copy();
 			pspr[i][1] = [];
 			pspr[i][2] = [];
+			pspr[i][3] = [];
 
 			var st = 0;
 			var nt = 0;
@@ -178,6 +174,8 @@ class Codename implements IAdapter {
 			var ni = 0;
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
+
+		for (grp in PlayState.instance.splashHandler.grpMap) grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
 
 		return pspr;
 	}
