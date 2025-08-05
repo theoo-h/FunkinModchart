@@ -1,138 +1,136 @@
-## 8/10/21
-- Hold note quad rework (from Schmovin')
+## August 10, 2021
+- Hold note quad rework (from Schmovin’)
 - Added modifiers (PathModifier, Bumpy, Infinite)
 - Fixed note positions
-- Improved some code
-- Fixed hold size (+= 6)
+- Improved code structure
+- Fixed hold size (`+= 6`)
 
-## 8/10/21 (2)
+## August 10, 2021 (2)
 - Hold scale fix
 
-## 12/10/24
-- Hold graphic subdivition system (from Schmovin')
-	- A subdivision system was already in, but hold notes were literally splited, causing you to gain or lose more heatlh (plus it caused more lag, as well as causing visual issues with texture)
-	- Also because of the new subdivision system in hold notes, now to implement this library in cne it is no longer necessary to change anything within the source code.
-- Fixed hold notes position and scale when scaling by Z or Zoom.
-- Code improvements
-- Optimization.
+## October 12, 2024
+- Hold graphic subdivision system (from Schmovin’)
+  - A subdivision system was already in, but hold notes were literally split, causing gameplay imbalance and visual issues
+  - New system reduces lag and avoids health drain/exploit issues
+  - No need to modify source code when using in CNE
+- Fixed hold note position and scale when using zoom
+- Code improvements and optimizations
 
-## 12/10/24 (2)
-- Schmovin Drunk & Tipsy Math (false paradise recreation upcoming >:3)
+## October 12, 2024 (2)
+- Schmovin Drunk & Tipsy Math (False Paradise recreation WIP)
 
-## 12/10/24 (3)
-- Fix broken hold spacing when bpm changes
+## October 12, 2024 (3)
+- Fixed hold spacing bug when BPM changes
 
-# 15/10/24
-- Custom mods examples
-- Modchart Examples
-- More stuff im forgeting
-- False paradise stuff... modchart still wip !! some modifiers are not working, dont play it yet
+## October 15, 2024
+- Custom mod examples
+- Modchart examples
+- False Paradise content (modchart still WIP, not fully functional)
+- Other minor additions
 
-# 24/10/24
-- Improved Infinite Modifier
-- Optimization and code improvement
-- Bounce Mod
+## October 24, 2024
+- Improved Infinite modifier
+- General optimization and code improvements
+- Added Bounce mod
 
-# 31/10/24
-- Changed List to Array in ModchartGroup (for better performance)
-- Added arrow paths (need to enable by Manager.renderArrowPaths = true)
-- Arrow path Sub mods
+## October 31, 2024
+- Switched `List` to `Array` in `ModchartGroup` for performance
+- Added arrow paths (toggle via `Manager.renderArrowPaths = true`)
+- Submods for arrow paths:
   - Alpha
   - Thickness
-  - Scale (Length / Limit)
+  - Scale (length/limit)
 
-# 3/11/24
-- Fixed critical memory leak in the arrow path renderer (it went from 70MB to more than 4GB in a very short time).
-- Optimized a bit the arrow path renderer.
+## November 3, 2024
+- Fixed critical memory leak in arrow path renderer (from 70MB to 4GB+)
+- Renderer optimization
 - Added X mod
 
-# 5/11/24
-- New Optimized Path Manager written by Me
-- Small code improvements
+## November 5, 2024
+- Rewrote Path Manager (optimized version)
+- Minor code improvements
 
-# 06/12/24
-- 3D Rotation for regular notes (also holds)
-- AngleX, AngleY, AngleZ now are visuals components.
-- Custom 3D Camera (Matrix3D)
+## December 6, 2024
+- 3D rotation for regular notes (and hold notes)
+- `AngleX`, `AngleY`, `AngleZ` now used as visual components
+- Custom 3D camera using `Matrix3D`
 
-# 08/12/24
-- Skew Mods
-- Stealth mods (alpha, glows) now are smoother on holds (depending of your hold subdivition).
+## December 8, 2024
+- Added Skew mods
+- Improved Stealth mods (glow/alpha) on hold notes (smoother with subdivision)
 
-# 17/12/24
-- Centered2 (also known as centered path)
-- Improvements
+## December 17, 2024
+- Added `Centered2` path (centered path mod)
+- General improvements
 
-# 31/12/24
-- Tornado Mod (from OpenITG)
-- Hold Rotation can be cancelled (via rotateHoldX, rotateHoldY, rotateHoldZ, can be 0-1)
-- Better Readme
-- Improvements
+## December 31, 2024
+- Added Tornado mod (ported from OpenITG)
+- Hold rotation now can be toggled via `rotateHoldX/Y/Z` (0 to 1)
+- Improved README
+- Further improvements
 
-# 4/01/25
-- Moved renderers from Manager.hx to separate classes (ModchartGraphics.hx)
-- Cleaned and improved a lot of code
+## January 4, 2025
+- Renderer classes moved from `Manager.hx` to `ModchartGraphics.hx`
+- Major code cleanup and structural improvements
 
-# 06/01/25 (penultimate commit)
-- Multiple Playfield support (each one can have his own modifiers and percents)
-- Plugin-based Standalone System (TESTING PHASE, NOT FINISHED)
-- No more rewriting of any flixel class, now all code is added using Macros.
+## January 6, 2025
+- Multiple playfield support (each with own modifiers and percents)
+- Plugin-based standalone system (testing phase)
+- Removed rewriting of Flixel classes (now uses macros)
 
-# 06/01/25 #2
+## January 6, 2025 (2)
 - Fixed arrow animation issue
 
--- Many changes were not indexed here --
+(*Many changes were not indexed between commits*)
 
-# 11/02/2025
-- New 3D Camera (using View Matrix)
-- Fix Projection on Arrow rotation. (Perspective correction)
-- Switching from Euler Angles to Quanterions.
-- Fix typos and refactoring.
-- Huge optimizations.
+## February 11, 2025
+- New 3D camera using View Matrix
+- Fixed projection issues with arrow rotation (perspective correction)
+- Switched from Euler angles to Quaternions
+- Fixes and refactors
+- Major optimizations
 
-# 12/02/25
-- Fixed 3D Camera Offsets (was breaking some stuff)
-- Optimized `ModifierGroup` percent management (now uses `haxe.ds.Vector` instead of `IntMap`)
-- Optimized a lot of stuff (added preallocation on most stuff possible)
-- Fixed `Rotate` (base) modifier (the rotation origin was 'wrong')
-- Fixed a oopsie i did (X Rotation was not applied cus a mistake i did lol)
-- Addition on `Codename` adapter: Now it read the strum real position (so u can position them without using modchart things)
+## February 12, 2025
+- Fixed 3D camera offsets (was breaking visuals)
+- Optimized `ModifierGroup` percent handling (`Vector` instead of `IntMap`)
+- General prealloc optimizations
+- Fixed `Rotate` base modifier (wrong rotation origin)
+- Fixed missing X rotation
+- Codename adapter now reads real strum position (no modchart offset needed)
 
-# 13/02/25
-- Added properly support for Sprite Sheet Packed (i just added frame angles lol)
+## February 13, 2025
+- Proper support for Sprite Sheet Packed (angle support)
 - New Adapter: FPS Plus
 
-# 18/08/25
-- Tons of optimization and code improvements
-- Added longHolds modifier (nneds fix)
-- Z-Sorting was Fixed
+## February 19, 2025
+- Re-added Scripted Modifiers system
 
-# 18/08/25 #2
-- Fix receptor, arrow, hold draw order.
+## March 3, 2025
+- Fixed `longHolds` modifier visuals
+- Added Hold Rotation mods (rotation based on parent note position)
+- Added `DizzyHolds` modifier
+- Expanded `Config.hx` customization options (WIP)
 
-# 19/02/25
-- Scripted Modifier (again)
+## March 10, 2025
+- New modifier percent system
+- General optimizations
+- WIP cache system (later discarded)
 
-# 3/03/25
-- Fixed longHolds modifier, now it looks good.
-- Added Hold Rotation Mods (Rotation with the parent note position as origin)
-- DizzyHolds modifier was added.
-- Added more customizable stuff on Config.hx (not everything works for now)
+## March 10, 2025 (2)
+- Started documentation (WIP)
+- Renamed `ScriptedModifier` to `DynamicModifier`
+- Compatibility with Flixel 5.1 and below (no color transform)
+- Fixes for Psych Engine 0.6 support
 
-# 10/03/25
-- New Modififier percents management system.
-- Optimizations.
-- WIP Cache System (Discarted for now)
+## March 31, 2025
+- Major code cleanup
+- Reorganized source files
+- Massive optimization pass
 
-# 10/03/25 (#2)
-- WIP Documentation
-- ScriptedModifier -> DynamicModifier
-- Support for Flixel 5.1 and below (with no color transform)'
-- Fixes for Psych 0.6 support
-
-# 31/03/25
-- Code Cleanup.
-- Source organization.
-- A lot of optimizations.
-
-**NOTE**: Since we changed the source organization, the new adapter path is `modchart.backend.standalone` instead of `modchart.core.standalone`
+## August 4, 2025
+- Flixel 6 compatibility ([#18](https://github.com/TheoDevelops/FunkinModchart/pull/18))
+- Codename adapter enhancement ([#26](https://github.com/TheoDevelops/FunkinModchart/pull/26))
+- New arrow path renderer (more efficient)
+- Rewritten event manager for better performance
+- `Add` event works correctly now
+- Multiple optimizations and enhancements
