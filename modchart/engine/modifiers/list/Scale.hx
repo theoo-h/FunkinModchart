@@ -20,6 +20,7 @@ class Scale extends Modifier {
 		var scale = 1.;
 		// Scale
 		scale *= getPercent('scale' + axis, player) + getPercent('scale' + axis + receptorName, player);
+		scale *= 1 - (getPercent('tiny' + axis, player) + getPercent('tiny' + axis + receptorName, player)) * 0.5;
 
 		switch (realAxis) {
 			case 'x':
@@ -40,14 +41,8 @@ class Scale extends Modifier {
 		applyScale(data, params, 'x', 'x');
 		applyScale(data, params, 'y', 'y');
 
-		var tinyAmount = getPercent('tiny', player) + getPercent('tiny' + receptorName, player);
-
-		// NotITG Scale (aka Tiny)
-		if (tinyAmount != 0)
-			tinyAmount = Math.pow(0.5, tinyAmount);
-
-		data.scaleX *= 1 + tinyAmount;
-		data.scaleY *= 1 + tinyAmount;
+		data.scaleX *= 1;
+		data.scaleY *= 1;
 
 		return data;
 	}

@@ -4,54 +4,33 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxEase.EaseFunction;
 import flixel.tweens.FlxEase;
 
-typedef AddData = {
-	var startBeat:Float;
-	var endBeat:Float;
+class AddEvent extends EaseEvent {
+	public var addAmount:Float = 0.;
 
-	var beatLength:Float;
+	public function new(mod:String, beat:Float, len:Float, addition:Float, ease:EaseFunction, player:Int, parent:EventManager) {
+		super(mod, beat, len, addAmount = addition, ease, player, parent);
 
-	var ease:EaseFunction;
-}
-
-class AddEvent extends Event {
-	public var data:AddData;
-
-	public function new(mod:String, beat:Float, len:Float, target:Float, ease:EaseFunction, player:Int, parent:EventManager) {
-		this.name = mod;
-		this.player = player;
-
-		this.data = {
-			startBeat: beat,
-			endBeat: beat + len,
-			beatLength: len,
-			ease: ease != null ? ease : FlxEase.linear
-		};
-
-		this.target = target;
-
-		super(beat, (_) -> {}, parent, true);
+		type = ADD;
 	}
-
-	var additionPerc:Null<Float> = null;
 
 	override function update(curBeat:Float) {
 		if (fired)
 			return;
 
-		if (curBeat < data.endBeat) {
-			if (additionPerc == null)
-				additionPerc = getModPercent(name, player);
+		if (curBeat < endBeat) {
+			if (entryPerc == null)
+				entryPerc = ModchartUtil.findEntryFrom(this);
 
-			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
+			var progress = (curBeat - startBeat) / (endBeat - startBeat);
 			// maybe we should make it use bound?
-			var out = FlxMath.lerp(additionPerc, additionPerc + target, data.ease(progress)); // it "adds" value to the perc instead of rewrite it
+			var out = FlxMath.lerp(entryPerc, entryPerc + addAmount, ease(progress));
 			setModPercent(name, out, player);
 			fired = false;
-		} else if (curBeat >= data.endBeat) {
+		} else if (curBeat >= endBeat) {
 			fired = true;
 
 			// we're using the ease function bc it may dont return 1
-			setModPercent(name, data.ease(1) * (additionPerc + target), player);
+			setModPercent(name, entryPerc + addAmount, player);
 		}
 	}
 }

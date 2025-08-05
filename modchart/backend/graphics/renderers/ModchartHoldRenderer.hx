@@ -5,7 +5,8 @@ typedef HoldSegmentOutput = {
 	left:Vector3,
 	right:Vector3,
 	visuals:VisualParameters,
-	depth:Float
+	depth:Float,
+	clipped:Bool
 }
 
 @:publicFields
@@ -52,18 +53,21 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	 * @see https://en.wikipedia.org/wiki/Unit_circle
 	 */
 	@:noCompletion
-	inline private function getHoldSegment(hold:FlxSprite, basePos:Vector3, params:ArrowData):HoldSegmentOutput {
+	inline private function getHoldSegment(hold:FlxSprite, basePos:Vector3, params:ArrowData, doClip:Bool = true):HoldSegmentOutput {
 		@:privateAccess
 		var holdTime = params.hitTime;
 		var parentTime = Adapter.instance.getHoldParentTime(hold);
+		var clipped = false;
 
 		var holdDistance = params.distance;
 		var parentDistance = Math.max(0, parentTime - Adapter.instance.getSongPosition());
 
 		params.hitTime = FlxMath.lerp(parentTime, holdTime, __long);
 		params.distance = FlxMath.lerp(parentDistance, holdDistance, __long);
-		if (params.hitten && params.distance < 0)
+		if (doClip && params.hitten && params.distance < 0) {
 			params.distance = 0;
+			clipped = true;
+		}
 
 		final size = hold.frame.frame.width * hold.scale.x * .5;
 
@@ -132,13 +136,12 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			left: quad0,
 			right: quad1,
 			visuals: origin.visuals,
-			depth: depth
+			depth: depth,
+			clipped: clipped
 		};
 	}
 
 	private var __long:Float = 0.0;
-	private var __straightAmount:Float = 0.0;
-	private var __calculatingSegments:Bool = false;
 	private var __rotateX:Float = 0;
 	private var __rotateY:Float = 0;
 	private var __rotateZ:Float = 0;
@@ -163,6 +166,16 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			_indices[indexCount + 5] = vertexPosition + 3;
 		}
 	}
+
+	var __lastLong:Float = 0;
+	var __lastC2:Float = 0;
+	var __lastDizzy:Float = 0;
+
+	var __lastRX:Float = 0;
+	var __lastRY:Float = 0;
+	var __lastRZ:Float = 0;
+
+	var __lastPlayer:Int = 0;
 
 	override public function prepare(item:FlxSprite):Void {
 		if (item.alpha <= 0)
@@ -198,14 +211,16 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		var alphaTotal:Float = 0.;
 
-		// refresh global mods percents
-		__long = instance.getPercent('longHolds', player) - instance.getPercent('shortHolds', player) + 1;
-		__centered2 = instance.getPercent('centered2', player);
-		__dizzy = instance.getPercent('dizzyHolds', player);
+		final canUseLast = __lastPlayer == player;
 
-		__rotateX = instance.getPercent('holdRotateX', player);
-		__rotateY = instance.getPercent('holdRotateY', player);
-		__rotateZ = instance.getPercent('holdRotateZ', player);
+		// refresh global mods percents
+		__long = canUseLast ? __lastLong : (__lastLong = instance.getPercent('longHolds', player) - instance.getPercent('shortHolds', player) + 1);
+		__centered2 = canUseLast ? __lastC2 : (__lastC2 = instance.getPercent('centered2', player));
+		__dizzy = canUseLast ? __lastDizzy : (__lastDizzy = instance.getPercent('dizzyHolds', player));
+
+		__rotateX = canUseLast ? __lastRX : (__lastRX = instance.getPercent('holdRotateX', player));
+		__rotateY = canUseLast ? __lastRY : (__lastRY = instance.getPercent('holdRotateY', player));
+		__rotateZ = canUseLast ? __lastRZ : (__lastRZ = instance.getPercent('holdRotateZ', player));
 
 		var parentTime = Adapter.instance.getHoldParentTime(item);
 		var parentData:ArrowData = {
@@ -243,11 +258,23 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 				item._z = out1.depth;
 
 				if (isHoldEnd && Config.PREVENT_SCALED_HOLD_END) {
-					timeScale = (holdHeight / HOLD_SUBDIVISIONS) / Math.max(0, (out2.origin - out1.origin).length);
-					out2 = getHoldSegment(item, basePos, (lastData = getArrowParams(item, holdTimeInterval * timeScale)));
+					if (out1.clipped) {
+						final rawStart = getHoldSegment(item, basePos, getArrowParams(item, holdTimeProgress), false);
+						final rawEnd = out2.clipped ? getHoldSegment(item, basePos, getArrowParams(item, holdTimeProgress + holdTimeInterval), false) : out2;
+
+						final rawLength = (rawEnd.origin - rawStart.origin).length;
+						if (rawLength > 0) {
+							timeScale = (holdHeight / HOLD_SUBDIVISIONS) / rawLength;
+							out2 = getHoldSegment(item, basePos, (lastData = getArrowParams(item, holdTimeInterval * timeScale)));
+						}
+					} else {
+						timeScale = (holdHeight / HOLD_SUBDIVISIONS) / Math.max(0, (out2.origin - out1.origin).length);
+						out2 = getHoldSegment(item, basePos, (lastData = getArrowParams(item, holdTimeInterval * timeScale)));
+					}
 				}
 			}
 
+			__lastPlayer = player;
 			lastSegment = out2;
 
 			alphaTotal = alphaTotal + out1.visuals.alpha;
@@ -310,7 +337,7 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 					t.alphaMultiplier *= camera.alpha;
 
 			var item = camera.startTrianglesBatch(item.graphic, item.antialiasing, true, item.blend, true, item.shader);
-			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, new openfl.Vector<Int>(), null, camera._bounds, cTransforms);
+			item.addGradientTriangles(instruction.vertices, instruction.indices, instruction.uvt, null, camera._bounds, cTransforms);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package modchart.engine.events;
 
 import haxe.ds.StringMap;
+import haxe.ds.Vector;
 import modchart.backend.util.ModchartUtil;
 import modchart.engine.PlayField;
 import modchart.events.types.*;
@@ -11,8 +12,9 @@ import modchart.events.types.*;
 #end
 @:allow(modchart.engine.events.Event)
 class EventManager {
-	private var table:StringMap<Array<Array<Event>>> = new StringMap();
-	private var eventList:Array<Event> = [];
+	private var table:StringMap<Array<Vector<Event>>> = new StringMap();
+	private var eventList:Vector<Event> = new Vector<Event>(256);
+	private var eventCount:Int = 0;
 
 	private var pf:PlayField;
 
@@ -26,62 +28,77 @@ class EventManager {
 			var player = event.player;
 
 			var entry = table.get(lwr);
-			if (entry == null)
-				table.set(lwr, entry = []);
-			if (entry[player] == null)
-				entry[player] = [];
-
-			entry[player].push(event);
+			if (entry == null) {
+				entry = [];
+				table.set(lwr, entry);
+			}
+			if (entry[player] == null) {
+				entry[player] = new Vector<Event>(256);
+				event.prev = null;
+			} else {
+				var len = getVectorLength(entry[player]);
+				if (len > 0)
+					event.prev = entry[player][len - 1];
+			}
+			insertSorted(entry[player], event);
 		}
 
-		eventList.push(event);
-
-		sortEvents();
+		insertSorted(eventList, event, true);
+		eventCount++;
 	}
 
 	public function update(curBeat:Float) {
-		for (ev in eventList) {
-			ev.active = false;
-
-			if (ev.beat >= curBeat)
-				continue;
-
+		for (i in 0...eventCount) {
+			var ev = eventList[i];
+			if (ev.beat >= curBeat) {
+				ev.active = false;
+				for (j in i...eventCount)
+					eventList[j].active = false;
+				break;
+			}
 			ev.active = true;
 			ev.update(curBeat);
 		}
 	}
 
 	public function getLastEventBefore(event:Event):Event {
-		final playerEvents = table.get(event.name.toLowerCase());
-		if (playerEvents == null)
-			return null;
-
-		final eventList = playerEvents[event.player];
-		if (eventList == null)
-			return null;
-
-		final lastIndex = eventList.indexOf(event);
-		if (lastIndex > 0) {
-			final possibleEvent = eventList[lastIndex - 1];
-			return possibleEvent != null ? possibleEvent : null;
-		}
-
-		return null;
+		return event.prev;
 	}
 
-	private function sortEvents() {
-		for (modTab in table.iterator()) {
-			if (modTab == null)
-				continue;
-			for (events in modTab)
-				if (events != null && events.length > 0)
-					events.sort(__sortFunction);
+	private function insertSorted(vec:Vector<Event>, event:Event, resize:Bool = false) {
+		var len = getVectorLength(vec);
+		if (len >= vec.length) {
+			if (!resize)
+				return;
+			var newVec = new Vector<Event>(vec.length + 64);
+
+			Vector.blit(vec, 0, newVec, 0, vec.length);
+			vec = newVec;
+			// only applies to main list
+			eventList = vec;
 		}
-		eventList.sort(__sortFunction);
+
+		// insert already sorted
+		var pos = len;
+		while (pos > 0 && cmpBeat(event, vec[pos - 1]) < 0) {
+			vec[pos] = vec[pos - 1];
+			pos--;
+		}
+		vec[pos] = event;
 	}
 
-	@:noCompletion
-	private final __sortFunction:(Event, Event) -> Int = (a, b) -> {
-		return Math.floor(a.beat - b.beat);
-	};
+	private inline function cmpBeat(a:Event, b:Event):Int {
+		return a.beat < b.beat ? -1 : (a.beat > b.beat ? 1 : 0);
+	}
+
+	private inline function getVectorLength(vec:Vector<Event>):Int {
+		var len = vec.length;
+		for (i in 0...len) {
+			if (vec[i] == null) {
+				len = i;
+				break;
+			}
+		}
+		return len;
+	}
 }

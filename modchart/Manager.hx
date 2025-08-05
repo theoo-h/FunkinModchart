@@ -255,9 +255,8 @@ final class Manager extends FlxBasic {
 			return FlxSort.byValues(FlxSort.DESCENDING, a.z, b.z);
 		});
 
-		for (item in drawQueue) {
+		for (item in drawQueue)
 			item.callback();
-		}
 	}
 
 	/**

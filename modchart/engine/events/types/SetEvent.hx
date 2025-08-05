@@ -9,5 +9,6 @@ class SetEvent extends Event {
 		super(beat, (_) -> {
 			setModPercent(mod, target, player);
 		}, parent);
+		type = SET;
 	}
 }

@@ -3,15 +3,7 @@ package modchart.backend.graphics.renderers;
 import flixel.FlxG;
 import flixel.graphics.FlxGraphic;
 import flixel.util.FlxDestroyUtil;
-
-@:structInit
-@:publicFields
-private final class PathSegment {
-	var alpha:Float;
-	var scale:Float;
-	var color:Int;
-	var pos:Vector3;
-}
+import openfl.geom.ColorTransform;
 
 var pathVector = new Vector3();
 
@@ -60,15 +52,25 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 		__lineGraphic = FlxG.bitmap.create(10, 10, 0xFFFFFFFF);
 	}
 
+	var __lastPlayer:Int = -1;
+	var __lastAlpha:Float = 0;
+	var __lastThickness:Float = 0;
+
 	// the entry sprite should be A RECEPTOR / STRUM !!
 	override public function prepare(item:FlxSprite) {
 		final lane = Adapter.instance.getLaneFromArrow(item);
 		final fn = Adapter.instance.getPlayerFromArrow(item);
 
-		final alpha = instance.getPercent('arrowPathAlpha', fn);
-		final thickness = instance.getPercent('arrowPathThickness', fn);
+		final canUseLast = fn == __lastPlayer;
 
-		if (alpha <= 0 || thickness <= 0)
+		final pathAlpha = canUseLast ? __lastAlpha : instance.getPercent('arrowPathAlpha', fn);
+		final pathThickness = canUseLast ? __lastThickness : instance.getPercent('arrowPathThickness', fn);
+
+		__lastAlpha = pathAlpha;
+		__lastThickness = pathThickness;
+		__lastPlayer = fn;
+
+		if (pathAlpha <= 0 || pathThickness <= 0)
 			return;
 
 		final divisions = Std.int(20 * Config.ARROW_PATHS_CONFIG.RESOLUTION);
@@ -81,9 +83,16 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 
 		var vi = 0, vertCount = 0;
 
-		var lastSegment:PathSegment = null;
+		var lastOutput:ModifierOutput = null;
 		pathVector.setTo(Adapter.instance.getDefaultReceptorX(lane, fn), Adapter.instance.getDefaultReceptorY(lane, fn), 0);
 		pathVector.incrementBy(ModchartUtil.getHalfPos());
+
+		final colored = Config.ARROW_PATHS_CONFIG.APPLY_COLOR;
+		final applyAlpha = Config.ARROW_PATHS_CONFIG.APPLY_ALPHA;
+
+		final transforms:Array<ColorTransform> = [];
+		var tID:Int = 0;
+		transforms.resize(segs);
 
 		for (index in 0...divisions) {
 			var hitTime = -500 + interval * index;
@@ -96,22 +105,9 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 				isTapArrow: true
 			});
 
-			final segment:PathSegment = {
-				pos: output.pos,
-				alpha: alpha,
-				scale: thickness,
-				color: 0xFFFFFF
-			};
-
-			if (Config.ARROW_PATHS_CONFIG.APPLY_SCALE)
-				segment.scale *= output.visuals.scaleX;
-
-			if (Config.ARROW_PATHS_CONFIG.APPLY_DEPTH)
-				segment.scale *= 1 / (output.pos.z * 2);
-
-			if (lastSegment != null) {
-				final p0 = lastSegment;
-				final p1 = segment;
+			if (lastOutput != null) {
+				final p0 = lastOutput;
+				final p1 = output;
 
 				final pos0 = p0.pos;
 				final pos1 = p1.pos;
@@ -122,8 +118,8 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 				final nx = -dy / len;
 				final ny = dx / len;
 
-				final t0 = p0.scale * 0.5;
-				final t1 = p1.scale * 0.5;
+				final t0 = (pathThickness * (Config.ARROW_PATHS_CONFIG.APPLY_SCALE ? p1.visuals.scaleX : 1) * (Config.ARROW_PATHS_CONFIG.APPLY_DEPTH ? 1 / pos0.z : 1)) * 0.5;
+				final t1 = (pathThickness * (Config.ARROW_PATHS_CONFIG.APPLY_SCALE ? p1.visuals.scaleX : 1) * (Config.ARROW_PATHS_CONFIG.APPLY_DEPTH ? 1 / pos1.z : 1)) * 0.5;
 
 				final a1x = pos0.x + nx * t0;
 				final a1y = pos0.y + ny * t0;
@@ -145,16 +141,23 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 				vertices.set(vi++, b2x);
 				vertices.set(vi++, b2y);
 
+				final glow = (colored ? p0.visuals.glow : 0);
+				final fAlpha = (applyAlpha ? p0.visuals.alpha : 1);
+				final negGlow = 1 - glow;
+				final absGlow = glow * 255;
+				transforms[tID++] = new ColorTransform(negGlow, negGlow, negGlow, fAlpha * pathAlpha, Math.round(p0.visuals.glowR * absGlow),
+					Math.round(p0.visuals.glowG * absGlow), Math.round(p0.visuals.glowB * absGlow));
+
 				vertCount += 4;
 			}
 
-			lastSegment = segment;
+			lastOutput = output;
 		}
 
 		updateTris(divisions);
 
 		var newInstruction:FMDrawInstruction = {};
-		newInstruction.extra = [vertices, indices, uvt];
+		newInstruction.extra = [vertices, indices, uvt, transforms];
 		queue[count++] = newInstruction;
 	}
 
@@ -167,9 +170,12 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 			final vertices:DrawData<Float> = cast instruction.extra[0];
 			final indices:DrawData<Int> = cast instruction.extra[1];
 			final uvt:DrawData<Float> = cast instruction.extra[2];
+			final transforms:Array<ColorTransform> = cast instruction.extra[3];
 
 			for (camera in cameras) {
-				camera.drawTriangles(__lineGraphic, vertices, indices, uvt, new DrawData<Int>(), null, null, false, true, null, null);
+				var item = camera.startTrianglesBatch(__lineGraphic, false, true, NORMAL, true);
+				@:privateAccess
+				item.addGradientTriangles(vertices, indices, uvt, null, camera._bounds, transforms);
 			}
 		}
 	}

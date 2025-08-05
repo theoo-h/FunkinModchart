@@ -4,32 +4,27 @@ import flixel.math.FlxMath;
 import flixel.tweens.FlxEase.EaseFunction;
 import flixel.tweens.FlxEase;
 
-typedef EaseData = {
-	var startBeat:Float;
-	var endBeat:Float;
-
-	var beatLength:Float;
-
-	var ease:EaseFunction;
-}
-
 class EaseEvent extends Event {
-	public var data:EaseData;
+	public var startBeat:Float;
+	public var endBeat:Float;
+
+	public var beatLength:Float;
+	public var ease:EaseFunction;
 
 	public function new(mod:String, beat:Float, len:Float, target:Float, ease:EaseFunction, player:Int, parent:EventManager) {
 		this.name = mod;
 		this.player = player;
 
-		this.data = {
-			startBeat: beat,
-			endBeat: beat + len,
-			beatLength: len,
-			ease: ease != null ? ease : FlxEase.linear
-		};
+		this.startBeat = beat;
+		this.endBeat = beat + len;
+		this.beatLength = len;
+		this.ease = ease != null ? ease : FlxEase.linear;
 
 		this.target = target;
 
 		super(beat, (_) -> {}, parent, true);
+
+		type = EASE;
 	}
 
 	var entryPerc:Null<Float> = null;
@@ -38,33 +33,20 @@ class EaseEvent extends Event {
 		if (fired)
 			return;
 
-		if (curBeat < data.endBeat) {
-			if (entryPerc == null) {
-				// this fixed A LOT of visual issues when convining eases and sets
-				// based on schmovin timeline
-				final possibleLastEvent = parent.getLastEventBefore(this);
+		if (curBeat < endBeat) {
+			if (entryPerc == null)
+				entryPerc = ModchartUtil.findEntryFrom(this);
 
-				if (possibleLastEvent != null) {
-					if (possibleLastEvent is EaseEvent) {
-						var castedEvent:EaseEvent = cast possibleLastEvent;
-						// the ease function may not return 1
-						entryPerc = castedEvent.data.ease(1) * possibleLastEvent.target;
-					} else
-						entryPerc = possibleLastEvent.target;
-				} else
-					entryPerc = getModPercent(name, player);
-			}
-
-			var progress = (curBeat - data.startBeat) / (data.endBeat - data.startBeat);
+			var progress = (curBeat - startBeat) / (endBeat - startBeat);
 			// maybe we should make it use bound?
-			var out = FlxMath.lerp(entryPerc, target, data.ease(progress));
+			var out = FlxMath.lerp(entryPerc, target, ease(progress));
 			setModPercent(name, out, player);
 			fired = false;
-		} else if (curBeat >= data.endBeat) {
+		} else if (curBeat >= endBeat) {
 			fired = true;
 
 			// we're using the ease function bc it may dont return 1
-			setModPercent(name, data.ease(1) * target, player);
+			setModPercent(name, ease(1) * target, player);
 		}
 	}
 }

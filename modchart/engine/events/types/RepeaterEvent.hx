@@ -7,6 +7,7 @@ class RepeaterEvent extends Event {
 		super(beat, callback, parent);
 
 		end = beat + length;
+		type = REPEATER;
 	}
 
 	override function update(curBeat:Float):Void {

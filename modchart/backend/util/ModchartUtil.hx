@@ -5,7 +5,11 @@ import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
 import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
+import flixel.math.FlxRect;
 import haxe.ds.Vector;
+import modchart.engine.events.Event;
+import modchart.engine.events.types.AddEvent;
+import modchart.engine.events.types.EaseEvent;
 import openfl.geom.Matrix3D;
 
 using StringTools;
@@ -18,11 +22,36 @@ using StringTools;
 	// pain (we need this if we want support for sprite sheet packer)
 	@:pure
 	inline public static function getFrameAngle(spr:FlxSprite):Float {
-		return switch (spr.frame.angle) {
-			case ANGLE_90: 90;
-			case ANGLE_270 | ANGLE_NEG_90: 270;
-			default: 0; // ANGLE_0d
+		// return switch (spr.frame.angle) {
+		// 	case ANGLE_90: 90;
+		// 	case ANGLE_270 | ANGLE_NEG_90: 270;
+		// 	default: 0; // ANGLE_0d
+		// }
+		return cast spr.frame.angle; // We can just do this, prevents an unused case warning too!
+	}
+
+	inline public static function findEntryFrom(event:Event) {
+		final possibleLastEvent = event.parent.getLastEventBefore(event);
+
+		var entryPerc = 0.;
+
+		if (possibleLastEvent != null) {
+			final evType = possibleLastEvent.getType();
+			if (evType == EASE) {
+				var castedEvent:EaseEvent = cast possibleLastEvent;
+				entryPerc = (castedEvent.ease(1) * castedEvent.target);
+			} else if (evType == ADD) {
+				var castedEvent:AddEvent = cast possibleLastEvent;
+				@:privateAccess
+				entryPerc = (castedEvent.entryPerc + (castedEvent.ease(1) * castedEvent.addAmount));
+			} else {
+				entryPerc = possibleLastEvent.target;
+			}
+		} else {
+			entryPerc = event.getModPercent(event.name, event.player);
 		}
+
+		return entryPerc;
 	}
 
 	@:pure @:noDebug
@@ -103,8 +132,16 @@ using StringTools;
 			uv = new DrawData<Float>(8 * subs, true, []);
 
 		var frameUV = arrow.frame.uv;
-		var frameWidth = frameUV.width - frameUV.x;
-		var frameHeight = frameUV.height - frameUV.y;
+
+		// i do not like this
+		// but i was suggested to do this instead by theo -swordcube
+		var left = #if (flixel >= "6.1.0") frameUV.left #else frameUV.x #end;
+		var right = #if (flixel >= "6.1.0") frameUV.right #else frameUV.y #end;
+		var top = #if (flixel >= "6.1.0") frameUV.top #else frameUV.width #end;
+		var bottom = #if (flixel >= "6.1.0") frameUV.bottom #else frameUV.height #end;
+
+		var frameWidth = top - left;
+		var frameHeight = bottom - right;
 
 		var subDivided = 1.0 / subs;
 
@@ -114,10 +151,10 @@ using StringTools;
 				var uvOffset = subDivided * curSub;
 				var subIndex = curSub * 8;
 
-				uv[subIndex] = uv[subIndex + 4] = frameUV.x;
-				uv[subIndex + 2] = uv[subIndex + 6] = frameUV.width;
-				uv[subIndex + 1] = uv[subIndex + 3] = frameUV.y + uvOffset * frameHeight;
-				uv[subIndex + 5] = uv[subIndex + 7] = frameUV.y + (uvOffset + subDivided) * frameHeight;
+				uv[subIndex] = uv[subIndex + 4] = left;
+				uv[subIndex + 2] = uv[subIndex + 6] = top;
+				uv[subIndex + 1] = uv[subIndex + 3] = right + uvOffset * frameHeight;
+				uv[subIndex + 5] = uv[subIndex + 7] = right + (uvOffset + subDivided) * frameHeight;
 			}
 			return uv;
 		}
@@ -126,8 +163,8 @@ using StringTools;
 		var cosA = ModchartUtil.cos(angleRad);
 		var sinA = ModchartUtil.sin(angleRad);
 
-		var uCenter = frameUV.x + frameWidth * .5;
-		var vCenter = frameUV.y + frameHeight * .5;
+		var uCenter = left + frameWidth * .5;
+		var vCenter = right + frameHeight * .5;
 
 		// my brain is not braining anymore
 		// i give up
@@ -137,10 +174,10 @@ using StringTools;
 
 			// uv coords before rotation
 			var uvCoords = [
-				[frameUV.x, frameUV.y + uvOffset * frameHeight], // tl
-				[frameUV.width, frameUV.y + uvOffset * frameHeight], // tr
-				[frameUV.x, frameUV.y + (uvOffset + subDivided) * frameHeight], // bl
-				[frameUV.width, frameUV.y + (uvOffset + subDivided) * frameHeight] // br
+				[left, right + uvOffset * frameHeight], // tl
+				[top, right + uvOffset * frameHeight], // tr
+				[left, right + (uvOffset + subDivided) * frameHeight], // bl
+				[top, right + (uvOffset + subDivided) * frameHeight] // br
 			];
 
 			// apply rotation
