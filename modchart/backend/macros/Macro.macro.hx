@@ -137,11 +137,6 @@ class Macro {
 						type: macro :DrawData<Float>
 					},
 					{
-						name: 'colors',
-						type: macro :DrawData<Int>,
-						opt: true
-					},
-					{
 						name: 'position',
 						type: macro :FlxPoint,
 						opt: true
@@ -169,7 +164,6 @@ class Macro {
 					var numberOfVertices:Int = Std.int(verticesLength / 2);
 					var prevIndicesLength:Int = this.indices.length;
 					var prevUVTDataLength:Int = this.uvtData.length;
-					var prevColorsLength:Int = this.colors.length;
 					var prevNumberOfVertices:Int = this.numVertices;
 
 					var tempX:Float, tempY:Float;
@@ -203,14 +197,6 @@ class Macro {
 
 						for (i in 0...indicesLength) {
 							this.indices[prevIndicesLength + i] = indices[i] + prevNumberOfVertices;
-						}
-
-						if (colored) {
-							for (i in 0...numberOfVertices) {
-								this.colors[prevColorsLength + i] = colors[i];
-							}
-
-							colorsPosition = colorsPosition + numberOfVertices;
 						}
 
 						verticesPosition = verticesPosition + verticesLength;

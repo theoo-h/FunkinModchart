@@ -8,37 +8,42 @@ import modchart.backend.core.ModifierParameters;
 class Beat extends Modifier {
 	public function new(pf) {
 		super(pf);
+
+		for (x in ['x', 'y', 'z', ''])
+			setPercent('beat${x}Speed', 1);
 	}
 
-	static var fAccelTime = 0.2;
-	static var fTotalTime = 0.5;
+	static final fAccelTime:Float = 0.2;
+	static final fTotalTime:Float = 0.5;
+
+	static final zeroOneFactor = 1 / fAccelTime;
+	static final oneZeroFactor = 1 / fTotalTime;
 
 	@:dox(hide)
-	@:noCompletion private inline function beatMath(params:ModifierParameters, offset:Float, speed:Float, mult:Float):Float {
-		var curBeat = speed * (params.curBeat + offset) + fAccelTime;
+	@:noCompletion private inline function beatMath(params:ModifierParameters, offset:Float, mult:Float, speed:Float):Float {
+		var fBeat = ((params.curBeat * speed) + offset) + fAccelTime;
 
-		if (curBeat < 0)
+		if (fBeat <= 0)
 			return 0;
 
-		curBeat = (curBeat % 1 + 1) % 1;
+		final bEvenBeat = Std.int(fBeat) % 2 != 0;
+		fBeat = (fBeat % 1 + 1) % 1;
 
-		if (curBeat >= fTotalTime)
+		if (fBeat >= fTotalTime)
 			return 0;
+		var fAmount:Float;
 
-		var fAmount = 0.0;
-		if (curBeat < fAccelTime) {
-			var v = curBeat / fAccelTime;
-			fAmount = v * v;
+		if (fBeat < fAccelTime) {
+			fAmount = Math.pow(fBeat * zeroOneFactor, 2);
 		} else {
-			var v = (fTotalTime - curBeat) / (fTotalTime - fAccelTime);
-			fAmount = 1 - (1 - v) * (1 - v);
+			final fcBeat = fBeat * oneZeroFactor;
+			fAmount = (1 - fcBeat) * (1 + fcBeat);
 		}
 
-		if (Math.floor(curBeat) % 2 != 0)
-			fAmount = -fAmount;
+		if (bEvenBeat)
+			fAmount *= -1;
 
-		var fShift = 20 * fAmount * sin((params.distance * 0.01 * mult) + (Math.PI * .5));
-		return fShift;
+		return 20 * fAmount * cos(params.distance * 0.01 * mult);
 	}
 
 	@:dox(hide)
@@ -51,11 +56,11 @@ class Beat extends Modifier {
 		if (amount == 0)
 			return curPos;
 
+		final speed = 1 * getPercent('beat' + axis + 'Speed', player);
 		final offset = getPercent('beat' + axis + 'Offset', player);
-		final speed = getPercent('beat' + axis + 'Speed', player);
 		final mult = getPercent('beat' + axis + 'Mult', player);
 
-		var shift = beatMath(params, offset, 1 + speed, 1 + mult);
+		var shift = beatMath(params, offset, 1 + mult, speed) * amount;
 
 		switch (realAxis) {
 			case 'x':

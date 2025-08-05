@@ -32,6 +32,10 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		];
 	}
 
+	var __lastOrient:Float = 0;
+	var __lastC2:Float = 0;
+	var __lastPlayer:Int = -1;
+
 	override public function prepare(arrow:FlxSprite) {
 		if (arrow.alpha <= 0)
 			return;
@@ -45,11 +49,16 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		var songPos = Adapter.instance.getSongPosition();
 		var arrowDiff = arrowTime - songPos;
 
+		final canUseLast = player == __lastPlayer;
+
+		final centered2 = canUseLast ? __lastC2 : (__lastC2 = instance.getPercent('centered2', player));
+		final orient = canUseLast ? __lastOrient : (__lastOrient = instance.getPercent('orient', player));
+
 		// apply centered 2 (aka centered path)
 		if (Adapter.instance.isTapNote(arrow)) {
-			arrowDiff += FlxG.height * 0.25 * instance.getPercent('centered2', player);
+			arrowDiff += FlxG.height * 0.25 * centered2;
 		} else {
-			arrowTime = songPos + (FlxG.height * 0.25 * instance.getPercent('centered2', player));
+			arrowTime = songPos + (FlxG.height * 0.25 * centered2);
 			arrowDiff = arrowTime - songPos;
 		}
 		var arrowData:ArrowData = {
@@ -67,7 +76,6 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 		arrowPosition.copyFrom(output.pos.clone());
 
 		// internal mods
-		final orient = instance.getPercent('orient', arrowData.player);
 		if (orient != 0) {
 			final nextOutput = instance.modifiers.getPath(new Vector3(Adapter.instance.getDefaultReceptorX(arrowData.lane, arrowData.player)
 				+ Manager.ARROW_SIZEDIV2,
@@ -79,6 +87,8 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 
 			output.visuals.angleZ += FlxAngle.wrapAngle((-90 + (Math.atan2(nextPos.y - thisPos.y, nextPos.x - thisPos.x) * FlxAngle.TO_DEG)) * orient);
 		}
+
+		__lastPlayer = player;
 
 		// prepare the instruction for drawing
 		final projectionDepth = arrowPosition.z;
@@ -199,37 +209,8 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			final cTransform = instruction.colorData[0];
 			cTransform.alphaMultiplier *= camera.alpha;
 
-			// this in heavy wip
-			/*
-				if (Config.ACTOR_FRAME_SYSTEM) {
-					var vertices = instruction.vertices;
-
-					// prepare matrix
-					fMatrix.identity();
-
-					// this try to replicate camera transformations
-					fMatrix.translate(-(0.5 * camera.width * (camera.scaleX - camera.initialZoom) / camera.scaleX),
-						-(0.5 * camera.height * (camera.scaleY - camera.initialZoom) / camera.scaleY));
-					fMatrix.scale(camera.scaleX, camera.scaleY);
-
-					var row = 0;
-
-					do {
-						var vX = vertices[row];
-						var vY = vertices[row + 1];
-
-						vertices[row] = fMatrix.__transformX(vX, vY);
-						vertices[row + 1] = fMatrix.__transformY(vX, vY);
-
-						row = row + 2;
-					} while (row < vertices.length);
-
-					display.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
-						item.antialiasing, cTransform, item.shader);
-			} else {*/
 			camera.drawTriangles(item.graphic, instruction.vertices, instruction.indices, instruction.uvt, new Vector<Int>(), null, item.blend, false,
 				item.antialiasing, cTransform, item.shader);
-			/*}*/
 		}
 	}
 }

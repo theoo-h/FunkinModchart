@@ -1,13 +1,18 @@
 package modchart.engine.events;
 
 import modchart.Manager;
+import modchart.engine.events.EventType;
 
 class Event {
 	public var name:String;
 	public var target:Float;
 
+	public var type:EventType = EMPTY;
+
 	public var beat:Float;
 	public var player:Int;
+
+	public var prev:Event = null;
 
 	public var callback:Event->Void;
 	public var parent:EventManager;
@@ -45,5 +50,9 @@ class Event {
 
 	public inline function getModPercent(name, player):Float {
 		return parent.pf.getPercent(name, player);
+	}
+
+	inline public function getType():EventType {
+		return type;
 	}
 }

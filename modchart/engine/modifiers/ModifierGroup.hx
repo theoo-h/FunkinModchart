@@ -5,6 +5,7 @@ import haxe.ds.ObjectMap;
 import haxe.ds.StringMap;
 import haxe.ds.Vector;
 import modchart.backend.core.ArrowData;
+import modchart.backend.core.ModifierOutput;
 import modchart.backend.core.ModifierParameters;
 import modchart.backend.core.PercentArray;
 import modchart.backend.core.VisualParameters;
@@ -13,13 +14,6 @@ import modchart.backend.util.ModchartUtil;
 import modchart.engine.modifiers.Modifier;
 import modchart.engine.modifiers.list.*;
 import modchart.engine.modifiers.list.false_paradise.*;
-
-@:structInit
-@:publicFields
-class ModifierOutput {
-	var pos:Vector3;
-	var visuals:VisualParameters;
-}
 
 #if !openfl_debug
 @:fileXml('tags="haxe,release"')

@@ -7,6 +7,9 @@ import flixel.math.FlxAngle;
 import flixel.math.FlxMath;
 import flixel.math.FlxRect;
 import haxe.ds.Vector;
+import modchart.engine.events.Event;
+import modchart.engine.events.types.AddEvent;
+import modchart.engine.events.types.EaseEvent;
 import openfl.geom.Matrix3D;
 
 using StringTools;
@@ -25,6 +28,30 @@ using StringTools;
 		// 	default: 0; // ANGLE_0d
 		// }
 		return cast spr.frame.angle; // We can just do this, prevents an unused case warning too!
+	}
+
+	inline public static function findEntryFrom(event:Event) {
+		final possibleLastEvent = event.parent.getLastEventBefore(event);
+
+		var entryPerc = 0.;
+
+		if (possibleLastEvent != null) {
+			final evType = possibleLastEvent.getType();
+			if (evType == EASE) {
+				var castedEvent:EaseEvent = cast possibleLastEvent;
+				entryPerc = (castedEvent.ease(1) * castedEvent.target);
+			} else if (evType == ADD) {
+				var castedEvent:AddEvent = cast possibleLastEvent;
+				@:privateAccess
+				entryPerc = (castedEvent.entryPerc + (castedEvent.ease(1) * castedEvent.addAmount));
+			} else {
+				entryPerc = possibleLastEvent.target;
+			}
+		} else {
+			entryPerc = event.getModPercent(event.name, event.player);
+		}
+
+		return entryPerc;
 	}
 
 	@:pure @:noDebug
