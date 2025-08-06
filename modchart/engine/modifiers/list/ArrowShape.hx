@@ -9,7 +9,7 @@ class ArrowShape extends PathModifier {
 	public function new(pf:PlayField) {
 		var path:Array<PathNode> = [];
 
-		for (line in ModchartUtil.coolTextFile('assets/modchart/arrowShape.csv')) {
+		for (line in ModchartUtil.coolTextFile('modchart/arrowShape.csv')) {
 			var coords = line.split(';');
 			path.push({
 				x: Std.parseFloat(coords[0]) * 200,
