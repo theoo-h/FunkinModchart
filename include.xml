@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://lime.openfl.org/project/1.0.4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://lime.openfl.org/project/1.0.4 http://lime.openfl.org/xsd/project-1.0.4.xsd">
+
+
+	<assets path="assets/modchart/arrowShape.csv" rename="modchart/arrowShape.csv" embed="true" />
+	<assets path="assets/modchart/eyeShape.csv" rename="modchart/eyeShape.csv" embed="true" />
+</project>
