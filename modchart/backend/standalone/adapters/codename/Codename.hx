@@ -20,11 +20,7 @@ class Codename implements IAdapter {
 	public function new() {}
 
 	public function onModchartingInitialization() {
-		for (strumLine in PlayState.instance.strumLines.members) {
-			strumLine.forEach(strum -> {
-				strum.extra.set('player', strumLine.ID);
-			});
-		}
+		// do nothing
 	}
 
 	public function isTapNote(sprite:FlxSprite)
@@ -79,7 +75,7 @@ class Codename implements IAdapter {
 			return note.strumLine.ID;
 		} else if (arrow is Strum) {
 			final strum:Strum = cast arrow;
-			return strum.extra.get('player');
+			return strum.strumLine.ID;
 		} else if (arrow is Splash) {
 			final splash:Splash = cast arrow;
 			return splash.strum.extra.get('player');
@@ -174,7 +170,7 @@ class Codename implements IAdapter {
 		}
 
 		for (grp in PlayState.instance.splashHandler.grpMap)
-			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.extra.get('player')][3].push(spr));
+			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.strumLine.ID][3].push(spr));
 
 		return pspr;
 	}
