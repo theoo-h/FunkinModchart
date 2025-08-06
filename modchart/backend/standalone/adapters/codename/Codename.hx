@@ -21,7 +21,6 @@ class Codename implements IAdapter {
 
 	public function onModchartingInitialization() {
 		// do nothing
-		}
 	}
 
 	public function isTapNote(sprite:FlxSprite)
