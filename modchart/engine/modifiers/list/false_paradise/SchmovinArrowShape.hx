@@ -44,7 +44,7 @@ class SchmovinArrowShape extends Modifier {
 	}
 
 	function LoadPath():List<TimeVector> {
-		var file = ModchartUtil.coolTextFile('assets/modchart/arrowShape.csv');
+		var file = ModchartUtil.coolTextFile('modchart/arrowShape.csv');
 		var path = new List<TimeVector>();
 		for (line in file) {
 			var coords = line.split(';');

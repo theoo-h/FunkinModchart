@@ -53,7 +53,7 @@ class EyeShape extends Modifier {
 	function loadPath():Vector<TimeVector> {
 		var pathArray:Array<TimeVector> = [];
 
-		for (node in ModchartUtil.coolTextFile('assets/modchart/eyeShape.csv')) {
+		for (node in ModchartUtil.coolTextFile('modchart/eyeShape.csv')) {
 			final coords = node.split(';');
 			pathArray.push(new TimeVector(Std.parseFloat(coords[0]) * SCALE, Std.parseFloat(coords[1]) * SCALE, Std.parseFloat(coords[2]) * SCALE,
 				Std.parseFloat(coords[3]) * SCALE));
