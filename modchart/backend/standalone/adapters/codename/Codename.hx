@@ -10,12 +10,7 @@ import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.backend.standalone.IAdapter;
 
-/**
- * Codename Adapter for codename version before FunkinModchart being added
- * This doesn't contain:
- * Hold parent time (used to rotate the hold around the parent note, for long/short holds, etc), (should i add it using a work around??)
- * Hold subdivision option
- */
+// TODO: make this work for v0.1.0 legacy (when the pr gets merged)
 class Codename implements IAdapter {
 	public function new() {}
 
