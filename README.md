@@ -19,7 +19,7 @@ At the bottom of where the haxelib section is, paste this code.
 <haxedef name="FM_ENGINE_VERSION" value="ENGINE_VERSION"/>
 
 <haxelib name="funkin-modchart" />
-<haxeflag name="--macro" value="modchart.core.macros.Macro.includeFiles()"/>
+<haxeflag name="--macro" value="modchart.backend.macros.Macro.includeFiles()"/>
 ```
 
 Fill in the definitions with your engine name and version using the [format](https://github.com/TheoDevelops/FunkinModchart/blob/main/SUPPORT.md) mentioned.
