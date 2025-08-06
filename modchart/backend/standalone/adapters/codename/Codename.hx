@@ -78,7 +78,7 @@ class Codename implements IAdapter {
 			return strum.strumLine.ID;
 		} else if (arrow is Splash) {
 			final splash:Splash = cast arrow;
-			return splash.strum.extra.get('player');
+			return splash.strum.strumLine.ID;
 		}
 
 		return 0;
