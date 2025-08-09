@@ -86,7 +86,7 @@ class Codename implements IAdapter {
 
 	public function getHoldParentTime(arrow:FlxSprite) {
 		final note:Note = cast arrow;
-		return note.strumTime;
+		return #if (FM_ENGINE_VERSION == "1.0") note.sustainParent.strumTime #else note.strumTime #end;
 	}
 
 	// im so fucking sorry for those conditionals
@@ -110,8 +110,12 @@ class Codename implements IAdapter {
 	}
 
 	public function getHoldSubdivisions(hold:FlxSprite):Int {
+		#if (FM_ENGINE_VERSION == "1.0")
 		final val = Options.modchartingHoldSubdivisions;
 		return val < 1 ? 1 : val;
+		#else
+		return 4;
+		#end
 	}
 
 	public function getDownscroll():Bool
