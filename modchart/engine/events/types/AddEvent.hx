@@ -30,7 +30,7 @@ class AddEvent extends EaseEvent {
 			fired = true;
 
 			// we're using the ease function bc it may dont return 1
-			setModPercent(name, entryPerc + addAmount, player);
+			setModPercent(name, entryPerc + ease(1) * addAmount, player);
 		}
 	}
 }

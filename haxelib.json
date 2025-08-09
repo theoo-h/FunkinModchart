@@ -2,8 +2,8 @@
     "name": "funkin-modchart",
     "license": "Apache",
     "description": "An modcharting plugin for Friday Night Funkin'",
-    "version": "1.2.1",
-    "releasenote": "Various additions & several optimization.",
+    "version": "1.2.2",
+    "releasenote": "Small improvements.",
     "contributors": ["TheoDev"],
     "tags": ["fnf", "friday-night-funkin"],
     "dependencies": {
