@@ -1,7 +1,8 @@
 ## Current supported FNF engines/frameworks
 
 ## Codename Engine
-- Beta
+- 0.1.0 (Beta) (Misses some stuff)
+- 1.0
 
 - `FM_ENGINE`: "CODENAME"
 - `FM_ENGINE_VERSION`: ""
