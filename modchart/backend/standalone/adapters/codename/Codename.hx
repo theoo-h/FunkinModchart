@@ -16,6 +16,9 @@ class Codename implements IAdapter {
 
 	public function onModchartingInitialization() {
 		// do nothing
+		#if (FM_ENGINE_VERSION == "1.0")
+		PlayState.instance.splashHandler.visible = false;
+		#end
 	}
 
 	public function isTapNote(sprite:FlxSprite)
@@ -168,8 +171,10 @@ class Codename implements IAdapter {
 			sl.notes.forEachAlive((spr) -> pspr[i][spr.isSustainNote ? 2 : 1][spr.isSustainNote ? si++ : ni++] = spr);
 		}
 
+		#if (FM_ENGINE_VERSION == "1.0")
 		for (grp in PlayState.instance.splashHandler.grpMap)
 			grp.forEachAlive((spr) -> if (spr.strum != null && spr.active) pspr[spr.strum.strumLine.ID][3].push(spr));
+		#end
 
 		return pspr;
 	}
