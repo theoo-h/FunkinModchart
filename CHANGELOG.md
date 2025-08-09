@@ -138,3 +138,7 @@
 ## August 6, 2025
 - Added CSV Paths to Assets for `ArrowShape` and `EyeShape` mods.
 - Small improvements.
+
+## August, 8, 2025
+- Fixed crash caused by Arrow Path when alpha is 0.
+- Fixed `ADD` event (again).
