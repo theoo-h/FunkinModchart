@@ -66,12 +66,12 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 		final pathAlpha = canUseLast ? __lastAlpha : instance.getPercent('arrowPathAlpha', fn);
 		final pathThickness = canUseLast ? __lastThickness : instance.getPercent('arrowPathThickness', fn);
 
+		if (pathAlpha <= 0 || pathThickness <= 0)
+			return;
+
 		__lastAlpha = pathAlpha;
 		__lastThickness = pathThickness;
 		__lastPlayer = fn;
-
-		if (pathAlpha <= 0 || pathThickness <= 0)
-			return;
 
 		final divisions = Std.int(20 * Config.ARROW_PATHS_CONFIG.RESOLUTION);
 		final limit = 1500 + Config.ARROW_PATHS_CONFIG.LENGTH;
@@ -162,11 +162,13 @@ final class ModchartPathRenderer extends ModchartRenderer<FlxSprite> {
 	}
 
 	override public function shift() {
-		if (queue.length <= 0)
+		if (count == 0 || queue.length <= 0)
 			return;
 
 		final cameras = Adapter.instance.getArrowCamera();
 		for (instruction in queue) {
+			if (instruction == null)
+				continue;
 			final vertices:DrawData<Float> = cast instruction.extra[0];
 			final indices:DrawData<Int> = cast instruction.extra[1];
 			final uvt:DrawData<Float> = cast instruction.extra[2];

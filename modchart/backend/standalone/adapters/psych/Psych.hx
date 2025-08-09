@@ -199,9 +199,4 @@ class Psych implements IAdapter {
 
 		return pspr;
 	}
-
-	public function getHoldParentTime(arrow:FlxSprite) {
-		final note:Note = cast arrow;
-		return note.parent.strumTime;
-	}
 }
