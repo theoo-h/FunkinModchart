@@ -102,6 +102,13 @@ class Config {
 	 * Default: `true`
 	 */
 	public static var COLUMN_SPECIFIC_MODIFIERS:Bool = true;
+
+	/**
+	 * Shows the sustains behind the strums
+	 * 
+	 * Default `false`
+	 */
+	public static var HOLDS_BEHIND_STRUM:Bool = false;
 }
 
 typedef ArrowPathConfig = {
@@ -128,7 +135,7 @@ typedef ArrowPathConfig = {
 	APPLY_SCALE:Bool,
 
 	/**
-	 * "Resulution" multiplier of arrow paths.
+	 * "Resolution" multiplier of arrow paths.
 	 * Higher value = More divisions = Smoother path.
 	 * **WARNING**: Can't be zero or it will CRASH.
 	 */
