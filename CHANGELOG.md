@@ -142,3 +142,10 @@
 ## August, 8, 2025
 - Fixed crash caused by Arrow Path when alpha is 0.
 - Fixed `ADD` event (again).
+
+## Agoust 10, 2025
+- PR #39: CNE Invisible Strumline Fix + Draw Sustain Behind Strums
+
+## October, 23, 2025
+- Fixed camera targets.
+- Workaround on Codename adapter to properly use strumlines, strum or notes cameras.
