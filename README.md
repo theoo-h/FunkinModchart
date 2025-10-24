@@ -76,7 +76,7 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 ## Credits
 **TheoDev**: Owner, Lead coder.
 
-**Ne_Eo (aka. Neo)**: Coder, bugfixes & Optimizer.
+**Ne_Eo (aka. Neo)**: Coder (bugfixes and Optimisation).
 
 **EdwhakKB**: Maintainer.
 
