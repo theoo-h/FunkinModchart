@@ -163,9 +163,6 @@ final class PlayField extends FlxSprite {
 				if (node == null)
 					continue;
 
-				if (node == null)
-					continue;
-
 				var entryPercs = [];
 				var outPercs = [];
 				entryPercs.resize(node.input.length);
@@ -269,6 +266,9 @@ final class PlayField extends FlxSprite {
 		// i is player index
 		for (i in 0...playerItems.length) {
 			var curItems:Array<Array<FlxSprite>> = playerItems[i];
+
+			if (curItems == null || curItems.length == 0)
+				continue;
 
 			// receptors
 			if (receptorLength > 0) {

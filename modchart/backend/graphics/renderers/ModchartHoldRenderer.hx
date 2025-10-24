@@ -178,8 +178,9 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	var __lastPlayer:Int = 0;
 
 	override public function prepare(item:FlxSprite):Void {
-		if (item.alpha <= 0)
+		if (item.alpha <= 0) {
 			return;
+		}
 
 		Manager.HOLD_SIZE = item.width;
 		Manager.HOLD_SIZEDIV2 = item.width * .5;
@@ -309,15 +310,6 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		__lastHoldSubs = HOLD_SUBDIVISIONS;
 	}
 
-	inline static final drawMargin = 50;
-
-	inline function shouldDraw(info:HoldSegmentOutput) {
-		return info.origin.x < -drawMargin
-			&& info.origin.x > FlxG.width + drawMargin
-			&& info.origin.y < -drawMargin
-			&& info.origin.y > FlxG.height + drawMargin;
-	}
-
 	override public function shift() {
 		__drawInstruction(queue[postCount++]);
 	}
@@ -327,7 +319,8 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			return;
 		final item:FlxSprite = instruction.item;
 
-		var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
+		@:privateAccess
+		final cameras = #if (flixel >= "5.7.0") item.getCamerasLegacy() #else item.get_cameras() #end;
 
 		@:privateAccess for (camera in cameras) {
 			var cTransforms = instruction.colorData.copy();
