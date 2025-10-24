@@ -86,6 +86,6 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 
 ## Special Thanks
 
-**lunarcleint:** Support, such a nice guy!
+**lunarcleint:** Moral support, the goat.
 
-**Tsaku:** Support, bug finder. (thanks !!!)
+**Tsaku:** Support, betatester.
