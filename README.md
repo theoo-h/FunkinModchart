@@ -1,6 +1,6 @@
 <p align="center">
   <div align="center">
-    <img src="github/imagotipo.png" alt="17Undertoaderos Logo" style="width:55%; height:auto;"/>
+    <img src="github/imagotipo.png" alt="17Undertoaderos Logo" style="width:65%; height:auto;"/>
   </div>
 
   <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h2>
