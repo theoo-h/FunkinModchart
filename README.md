@@ -1,6 +1,6 @@
 <p align="center">
   <div align="center">
-    <img src="https://github.com/TheoDevelops/FunkinModchart/blob/main/github/imagotipo.png" alt="17Undertoaderos Logo" style="width:70%; height:auto;"/>
+    <img src="https://raw.githubusercontent.com/theoo-h/FunkinModchart/refs/heads/main/github/imagotipo.png" alt="17Undertoaderos Logo" style="width:70%; height:auto;"/>
   </div>
 
   <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h2>
