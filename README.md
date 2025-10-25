@@ -1,6 +1,6 @@
 <p align="center">
   <div align="center">
-    <img src="github/imagotipo.png" alt="17Undertoaderos Logo" style="width:70%; height:auto;"/>
+    <img src="https://github.com/TheoDevelops/FunkinModchart/blob/main/github/imagotipo.png" alt="17Undertoaderos Logo" style="width:70%; height:auto;"/>
   </div>
 
   <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h2>
@@ -77,7 +77,7 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 </details>
 
 ## Credits
-**TheoDev**: Owner, Lead coder.
+**Theo**: Owner, Lead coder.
 
 **Ne_Eo (aka. Neo)**: Coder (bugfixes and Optimisation).
 
