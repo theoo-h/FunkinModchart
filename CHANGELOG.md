@@ -149,3 +149,7 @@
 ## October, 23, 2025
 - Fixed camera targets.
 - Workaround on Codename adapter to properly use strumlines, strum or notes cameras.
+
+## October, 24, 2025
+- Fixed holds from player 0 appearing just after a hold from player 1 appears.
+- Added the logo.
