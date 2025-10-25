@@ -1,6 +1,7 @@
 package modchart.backend.standalone.adapters.codename;
 
 import flixel.FlxCamera;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import funkin.backend.system.Conductor;
 import funkin.game.Note;
@@ -10,7 +11,6 @@ import funkin.game.Strum;
 import funkin.options.Options;
 import modchart.backend.standalone.IAdapter;
 
-// TODO: make this work for v0.1.0 legacy (when the pr gets merged)
 class Codename implements IAdapter {
 	public function new() {}
 
@@ -19,6 +19,8 @@ class Codename implements IAdapter {
 		#if (FM_ENGINE_VERSION == "1.0")
 		PlayState.instance.splashHandler.visible = false;
 		#end
+
+		FlxG.signals.postDraw.add(postDraw);
 	}
 
 	public function isTapNote(sprite:FlxSprite)
@@ -157,9 +159,18 @@ class Codename implements IAdapter {
 			pspr[i][2] = [];
 			pspr[i][3] = [];
 
+			sl.forEach(str -> @:privateAccess {
+				str._fmExtra.oldCameras = str._cameras;
+				if (str._cameras == null || str._cameras.length == 0)
+					str._cameras = str.strumLine.cameras;
+			});
 			var st = 0;
 			var nt = 0;
-			sl.notes.forEachAlive((spr) -> {
+			sl.notes.forEachAlive((spr) -> @:privateAccess {
+				spr._fmExtra.oldCameras = spr._cameras;
+				if ((spr._cameras == null || spr._cameras.length == 0) && spr.__strumCameras != null)
+					spr.cameras = spr.__strumCameras;
+
 				spr.isSustainNote ? st++ : nt++;
 			});
 
@@ -177,5 +188,22 @@ class Codename implements IAdapter {
 		#end
 
 		return pspr;
+	}
+
+	function postDraw() {
+		var strumLineMembers = PlayState.instance.strumLines.members;
+		for (i in 0...strumLineMembers.length)
+			@:privateAccess {
+			final sl = strumLineMembers[i];
+
+			if (!sl.visible)
+				continue;
+			sl.forEach(st -> {
+				st.cameras = st._fmExtra.oldCameras;
+			});
+			sl.notes.forEachAlive((spr) -> {
+				spr.cameras = spr._fmExtra.oldCameras;
+			});
+		}
 	}
 }

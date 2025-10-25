@@ -1,6 +1,9 @@
 <p align="center">
-  <h1 align="center">FunkinModchart</h1>
-  <h4 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h4>
+  <div align="center">
+    <img src="https://github.com/TheoDevelops/FunkinModchart/blob/main/github/imagotipo.png" alt="17Undertoaderos Logo" style="width:70%; height:auto;"/>
+  </div>
+
+  <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h2>
 </p>
 
 **FunkinModchart** is a tool designed to bring [NotITG](https://www.noti.tg/) visuals and capabilities to [Friday Night Funkin](https://ninja-muffin24.itch.io/funkin) ***or VSRG games made in flixel***, adding modifiers to change the **arrow trajectory, colors, transparency and the  rotation angle through 3D Axes**, event system to change the modifier's percent easing or setting those to create endless amazing visual effects and even **more**!.
@@ -74,9 +77,9 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 </details>
 
 ## Credits
-**TheoDev**: Owner, Lead coder.
+**Theo**: Owner, Lead coder.
 
-**Ne_Eo (aka. Neo)**: Coder, bugfixes & Optimizer.
+**Ne_Eo (aka. Neo)**: Coder (bugfixes and Optimisation).
 
 **EdwhakKB**: Maintainer.
 
@@ -84,8 +87,10 @@ In case you want to rewrite the adapter when the game is running, you can do so.
 
 **4mbr0s3:** Some code taken from [Schmovin'](https://github.com/4mbr0s3-2/Schmovin), his own Modcharting Lib. (really impressive)
 
+**Soihan**: Logo Artist.
+
 ## Special Thanks
 
-**lunarcleint:** Support, such a nice guy!
+**lunarcleint:** Moral support, the goat.
 
-**Tsaku:** Support, bug finder. (thanks !!!)
+**Tsaku:** Support, betatester.

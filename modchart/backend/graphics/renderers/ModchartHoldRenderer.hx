@@ -64,6 +64,8 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 
 		params.hitTime = FlxMath.lerp(parentTime, holdTime, __long);
 		params.distance = FlxMath.lerp(parentDistance, holdDistance, __long);
+
+		// not this
 		if (doClip && params.hitten && params.distance < 0) {
 			params.distance = 0;
 			clipped = true;
@@ -77,6 +79,7 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		final zScale:Float = curPoint.z != 0 ? (1 / curPoint.z) : 1;
 		curPoint.z = 0;
 
+		// before this, bc it fails with optimiz eholds too
 		var unit:Vector3;
 
 		if (Config.OPTIMIZE_HOLDS) {
@@ -131,6 +134,7 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			quad.y = projection.y;
 			quad.z = projection.z;
 		}
+
 		return {
 			origin: curPoint,
 			left: quad0,
@@ -175,11 +179,13 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 	var __lastRY:Float = 0;
 	var __lastRZ:Float = 0;
 
-	var __lastPlayer:Int = 0;
+	// YOU MOTHERFUCKER
+	var __lastPlayer:Int = -1;
 
 	override public function prepare(item:FlxSprite):Void {
-		if (item.alpha <= 0)
+		if (item.alpha <= 0) {
 			return;
+		}
 
 		Manager.HOLD_SIZE = item.width;
 		Manager.HOLD_SIZEDIV2 = item.width * .5;
@@ -309,15 +315,6 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 		__lastHoldSubs = HOLD_SUBDIVISIONS;
 	}
 
-	inline static final drawMargin = 50;
-
-	inline function shouldDraw(info:HoldSegmentOutput) {
-		return info.origin.x < -drawMargin
-			&& info.origin.x > FlxG.width + drawMargin
-			&& info.origin.y < -drawMargin
-			&& info.origin.y > FlxG.height + drawMargin;
-	}
-
 	override public function shift() {
 		__drawInstruction(queue[postCount++]);
 	}
@@ -327,7 +324,8 @@ final class ModchartHoldRenderer extends ModchartRenderer<FlxSprite> {
 			return;
 		final item:FlxSprite = instruction.item;
 
-		var cameras = item._cameras != null ? item._cameras : Adapter.instance.getArrowCamera();
+		@:privateAccess
+		final cameras = #if (flixel >= "5.7.0") item.getCamerasLegacy() #else item.get_cameras() #end;
 
 		@:privateAccess for (camera in cameras) {
 			var cTransforms = instruction.colorData.copy();
