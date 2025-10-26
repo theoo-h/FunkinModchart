@@ -202,8 +202,7 @@ final class ModchartArrowRenderer extends ModchartRenderer<FlxSprite> {
 			return;
 
 		final item = instruction.item;
-		@:privateAccess
-		final cameras = #if (flixel >= "5.7.0") item.getCamerasLegacy() #else item.get_cameras() #end;
+		final cameras = ModchartUtil.resolveCameras(item);
 
 		@:privateAccess
 		for (camera in cameras) {

@@ -3,7 +3,7 @@
     <img src="https://raw.githubusercontent.com/theoo-h/FunkinModchart/refs/heads/main/github/imagotipo.png" alt="FunkinModchart" style="width:70%; height:auto;"/>
   </div>
 
-  <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, to modders.</h2>
+  <h2 align="center">An Modcharting backend library for Friday Night Funkin' made by modders, for modders.</h2>
 </p>
 
 **FunkinModchart** is a tool designed to bring [NotITG](https://www.noti.tg/) visuals and capabilities to [Friday Night Funkin](https://ninja-muffin24.itch.io/funkin) ***or VSRG games made in flixel***, adding modifiers to change the **arrow trajectory, colors, transparency and the  rotation angle through 3D Axes**, event system to change the modifier's percent easing or setting those to create endless amazing visual effects and even **more**!.

@@ -47,16 +47,16 @@ class Drugged extends Modifier {
 		var squishX = 1 + FlxMath.bound(y, -1, 0) * -1 * 0.6;
 		var squishY = 1 + FlxMath.bound(y, 0, 1) * 0.6;
 
-		visuals.scaleX *= squishX * drug;
-		visuals.scaleY *= squishY * drug;
+		visuals.scaleX = FlxMath.lerp(visuals.scaleX, visuals.scaleX * squishX, drug);
+		visuals.scaleY = FlxMath.lerp(visuals.scaleY, visuals.scaleY * squishY, drug);
 
 		var preproduct = Math.asin(y);
 		// var cosdY = cos(preproduct);
 
-		visuals.glow = y * -.7;
-		visuals.glowR -= 0.5 + sin(preproduct * 1.4) * .5;
-		visuals.glowG += 0.4 + cos(preproduct * 0.5) * .6;
-		visuals.glowB -= 0.2 + tan(preproduct) * .8;
+		visuals.glow = FlxMath.lerp(visuals.glow, y * -.7, drug);
+		visuals.glowR = FlxMath.lerp(visuals.glowR, visuals.glowR - (0.5 + sin(preproduct * 1.4) * .5), drug);
+		visuals.glowG = FlxMath.lerp(visuals.glowG, visuals.glowG + (0.4 + cos(preproduct * 0.5) * .6), drug);
+		visuals.glowB = FlxMath.lerp(visuals.glowB, visuals.glowB - (0.2 + tan(preproduct) * .8), drug);
 
 		return visuals;
 

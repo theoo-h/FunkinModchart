@@ -1,5 +1,6 @@
 package modchart.backend.util;
 
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.graphics.tile.FlxDrawTrianglesItem.DrawData;
@@ -28,6 +29,18 @@ using StringTools;
 		// 	default: 0; // ANGLE_0d
 		// }
 		return cast spr.frame.angle; // We can just do this, prevents an unused case warning too!
+	}
+
+	@:pure
+	inline public static function resolveCameras(item:FlxSprite):Array<FlxCamera> {
+		@:privateAccess
+		var cameras = #if (flixel >= "5.7.0") item.getCameras() #else item._cameras #end;
+
+		// fallback to def arrow cameras
+		if (cameras == null || cameras.length == 0)
+			cameras = Adapter.instance.getArrowCamera();
+
+		return cameras;
 	}
 
 	inline public static function findEntryFrom(event:Event) {
