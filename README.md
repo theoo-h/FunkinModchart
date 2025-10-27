@@ -124,10 +124,5 @@ You can even **swap adapters at runtime** — perfect for editors or very crazy 
   
 # Licensing
 
-<div style="display: flex; align-items: center; gap: 1em;">
-  <img src="github/isotipo.png" alt="Logo" style="height:10em;" />
-  <div style="font-size: 1.2em;">
-    <strong>FunkinModchart</strong> is available under the MIT License.<br>
-    <a href="LICENSE">Check License for more info.</a>
-  </div>
-</div>
+**FunkinModchart** is avalidable under the **MIT** License.
+Check LICENCE for more info.
