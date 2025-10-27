@@ -125,4 +125,4 @@ You can even **swap adapters at runtime** — perfect for editors or very crazy 
 # Licensing
 
 **FunkinModchart** is avalidable under the **MIT** License.
-Check LICENCE for more info.
+Check [LICENCE](https://github.com/theoo-h/FunkinModchart/blob/dev/LICENSE) for more info.
