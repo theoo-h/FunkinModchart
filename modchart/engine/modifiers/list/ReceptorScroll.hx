@@ -38,12 +38,17 @@ class ReceptorScroll extends Modifier {
 		if (perc == 0)
 			return data;
 
-		var bar = params.songTime / (Adapter.instance.getCurrentCrochet() * .25);
-		var hitTime = params.distance;
-
-		data.alpha = FlxMath.bound((1400 - hitTime) / 200, 0, 0.3) * perc;
-		if ((params.distance + params.songTime) < Math.floor(bar + 1) * Adapter.instance.getCurrentCrochet() * 4)
-			data.alpha = 1;
+		final moveSpeed = Adapter.instance.getCurrentCrochet() * 4;
+		var songTime = Adapter.instance.getSongPosition();
+		var currentCycle = Math.floor(songTime / moveSpeed) % 2;
+		var noteTime = songTime + params.distance;
+		var noteCycle = Math.floor(noteTime / moveSpeed) % 2;
+		
+		if (currentCycle == noteCycle) {
+			data.alpha = 1.0;
+		} else {
+			data.alpha = 0.3;
+		}
 
 		return data;
 	}
